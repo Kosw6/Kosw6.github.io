@@ -1,0 +1,52 @@
+title: "Sungwon Kim"
+description: "Backend Engineer · Portfolio & Blog"
+url: "https://username.github.io"
+locale: "ko-KR"
+theme: minimal-mistakes-jekyll
+
+# 기본 설정
+timezone: Asia/Seoul
+markdown: kramdown
+highlighter: rouge
+
+# 사이트 정보
+author:
+  name: "Sungwon Kim"
+  avatar: "/assets/images/avatar.png" # 선택
+  bio: "Backend/DevOps | Spring Boot, JPA, PostgreSQL, Redis, AWS, Docker"
+  location: "Seoul, Korea"
+  links:
+    - label: "GitHub"
+      icon: "fab fa-github"
+      url: "https://github.com/username"
+    - label: "LinkedIn"
+      icon: "fab fa-linkedin"
+      url: "https://www.linkedin.com/in/username/"
+    - label: "Email"
+      icon: "fas fa-envelope"
+      url: "mailto:you@example.com"
+
+# 네비게이션
+collections:
+  projects:
+    output: true
+    permalink: /projects/:name/
+
+# 플러그인 (GitHub Pages 호환)
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# 페이지네이션/태그
+paginate: 8
+paginate_path: "/page:num/"
+tag_archive:
+  type: liquid
+  path: /tags/
+
+# 구글 애널리틱스(선택)
+# google_analytics: G-XXXXXXXXXX
+
+# MM 테마 옵션
+minimal_mistakes_skin: "dark" # "default", "air", "contrast", "dark" 등
