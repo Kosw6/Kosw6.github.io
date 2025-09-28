@@ -1,8 +1,22 @@
+# _config.yml
 title: "Sungwon Kim"
 description: "Backend Engineer · Portfolio & Blog"
-url: "https://username.github.io"
+url: "https://kosw6.github.io" # 본인 GitHub Pages 주소
 locale: "ko-KR"
-theme: minimal-mistakes-jekyll
+
+# GitHub Pages 호환: remote_theme 방식
+remote_theme: "mmistakes/minimal-mistakes@4.26.2"
+
+# 플러그인 (remote_theme 필수 포함)
+plugins:
+  - jekyll-remote-theme
+  - jekyll-include-cache
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# 레이아웃 스킨 (다크 모드)
+minimal_mistakes_skin: "dark"
 
 # 기본 설정
 timezone: Asia/Seoul
@@ -12,13 +26,13 @@ highlighter: rouge
 # 사이트 정보
 author:
   name: "Sungwon Kim"
-  avatar: "/assets/images/avatar.png" # 선택
-  bio: "Backend/DevOps | Spring Boot, JPA, PostgreSQL, Redis, AWS, Docker"
+  avatar: "/assets/images/avatar.png" # 프로필 이미지 (선택)
+  bio: "Backend/DevOps | Spring Boot, JPA, PostgreSQL/TimescaleDB, Redis, AWS, Docker"
   location: "Seoul, Korea"
   links:
     - label: "GitHub"
       icon: "fab fa-github"
-      url: "https://github.com/username"
+      url: "https://github.com/kosw6"
     - label: "LinkedIn"
       icon: "fab fa-linkedin"
       url: "https://www.linkedin.com/in/username/"
@@ -26,17 +40,11 @@ author:
       icon: "fas fa-envelope"
       url: "mailto:you@example.com"
 
-# 네비게이션
+# 프로젝트 컬렉션
 collections:
   projects:
     output: true
     permalink: /projects/:name/
-
-# 플러그인 (GitHub Pages 호환)
-plugins:
-  - jekyll-feed
-  - jekyll-seo-tag
-  - jekyll-sitemap
 
 # 페이지네이션/태그
 paginate: 8
@@ -44,9 +52,5 @@ paginate_path: "/page:num/"
 tag_archive:
   type: liquid
   path: /tags/
-
-# 구글 애널리틱스(선택)
+# 구글 애널리틱스 (선택)
 # google_analytics: G-XXXXXXXXXX
-
-# MM 테마 옵션
-minimal_mistakes_skin: "dark" # "default", "air", "contrast", "dark" 등
