@@ -1,6 +1,8 @@
 ---
 title: "SIC Club Portal"
 layout: single
+sidebar:
+  nav: "main"
 header:
   image: /assets/images/sic-erd.png
 excerpt: "팀 리딩(14–15명), Attendance/Quiz/Contracts 모듈, CI/CD & Monitoring"
