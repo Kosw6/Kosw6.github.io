@@ -26,3 +26,10 @@ tags: [spring, timescaledb, redis, aws, k6]
 
 - WebGL 차트 + 노트/엣지 그래프(React Flow)
 - 백테스트 기초 모듈(Sharpe/MDD) & 향후 PatchTST/LSTM 계획
+
+## Link
+
+- 부하테스트 결과
+  | 단계 | 문제점 | 해결요약 | 링크 |
+  | ---- | ----------- | -------|-------
+  | 1차 | 서버와 로컬의 매우 큰 성능 차이 존재 | 모니터링을 통한 DB 설정 변경 | ![Link](https://github.com/Kosw6/trader-backend/blob/master/k6/2025-10-17.md)|
