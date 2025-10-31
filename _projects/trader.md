@@ -34,3 +34,10 @@ tags: [spring, timescaledb, redis, aws, k6]
   | 단계 | 문제점                               | 해결요약                     | 링크                                                                              |
   | ---- | ------------------------------------ | ---------------------------- | --------------------------------------------------------------------------------- |
   | 1차  | 서버와 로컬의 매우 큰 성능 차이 존재 | 모니터링을 통한 DB 설정 변경 | [결과 보기](https://github.com/Kosw6/trader-backend/blob/master/k6/2025-10-17.md) |
+
+### 🧠 Trader (Personal Quant Platform)
+
+- [🔗 GitHub Repository](https://github.com/Kosw6/trader)
+- [📈 Performance Report](https://kosw6.github.io/trader/performance/)
+- [🗂 ERD & Schema Design](https://kosw6.github.io/trader/db/)
+- [🧪 k6 Load Test Summary](https://kosw6.github.io/trader/performance/stockcontroller.html)

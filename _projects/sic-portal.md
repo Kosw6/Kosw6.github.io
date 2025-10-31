@@ -18,3 +18,9 @@ tags: [react, spring, postgresql, ci-cd, leadership]
 
 - React + Vite PWA, Spring Boot, PostgreSQL, Redis, Docker
 - GitHub Actions, Jacoco, k6, Grafana dashboards, Slack alerts
+
+### 🏢 SISC Portal (Team Project)
+
+- [🔗 GitHub Repository](https://github.com/SISC-IT/sisc-web)
+- [📋 API Spec](https://sisc-it.github.io/sisc-web/api/)
+- [⚙️ CI/CD Pipeline](https://sisc-it.github.io/sisc-web/devops/)
