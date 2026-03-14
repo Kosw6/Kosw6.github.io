@@ -1,13 +1,18 @@
 main:
   - title: "Home"
-    url: /
+    url: "/"
+
   - title: "Projects"
-    url: /projects/
-  - title: "Blog"
-    url: /blog/
+    url: "/projects/"
+
+  - title: "Engineering Reports"
+    url: "/reports/"
+
   - title: "Resume"
-    url: /resume/
+    url: "/resume/"
+
   - title: "About"
-    url: /about/
-  - title: "Tags"
-    url: /tags/
+    url: "/about/"
+
+  - title: "GitHub"
+    url: "https://github.com/Kosw6"

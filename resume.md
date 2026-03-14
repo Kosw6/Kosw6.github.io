@@ -25,9 +25,8 @@ permalink: /resume/
 
 ## Education
 
-- Sejong University (예시)
+- Sejong University
 
 ## Links
 
-- GitHub: https://github.com/username
-- Blog: https://username.github.io/blog/
+- GitHub: https://github.com/Kosw6
