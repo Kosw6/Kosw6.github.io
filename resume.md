@@ -40,16 +40,16 @@ toc_sticky: true
 40–50M+ OHLCV 시계열 데이터 처리 플랫폼. 성능 측정 → 원인 분석 → 구조 개선 사이클을 반복하며 운영 중.
 
 **성능 개선**
-- k6 부하 테스트 설계 및 TimescaleDB 하이퍼테이블 도입 → **P95 7,247ms → 235ms @ 300 RPS (28배 개선)**
-- 인덱스 단계에서만 **P95 342ms → 32ms (10배)**, 이후 하이퍼테이블 + 청크 튜닝으로 최종 SLO 달성
-- JPA Fetch 전략 4차 비교 실험 (Lazy N+1 / Fetch Join / Projection / DB preview) → 10K payload 기준 붕괴 RPS **5배 차이** 확인
-- JFR/JMC 런타임 프로파일링으로 쿼리 튜닝 이후 숨어있던 JWT 중복 검증 발견 → **Old GC 36% 감소**
+- k6 부하 테스트 + TimescaleDB 하이퍼테이블·청크 튜닝 → P95 **7,247ms → 235ms** @ 300 RPS **(28배 개선, SLO 달성)**
+- 복합 인덱스 단독 적용만으로 P95 **342ms → 32ms (10배)** — 원인을 단계별로 분리해 측정
+- JPA Fetch 전략 4차 비교 실험 (Lazy N+1 / Fetch Join / Projection / DB preview) → 10K payload 기준 붕괴 RPS **5배 차이** 수치 확인
+- JFR/JMC Stack Trace로 JWT 중복 검증 hot path 발견 → 제거 후 Old GC **기준치 대비 36% 감소**
 
 **실시간 시스템**
-- WebSocket 브로드캐스트 동시성 버그(TEXT_PARTIAL_WRITING) 분석 → Dirty Flag 기반 최신값 전송 전략으로 재설계 → **≤200ms 수신율 0.38% → 99.97%**
-- groupId 해시 기반 WebSocket 샤딩 설계 · JFR 실측 검증 (GC 3회 → 1회, byte[] Allocation 205MiB → 93+111MiB)
-- shard 장애 시 Redis Draft 기반 편집 상태 보존 + dirtyFields 기반 **AUTO_MERGE / CONFLICT 자동 판별** 구현
-- Kafka offset replay 기반 **이벤트 유실 없는 무중단 Failback** 설계 및 E2E 검증
+- WebSocket TEXT_PARTIAL_WRITING 동시성 버그 분석 → Dirty Flag 최신값 전송으로 재설계 → ≤200ms 수신율 **0.38% → 99.97%**
+- groupId 해시 샤딩: totalSendAttempts **159K → 79K + 79K** 균등 분배, GC **3회 → 1회**, byte[] Allocation **205MiB → 93+111MiB** (JFR 실측)
+- shard 장애 시 Redis Draft 편집 상태 보존 + `dirtyFields ∩ serverChangedFields` 기반 **AUTO_MERGE / CONFLICT 자동 판별**
+- Kafka Catch-up Consumer offset replay → catchupCompleted 후 Broadcast 전환, **이벤트 유실 없는 무중단 Failback** E2E 검증
 
 **아키텍처 및 운영**
 - TimescaleDB Continuous Aggregate (CAGG) 활용한 1W/1M/1Y 조회 전략 설계
