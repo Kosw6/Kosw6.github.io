@@ -19,7 +19,11 @@ entries_layout: grid
 
 대표 주제
 
-- JPA Query Optimization
-- JFR / JMC Performance Analysis
-- TimescaleDB Performance Tuning
-- WebSocket Realtime Architecture
+- TimescaleDB 시계열 조회 성능 튜닝
+- JPA Fetch 전략별 성능 비교 및 Payload 영향 분석
+- JFR / JMC 기반 Allocation Hotspot 분석
+- WebSocket 실시간 브로드캐스트 성능 개선
+- WebSocket 수평 확장 PoC 시리즈
+  - PoC 1: 그룹 샤딩 기반 부하 분산 (fanout locality + JVM GC 감소)
+  - PoC 2: Fallback 환경 상태 동기화 및 필드 단위 충돌 제어
+  - PoC 3: Kafka Replay 기반 Failback & 무중단 서버 전환
