@@ -3,24 +3,69 @@ title: "SIC Club Portal"
 layout: single
 sidebar:
   nav: "main"
-header:
-  image: /assets/images/sic-erd.png
-excerpt: "팀 리딩(14–15명), Attendance/Quiz/Contracts 모듈, CI/CD & Monitoring"
-tags: [react, spring, postgresql, ci-cd, leadership]
+toc: true
+toc_sticky: true
+classes: wide
+excerpt: "FE/BE/AI/Design 14–15명 팀 리딩 · CI/CD · 출결/퀴즈/계약 모듈"
+tags: [react, spring, postgresql, ci-cd, leadership, aws]
 ---
 
-## Role & Impact
+## 프로젝트 개요
 
-- 총괄 리드: FE/BE/AI/Design 14–15명 운영
-- Atlassian-style 워크플로우, CODEOWNERS, PR 규칙, Jira/Slack/Notion 연동
+대학 동아리 운영을 위한 클럽 포털 웹 서비스.
+**14–15명(FE/BE/AI/Design) 팀을 리딩**하며 서비스 기획부터 인프라 구축까지 전 과정을 주도했습니다.
 
-## Tech
+| 항목 | 내용 |
+|------|------|
+| **Stack** | React · Vite PWA · Spring Boot · PostgreSQL · Redis · Docker |
+| **DevOps** | GitHub Actions · JaCoCo · Grafana · Slack 알람 |
+| **Cloud** | AWS (EC2 · S3 · CloudFront · RDS · IAM) |
+| **팀 규모** | 14–15명 (FE / BE / AI / Design) |
 
-- React + Vite PWA, Spring Boot, PostgreSQL, Redis, Docker
-- GitHub Actions, Jacoco, k6, Grafana dashboards, Slack alerts
+---
 
-### 🏢 SISC Portal (Team Project)
+## 팀 리딩
 
-- [🔗 GitHub Repository](https://github.com/SISC-IT/sisc-web)
-- [📋 API Spec](https://sisc-it.github.io/sisc-web/api/)
-- [⚙️ CI/CD Pipeline](https://sisc-it.github.io/sisc-web/devops/)
+### 워크플로우 구축
+
+- CODEOWNERS, PR 규칙, 브랜치 전략 수립으로 **코드 레벨 책임 구조** 정착
+- Jira / Slack / Notion 연동한 Atlassian-style 이슈 트래킹 도입
+- 일정 조율 및 마일스톤 관리 — 기획 · 디자인 · 개발 · 배포 각 단계 조율
+
+### 품질 기준 수립
+
+- GitHub Actions CI 파이프라인: PR 머지 전 빌드 · 테스트 자동 실행
+- JaCoCo **≥70% 테스트 커버리지** 기준을 팀 전체 적용
+- Grafana 대시보드 + Slack 알람으로 운영 모니터링 구성
+
+---
+
+## 기술 구현
+
+### 핵심 모듈
+
+| 모듈 | 내용 |
+|------|------|
+| **출결 관리** | 출결 기록 · 통계 · 예외 처리 |
+| **퀴즈 시스템** | 문제 출제 · 채점 · 결과 집계 |
+| **계약 관리** | 서명 · 계약서 이력 관리 |
+
+### 인프라
+
+- **배포**: EC2 + GitHub Actions 자동 배포
+- **정적 자산**: S3 + CloudFront CDN
+- **DB**: RDS PostgreSQL, Redis 캐싱
+- **PWA**: Vite 기반 React, 모바일 사용성 고려
+
+---
+
+## 역할 정리
+
+> 코드 레벨 구현보다 **팀이 효율적으로 개발할 수 있는 환경**을 만드는 데 집중했습니다.
+> 인원 관리, 일정 조율, 기획/디자인/UX 방향 결정, 인프라 구성을 담당하며 서비스가 실제로 배포되고 운영되는 전 과정을 리딩했습니다.
+
+---
+
+## GitHub
+
+- [SISC-IT / sisc-web](https://github.com/SISC-IT/sisc-web)

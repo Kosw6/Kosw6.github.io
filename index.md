@@ -3,74 +3,78 @@ layout: splash
 title: "Sungwon Kim"
 
 header:
-  overlay_filter: 0.45
+  overlay_filter: 0.5
   overlay_color: "#0b0f19"
   excerpt: >
-    Backend Engineer focused on performance optimization, realtime architecture, and scalable systems.<br>
-    Spring Boot · PostgreSQL · Redis · AWS · Performance Engineering
+    **성능을 측정하고, 병목을 추적하고, 구조로 해결하는 백엔드 엔지니어.**<br><br>
+    TimescaleDB 쿼리 **28배 개선** &nbsp;·&nbsp; WebSocket 실시간성 **0.38% → 99.97%**<br>
+    JFR/JMC 런타임 분석 &nbsp;·&nbsp; Kafka 기반 무중단 복구 설계
 
 intro:
   - excerpt: |
       ## Performance Highlights
-      실측 기반 성능 개선 사례를 중심으로, 병목 분석 → 구조 개선 → 정량 결과를 정리했습니다.
+      추측이 아닌 실측 기반으로 병목을 찾고, 수치로 개선 결과를 검증했습니다.
 
 highlights_row1:
-  - title: "27× Faster Time-Series Query"
+  - title: "28× Faster Time-Series Query"
     excerpt: |
-      **TimescaleDB 시계열 조회 성능 28배 개선**
-      인덱스 미적용 + 하이퍼테이블 누락으로 P95 7,247ms → 하이퍼테이블 + 청크 튜닝으로 **235ms (300 RPS)** 달성.
+      **P95 7,247ms → 235ms @ 300 RPS**
+      인덱스 미적용 + 하이퍼테이블 누락을 원인으로 확인. 인덱스 → 하이퍼테이블 → 청크 튜닝 3단계 개선으로 SLO 달성.
     url: "/reports/timescaledb-27x/"
-    btn_label: "View Report"
+    btn_label: "Report 보기"
     btn_class: "btn--primary"
   - title: "JPA Fetch Strategy Tuning"
     excerpt: |
-      **Canvas Node 조회 성능 개선**
-      Lazy N+1 → Fetch Join + DB 레벨 preview 전환. 10K payload 기준 붕괴 RPS **5배 차이** 확인. GC Pause 수치까지 측정.
+      **붕괴 RPS 5배 차이 실측**
+      Lazy N+1 → Fetch Join → DB 레벨 preview 전환. 10K payload 기준 4차 비교 실험, GC Pause 수치까지 측정.
     url: "/reports/jpa-tuning/"
-    btn_label: "View Report"
+    btn_label: "Report 보기"
     btn_class: "btn--primary"
 
 highlights_row2:
   - title: "JFR / JMC Allocation Hotspot"
     excerpt: |
-      **JVM 런타임 분석으로 인증 핫패스 발견**
-      쿼리 튜닝 이후 보이지 않던 병목을 JMC Stack Trace로 추적. JWT 중복 검증 제거 → Old GC **36% 감소**.
+      **Old GC 36% 감소**
+      쿼리 튜닝 이후 남은 병목을 JMC Stack Trace로 추적. JWT 중복 검증이 hot path임을 확인하고 제거.
     url: "/reports/jfr-jmc-hotpath/"
-    btn_label: "View Report"
+    btn_label: "Report 보기"
     btn_class: "btn--primary"
-  - title: "≤200ms Realtime Delivery (48% → 99%)"
+  - title: "WebSocket 실시간성 0.38% → 99.97%"
     excerpt: |
-      **WebSocket 브로드캐스트 실시간성 개선**
-      TEXT_PARTIAL_WRITING 동시성 버그 → Dirty Flag 기반 최신값 전송 전략으로 ≤200ms 성공률 **0.38% → 99.97%**.
+      **≤200ms 수신율 99.97% 달성**
+      TEXT_PARTIAL_WRITING 동시성 버그 → Dirty Flag 기반 최신값 전송 전략으로 재설계. 브로드캐스트 구조 분석 포함.
     url: "/reports/websocket-group-canvas/"
-    btn_label: "View Report"
+    btn_label: "Report 보기"
     btn_class: "btn--primary"
 
 poc_intro:
   - excerpt: |
       ## WebSocket 수평 확장 PoC 시리즈
-      단일 인스턴스 최적화 이후, **분산 환경에서 어떻게 확장하고 장애를 복구할 것인가**를 단계별로 설계·검증했습니다.
-      순서대로 읽으면 샤딩 → 충돌 제어 → 무중단 복구로 이어집니다.
+      단일 인스턴스 최적화 이후, **분산 환경에서 어떻게 확장하고 장애 없이 복구할 것인가**를 단계별로 설계·검증했습니다.
+      각 PoC는 이전 결과 위에서 다음 문제를 다룹니다. **PoC 1부터 순서대로 읽기를 권장합니다.**
 
 poc_row:
   - title: "PoC 1 — 그룹 샤딩 & 부하 분산"
     excerpt: |
-      groupId 기반 샤딩으로 fanout을 인스턴스 단위로 분리.
-      totalSendAttempts **159K → 79K+79K**, GC **3회 → 1회**, byte[] Allocation **205MiB → 93+111MiB** (JFR 실측).
+      **fanout 부하 인스턴스별 50% 분산 실측**
+      groupId 해시 기반 샤딩. totalSendAttempts 159K → 79K+79K 균등 분배.
+      JFR 실측: GC 3회 → 1회, byte[] Allocation 205MiB → 93+111MiB.
     url: "/reports/websocket-poc1-sharding/"
     btn_label: "PoC 1 보기"
     btn_class: "btn--primary"
   - title: "PoC 2 — Fallback & 편집 충돌 제어"
     excerpt: |
-      shard 장애 시 다른 인스턴스로 우회 + Redis Draft로 편집 상태 유지.
-      내가 편집 중 발생한 서버 변경을 필드 단위로 추적 → **AUTO_MERGE / CONFLICT** 자동 판별.
+      **CONFLICT / AUTO_MERGE 자동 판별 검증**
+      shard 장애 시 다른 인스턴스로 우회 + Redis Draft로 편집 상태 보존.
+      dirtyFields ∩ serverChangedFields 기반 충돌 감지 → E2E 3 케이스 전체 검증.
     url: "/reports/websocket-poc2-conflict/"
     btn_label: "PoC 2 보기"
     btn_class: "btn--primary"
-  - title: "PoC 3 — Kafka Replay & 무중단 Failback"
+  - title: "PoC 3 — Failback & Kafka Replay"
     excerpt: |
-      장애 서버 복구 시 Kafka offset 기반 누락 이벤트 replay → 이벤트 유실 없이 상태 복구.
-      Drain → 재연결 요청 → 서버 전환까지 **사용자 서비스 중단 없이** 처리.
+      **이벤트 유실 없는 무중단 서버 복구**
+      Kafka offset 기반 누락 이벤트 replay → catchupCompleted 후 broadcast 전환.
+      Drain → 재연결 요청 → 세션 전환 전 과정 E2E 검증.
     url: "/reports/websocket-poc3-failback/"
     btn_label: "PoC 3 보기"
     btn_class: "btn--primary"
@@ -84,16 +88,16 @@ project_row:
   - title: "Trader Platform"
     excerpt: |
       **40–50M+ OHLCV 시계열 데이터 처리 플랫폼**
-      Spring Boot, PostgreSQL/TimescaleDB 기반으로 트레이딩 데이터 분석 서비스를 설계하고 성능을 최적화했습니다.
+      TimescaleDB 하이퍼테이블 + 청크 튜닝, k6 부하 테스트, Prometheus/Grafana 모니터링, Google/Kakao/Naver SSO.
     url: "/projects/trader/"
-    btn_label: "View Project"
+    btn_label: "Project 보기"
     btn_class: "btn--primary"
   - title: "SIC Club Portal"
     excerpt: |
-      **팀 리딩 기반 웹 서비스 프로젝트**
-      팀원 모집, 서비스 기획, 백엔드 개발, AWS 기반 인프라 및 CI/CD 구축을 수행했습니다.
+      **FE/BE/AI/Design 14–15명 팀 리딩**
+      GitHub Actions CI/CD, JaCoCo ≥70% 커버리지 기준 수립, Jira/Slack/Notion 워크플로우 구축.
     url: "/projects/sic-portal/"
-    btn_label: "View Project"
+    btn_label: "Project 보기"
     btn_class: "btn--primary"
 
 ---
