@@ -7,7 +7,7 @@ toc_sticky: true
 classes: wide
 ---
 
-> **원본 분석 노트**: [GitHub에서 보기](링크_입력)
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/NodeController/JFR/JMC%EB%A5%BC%20%ED%99%9C%EC%9A%A9%ED%95%9C%20Allocation%20%EA%B8%B0%EB%B0%98%20%EC%84%B1%EB%8A%A5%20%EB%B3%91%EB%AA%A9%20%EB%B6%84%EC%84%9D.md)
 
 ---
 

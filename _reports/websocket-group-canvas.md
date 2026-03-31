@@ -7,7 +7,7 @@ toc_sticky: true
 classes: wide
 ---
 
-> **원본 분석 노트**: [GitHub에서 보기](링크_입력)
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/WebSocket.md)
 
 ---
 

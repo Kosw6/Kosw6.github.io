@@ -7,7 +7,7 @@ toc_sticky: true
 classes: wide
 ---
 
-> **원본 분석 노트**: [GitHub에서 보기](링크_입력)
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/NodeController/JPA%20Fetch%20%EC%A0%84%EB%9E%B5%EB%B3%84%20%EC%A1%B0%ED%9A%8C%20%EC%84%B1%EB%8A%A5%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20(NodeController).md)
 
 ---
 

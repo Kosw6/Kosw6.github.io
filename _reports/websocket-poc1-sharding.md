@@ -7,8 +7,12 @@ toc_sticky: true
 classes: wide
 ---
 
-> **원본 분석 노트**: [GitHub에서 보기](링크_입력)
-> **시리즈**: [WebSocket 성능 개선](/reports/websocket-group-canvas/) · **PoC 1: 샤딩** · [PoC 2: Fallback & 충돌 제어](/reports/websocket-poc2-conflict/) · [PoC 3: Failback & Replay](/reports/websocket-poc3-failback/)
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc1-websocket-sharding-load-distribution.md)
+<br>
+> **시리즈**: [WebSocket 성능 개선](/reports/websocket-group-canvas/) 
+ <br>**PoC 1: 샤딩** 
+ <br>[PoC 2: Fallback & 충돌 제어](/reports/websocket-poc2-conflict/) 
+ <br>[PoC 3: Failback & Replay](/reports/websocket-poc3-failback/)
 
 ---
 
