@@ -1,0 +1,25 @@
+---
+# Only the main scripts.
+---
+
+@import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}";
+@import "minimal-mistakes";
+
+/* feature_row 상하 패딩 축소 */
+.feature__wrapper {
+  margin-bottom: 0;
+  padding: 1em 0;
+  border-bottom: none;
+}
+
+.feature__item,
+.feature__item--left,
+.feature__item--right,
+.feature__item--center {
+  margin-bottom: 0.5em;
+}
+
+/* feature_row 내부 텍스트 영역 여백 조정 */
+.archive__item-body {
+  padding: 0 0.5em;
+}

@@ -1,0 +1,27 @@
+# ----------------------
+# Ruby / Bundler
+# ----------------------
+.bundle/
+vendor/bundle/
+Gemfile.lock
+
+# ----------------------
+# Jekyll build files
+# ----------------------
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# ----------------------
+# OS files
+# ----------------------
+.DS_Store
+Thumbs.db
+
+# ----------------------
+# Editor / IDE
+# ----------------------
+.vscode/
+.idea/
+*.swp
