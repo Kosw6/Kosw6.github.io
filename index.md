@@ -2,19 +2,23 @@
 layout: splash
 title: "Sungwon Kim"
 
+excerpt: >
+  **성능 병목을 추적하고, 수치로 증명하는 백엔드 개발자.**<br><br>
+  TimescaleDB P95 &nbsp;7,247ms&nbsp; → &nbsp;<strong>235ms</strong>&nbsp; (28× 개선)<br>
+  WebSocket &nbsp;0.38%&nbsp; → &nbsp;<strong>99.97%</strong>&nbsp; ≤200ms<br><br>
+  JFR/JMC 기반 GC 패턴 분석 · Kafka 기반 <strong>장애 복구(Failback) 설계</strong>
+
 header:
-  overlay_filter: 0.5
-  overlay_color: "#0b0f19"
-  excerpt: >
-    **성능 병목을 추적하고, 수치로 증명하는 백엔드 개발자.**<br><br>
-    TimescaleDB P95 &nbsp;<del>7,247ms</del>&nbsp; → &nbsp;<strong>235ms</strong>&nbsp; (28배)
-    &nbsp;·&nbsp;
-    WebSocket &nbsp;<del>0.38%</del>&nbsp; → &nbsp;<strong>99.97%</strong>&nbsp; ≤200ms<br>
-    JFR/JMC Old GC <strong>36% 감소</strong> &nbsp;·&nbsp; Kafka 기반 무중단 Failback 설계
+  overlay_image: /assets/images/hero-bg-1.png
+  overlay_filter: 0.6
+  overlay_color: "#000000"
+  actions:
+    - label: "대표 리포트 보기"
+      url: "#highlights"
 
 intro:
   - excerpt: |
-      ## Performance Highlights
+      ## Performance Highlights {#highlights}
       추측이 아닌 실측 기반으로 병목을 찾고, 수치로 개선 결과를 검증했습니다.
 
 highlights_row1:
@@ -34,10 +38,14 @@ highlights_row1:
     btn_class: "btn--primary"
 
 highlights_row2:
-  - title: "JFR / JMC — Old GC 횟수 36% 감소"
+  - title: "JFR/JMC 기반 Hot Path 제거 · Fetch 구조 PoC 후 성능 악화 확인 및 미채택"
     excerpt: |
-      **쿼리 튜닝 후 남은 GC를 프로파일러로 추적**
-      GC가 예상보다 많이 발생 → JMC Stack Trace 분석 → JWT 중복 검증이 hot path 확인 → 제거. 수치 개선 검증.
+      쿼리 튜닝 이후에도 SLO 미달 → JFR/JMC로 추가 분석 수행.
+      JMC Stack Trace를 통해 JWT 중복 검증이 hot path에 위치함을 확인하고 제거.
+
+      이후 Fetch Join → 2-step 구조로 PoC를 진행했으나,
+      P95 지연 증가와 Old GC 시간 약 36% 증가를 확인.
+      이는 병목 제거가 아닌 GC 부담 이동으로 판단되어 최종 미채택.
     url: "/reports/jfr-jmc-hotpath/"
     btn_label: "Report 보기"
     btn_class: "btn--primary"
