@@ -228,8 +228,6 @@ Group Canvas의 실시간 노드 업데이트 기능.
 
 | 항목 | 내용 |
 |------|------|
-| **CI/CD** | GitHub Actions — 빌드 · 테스트 · 배포 자동화 |
-| **Coverage** | JaCoCo ≥70% 기준 |
 | **Monitoring** | Prometheus + Grafana + Slack 알람 |
 | **Load Test** | k6 constant-arrival-rate 시나리오 |
 
