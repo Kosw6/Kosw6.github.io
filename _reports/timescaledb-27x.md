@@ -7,7 +7,8 @@ toc_sticky: true
 classes: wide
 ---
 
-> **원본 분석 노트**: [GitHub에서 보기](http://github.com/Kosw6/engineering-notes/blob/main/reports/StockController/stock_range_k6_report.md)
+> 🔍 **상세 분석 보기 (EXPLAIN 쿼리 플랜 · 청크 설계 비교 · k6 전체 로그 포함)**  
+> → [GitHub 원본 문서 확인하기](http://github.com/Kosw6/engineering-notes/blob/main/reports/StockController/stock_range_k6_report.md)
 
 ---
 
@@ -129,3 +130,6 @@ TimescaleDB 하이퍼테이블은 데이터를 **시간(Time) → 공간(Space)*
 
 > 인덱스가 쿼리 경로를 결정하고, 하이퍼테이블이 스캔 범위를 제한한다.
 > 두 조건이 모두 충족되어야 대규모 시계열 조회 성능이 확보된다.
+
+> 🔍 **원본 보고서 보기**  
+> → [GitHub 원본 문서 확인하기](http://github.com/Kosw6/engineering-notes/blob/main/reports/StockController/stock_range_k6_report.md)

@@ -7,7 +7,9 @@ toc_sticky: true
 classes: wide
 ---
 
-> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/NodeController/JFR/JMC%EB%A5%BC%20%ED%99%9C%EC%9A%A9%ED%95%9C%20Allocation%20%EA%B8%B0%EB%B0%98%20%EC%84%B1%EB%8A%A5%20%EB%B3%91%EB%AA%A9%20%EB%B6%84%EC%84%9D.md)
+> 🔍 **쿼리 문제가 아닌데 왜 느렸는지, JFR/JMC로 추적한 전체 과정 보기**  
+> (Stack Trace · Allocation 분석 · JWT 핫패스 발견 과정 포함)  
+> → [GitHub 원본 문서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/NodeController/JFR/JMC%EB%A5%BC%20%ED%99%9C%EC%9A%A9%ED%95%9C%20Allocation%20%EA%B8%B0%EB%B0%98%20%EC%84%B1%EB%8A%A5%20%EB%B3%91%EB%AA%A9%20%EB%B6%84%EC%84%9D.md)
 
 ---
 
@@ -18,8 +20,11 @@ classes: wide
 | Old GC Total Time (90s 본부하) | 3.47 s | **2.22 s** |
 | 개선율 | — | **약 36% 감소** |
 
+> ⚠️ 왜 GC 시간이 줄어들었는지 (JWT 중복 검증 발견 과정)  
+> → [원본 문서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/NodeController/JFR/JMC%EB%A5%BC%20%ED%99%9C%EC%9A%A9%ED%95%9C%20Allocation%20%EA%B8%B0%EB%B0%98%20%EC%84%B1%EB%8A%A5%20%EB%B3%91%EB%AA%A9%20%EB%B6%84%EC%84%9D.md)
+
 - **발견 방법**: JFR + JMC Stack Trace → JWT 검증 중복 실행 확인
-- **핵심**: 쿼리 튜닝만으로 보이지 않던 인증 경로 핫패스를 런타임 분석으로 발견
+- **핵심**: 쿼리 문제가 아닌 상황에서, JFR/JMC Stack Trace 분석으로 JWT 인증 경로의 숨은 핫패스를 발견
 
 ---
 
@@ -96,6 +101,9 @@ Authentication auth = jwtTokenProvider.getAuthentication(jwt, userDetailService)
 - `BaseNCodec.ensureBufferSize` 호출 수 감소
 - `AbstractQueuedSynchronizer$ConditionNode` 할당 감소
 - 핫패스 개선만으로 메모리 안정성과 성능이 동시에 개선됨
+
+> 🔍 JFR Stack Trace에서 어떻게 이 경로를 추적했는지 전체 분석 보기  
+> → [GitHub](https://github.com/Kosw6/engineering-notes/blob/main/reports/NodeController/JFR/JMC%EB%A5%BC%20%ED%99%9C%EC%9A%A9%ED%95%9C%20Allocation%20%EA%B8%B0%EB%B0%98%20%EC%84%B1%EB%8A%A5%20%EB%B3%91%EB%AA%A9%20%EB%B6%84%EC%84%9D.md)
 
 ---
 

@@ -7,7 +7,9 @@ toc_sticky: true
 classes: wide
 ---
 
-> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/NodeController/JPA%20Fetch%20%EC%A0%84%EB%9E%B5%EB%B3%84%20%EC%A1%B0%ED%9A%8C%20%EC%84%B1%EB%8A%A5%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20(NodeController).md)
+> 🔍 **왜 Projection이 Fetch Join보다 느려졌는지 궁금하다면**  
+> GC, 객체 생성 수, Hibernate 동작까지 포함한 전체 분석은 아래 원본 문서에 정리했습니다.  
+> → [GitHub 원본 문서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/NodeController/JPA%20Fetch%20%EC%A0%84%EB%9E%B5%EB%B3%84%20%EC%A1%B0%ED%9A%8C%20%EC%84%B1%EB%8A%A5%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20(NodeController).md)
 
 ---
 
@@ -20,6 +22,7 @@ classes: wide
 
 - **핵심 발견**: 병목이 DB(N+1) → GC(객체 생성) → Payload(직렬화) 순으로 이동함
 - **환경**: 4C/16GB, PostgreSQL 17 + TimescaleDB, k6 120 RPS × 90s, seed=777 고정
+
 
 ---
 
@@ -59,6 +62,10 @@ UI 요구사항으로 노드 목록에 `noteSubject`(제목)도 함께 반환해
 
 → **JSON Aggregation 보류**
 
+→ EXPLAIN은 좋아 보였지만 실제 성능은 악화
+
+> 🔍 실제 EXPLAIN vs k6 결과 비교 보기 -> [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/NodeController/JPA%20Fetch%20%EC%A0%84%EB%9E%B5%EB%B3%84%20%EC%A1%B0%ED%9A%8C%20%EC%84%B1%EB%8A%A5%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20(NodeController).md)
+
 ---
 
 ## 3차: 스키마 변경 + 조회 전략 비교
@@ -90,6 +97,7 @@ JSON Aggregation ≪ 500자 Projection ≪ 20자 Projection ≪ 500자 Fetch Joi
 - Projection은 DTO 100개를 전부 새로 생성 → 힙 객체 수 약 10배 차이
 - GC Pause: Fetch Join **5 ms** vs Projection **6 ms** → p95까지 전파
 
+
 ---
 
 ## 4차: Payload 크기 영향 분석 (content 1만자 vs 20자)
@@ -120,6 +128,12 @@ JSON Aggregation ≪ 500자 Projection ≪ 20자 Projection ≪ 500자 Fetch Joi
 | 조회 전략 | Fetch Join 유지 |
 | 목록 반환 | DB 레벨 `substring(content, 1, 20)` preview |
 | 상세 조회 | 별도 API — 원문 Lazy Loading |
+
+결국 병목은 DB에서 끝나지 않았다.  
+Fetch Join보다 DTO Projection이 더 느렸고, 병목은 **DB → GC → Payload** 순으로 이동했다.
+
+> 📊 GC pause, allocation, 실제 부하 로그까지 포함한 전체 분석 보기  
+> → [GitHub 원본 문서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/NodeController/JPA%20Fetch%20%EC%A0%84%EB%9E%B5%EB%B3%84%20%EC%A1%B0%ED%9A%8C%20%EC%84%B1%EB%8A%A5%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20(NodeController).md)
 
 ---
 
