@@ -6,8 +6,8 @@ sidebar:
 toc: true
 toc_sticky: true
 classes: wide
-excerpt: "40–50M+ OHLCV · TimescaleDB 28배 개선 · WebSocket 99.97% · Kafka Failback"
-tags: [spring, timescaledb, redis, kafka, websocket, k6, aws]
+excerpt: "20–30M+ OHLCV · TimescaleDB 28배 개선 · WebSocket 99.97% · Kafka Failback"
+tags: [spring, timescaledb, redis, kafka, websocket, k6]
 ---
 
 > **성능 수치를 가설로 세우고, k6·JFR·JMC로 측정하고, 구조로 개선했습니다.**
@@ -29,15 +29,14 @@ tags: [spring, timescaledb, redis, kafka, websocket, k6, aws]
 
 ## 프로젝트 개요
 
-40–50M+ OHLCV 시계열 데이터를 다루는 개인 퀀트 트레이딩 플랫폼.
+20–30M+ OHLCV 시계열 데이터를 다루는 개인 퀀트 트레이딩 플랫폼.
 **"기능이 동작하는가"보다 "얼마나 버티는가"와 "왜 느린가"를 먼저 물었습니다.**
 
 | 항목 | 내용 |
 |------|------|
-| **Stack** | Spring Boot · JPA · PostgreSQL / TimescaleDB · Redis · Kafka · React · AWS |
-| **Scale** | ~10K 종목 × 40–50M+ OHLCV 행 |
+| **Stack** | Spring Boot · JPA · PostgreSQL / TimescaleDB · Redis · Kafka · React|
+| **Scale** | ~10K 종목 × 20–30M+ OHLCV 행 |
 | **Load Test** | k6 constant-arrival-rate · p90 57ms, avg 18.6ms |
-| **SSO** | Google / Kakao / Naver JWT |
 
 ---
 
@@ -214,12 +213,10 @@ Group Canvas의 실시간 노드 업데이트 기능.
 [Client]
    │ HTTPS / WebSocket
 [Spring Boot]
-   ├── TimescaleDB  → Hypertable + CAGG (1D / 1W / 1M / 1Y)
+   ├── TimescaleDB  → Hypertable
    ├── Redis        → Cache, Draft State (편집 상태 보존)
    ├── Kafka        → Event replay, Failback Consumer Group
-   └── Prometheus / Grafana / Slack 알람
-[AWS]
-   EC2 · RDS · S3 · CloudFront
+   └── Prometheus / Grafana
 ```
 
 ---
@@ -228,7 +225,7 @@ Group Canvas의 실시간 노드 업데이트 기능.
 
 | 항목 | 내용 |
 |------|------|
-| **Monitoring** | Prometheus + Grafana + Slack 알람 |
+| **Monitoring** | Prometheus + Grafana |
 | **Load Test** | k6 constant-arrival-rate 시나리오 |
 
 ---
