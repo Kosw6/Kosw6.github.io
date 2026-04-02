@@ -6,9 +6,12 @@ toc: true
 toc_sticky: true
 classes: wide
 ---
-> 🔍 **서비스 중단 없이 WebSocket 서버를 교체하는 방법 (Kafka Replay · Drain · Failback 설계)**  
+> 🚀 **WebSocket 분산 시스템 설계의 마지막 단계**
+> (샤딩 → 정합성 → 무중단 복구)<br>
+> 🔍 **서비스 중단 없이 WebSocket 서버를 교체하는 방법 (Kafka Replay · Drain · Failback 설계)**  <br>
 > **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md.md)
 <br>
+
 > **시리즈**: [WebSocket 성능 개선](/reports/websocket-group-canvas/) 
  <br>[PoC 1: 샤딩](/reports/websocket-poc1-sharding/)
  <br>[PoC 2: Fallback & 충돌 제어](/reports/websocket-poc2-conflict/)

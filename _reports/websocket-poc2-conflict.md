@@ -8,8 +8,10 @@ classes: wide
 ---
 
 > 🔍 **Fallback 환경에서 편집 충돌을 어떻게 해결했는지 (Kafka · Redis · 필드 단위 충돌 감지 설계)** 
+
 > **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc2-fallback-state-sync-conflict-resolution.md)
 <br>
+
 > **시리즈**: [WebSocket 성능 개선](/reports/websocket-group-canvas/) 
  <br>[PoC 1: 샤딩](/reports/websocket-poc1-sharding/)
  <br>**PoC 2: Fallback & 충돌 제어**
@@ -161,3 +163,14 @@ public String validate(...) {
 > 편집 충돌은 "버전이 다르다"는 사실만으로는 판단할 수 없다.
 > 버전이 달라도 수정한 필드가 겹치지 않으면 자동 병합이 가능하고,
 > 이를 필드 단위로 추적하는 Draft 구조가 fallback 환경에서도 정합성을 유지하게 한다.
+
+## 다음 단계
+
+fallback 환경에서 정합성은 해결했다.
+
+하지만 장애 서버가 복구되면 또 다른 문제가 남는다.
+
+**이벤트를 놓친 서버를 어떻게 다시 정상 상태로 복구할까?  
+그리고 서비스를 끊지 않고 어떻게 원래 구조로 되돌릴까?**
+
+>→ [PoC 3 — Failback & Replay](./websocket-poc3-failback.md)

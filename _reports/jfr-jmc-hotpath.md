@@ -123,3 +123,12 @@ Authentication auth = jwtTokenProvider.getAuthentication(jwt, userDetailService)
 > 쿼리 튜닝 이후 보이지 않던 병목은 런타임 레이어에 숨어 있다.
 > JMC Stack Trace는 코드 리뷰만으로 발견하기 어려운 공통 핫패스(인증 경로)를 드러냈다.
 > 인증 로직은 모든 요청에 실행되므로, 고정 비용이 작아도 부하가 높아지면 tail latency에 누적된다.
+
+---
+
+## 연결되는 문제
+
+ WebSocket 환경에서는 단순 쿼리 문제가 아닌  
+**런타임 처리 비용과 fanout 구조 자체가 병목이 된다**
+
+>→ [WebSocket 성능 개선 시리즈 보기](./websocket-group-canvas.md)

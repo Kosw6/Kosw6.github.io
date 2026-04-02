@@ -10,6 +10,7 @@ classes: wide
 > 📊 **WebSocket 샤딩 PoC 전체 실험 과정 (부하 분산 · GC 변화 · 설계 이유)**  
 > **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc1-websocket-sharding-load-distribution.md)
 <br>
+
 > **시리즈**: [WebSocket 성능 개선](/reports/websocket-group-canvas/) 
  <br>**PoC 1: 샤딩** 
  <br>[PoC 2: Fallback & 충돌 제어](/reports/websocket-poc2-conflict/) 
@@ -121,3 +122,11 @@ shard = slot / (32 / instanceCount)
 > 그룹 단위 샤딩은 단순 연결 분산이 아니다.
 > fanout locality를 유지하면서 broadcast 처리 부담 자체를 인스턴스 단위로 나눠,
 > JVM Allocation과 GC 횟수까지 함께 줄이는 확장 전략이다.
+
+## 다음 단계
+
+샤딩으로 부하는 분산했지만, 새로운 문제가 발생한다.
+
+**서버가 바뀌는 순간 편집 상태는 어떻게 유지할까?**
+
+>[PoC 2 — Fallback & 충돌 제어 보기](./websocket-poc2-conflict.md)
