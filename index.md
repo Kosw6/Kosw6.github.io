@@ -86,9 +86,8 @@ poc_row:
 
   - title: "PoC 3 — Failback"
     excerpt: |
-      **Kafka replay 기반 복구**<br>
-      이벤트 유실 없이 재연결<br>
-      Kafka replay + 상태 기반 제어(UP/HEALTH/DRAIN)
+      이벤트 유실 없이 서버 상태를 복구하고 전환<br>
+      → Kafka replay + 상태 기반 lifecycle 제어
     url: "/reports/websocket-poc3-failback/"
     btn_label: "PoC 3"
     btn_class: "btn--primary"
