@@ -1,12 +1,12 @@
 ---
-title: "PoC 3 — Kafka Replay 기반 Failback & 무중단 서버 전환"
+title: "PoC 3 — Kafka Replay 기반 Failback & 중단, 데이터 유실없이 서버 전환"
 layout: single
 permalink: /reports/websocket-poc3-failback/
 toc: true
 toc_sticky: true
 classes: wide
 ---
-
+> 🔍 **서비스 중단 없이 WebSocket 서버를 교체하는 방법 (Kafka Replay · Drain · Failback 설계)**  
 > **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md.md)
 <br>
 > **시리즈**: [WebSocket 성능 개선](/reports/websocket-group-canvas/) 
@@ -25,8 +25,11 @@ classes: wide
 | ws-2 Drain → 클라이언트 재연결 | **서비스 중단 없는 전환** ✅ |
 
 - **문제**: 샤딩 서버가 복구된 후 fallback 서버에서 **어떻게 원복(failback)** 할 것인가
-- **해결**: Kafka를 이벤트 로그 저장소로 활용해 장애 구간을 replay → Gateway가 Drain으로 서버 전환 orchestration
+- **핵심 설계**: Kafka를 이벤트 로그로 활용해 장애 구간을 offset 기반으로 복구하고,<br>
+  Gateway + Drain으로 클라이언트 재연결을 유도하여 무중단 서버 전환 구현
 
+> ⚠️ 어떻게 이벤트 유실 없이 서버를 교체했는지 (Kafka Replay + Drain 흐름)   
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md.md)
 ---
 
 ## 배경
@@ -93,6 +96,9 @@ Catch-up 종료 → ready=true → Broadcast Consumer 시작
 
 이벤트 유실 없이 장애 구간 3건 모두 복구 확인.
 
+> 🔍 Kafka offset 기반 replay 설계와 실제 복구 로그 전체 보기   
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md.md)
+
 ---
 
 ### Drain & Failback 흐름
@@ -128,6 +134,10 @@ public void broadcast(CanvasEventEnvelope event) {
 [DRAIN] reconnect notice broadcast done sessionCount=1
 [DRAIN] force closing remainingSessions=0
 ```
+
+
+> 🔍 Drain → reconnect → failback 전체 시퀀스 상세 보기     
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md.md)
 
 ---
 

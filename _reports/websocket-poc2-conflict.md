@@ -7,6 +7,7 @@ toc_sticky: true
 classes: wide
 ---
 
+> 🔍 **Fallback 환경에서 편집 충돌을 어떻게 해결했는지 (Kafka · Redis · 필드 단위 충돌 감지 설계)** 
 > **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc2-fallback-state-sync-conflict-resolution.md)
 <br>
 > **시리즈**: [WebSocket 성능 개선](/reports/websocket-group-canvas/) 
@@ -25,7 +26,10 @@ classes: wide
 | shard 장애 시 다른 서버로 우회 | **Fallback 라우팅** ✅ |
 
 - **문제**: 샤딩 구조에서 특정 shard 장애 시 → 다른 인스턴스로 fallback → 편집 상태 불일치
-- **해결**: Kafka 이벤트 동기화 + Redis Draft 상태로 필드 단위 충돌 감지
+- **핵심 설계**: Kafka로 상태를 전파하고, Redis Draft로 필드 단위 변경 이력을 추적하여 fallback 환경에서도 충돌을 정확히 판별
+
+> ⚠️ 왜 fallback 상황에서도 AUTO_MERGE / CONFLICT를 정확히 구분할 수 있었는지 
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc2-fallback-state-sync-conflict-resolution.md)
 
 ---
 
@@ -114,6 +118,9 @@ public String validate(...) {
 | `SAFE` | 편집 중 서버 변경 없음 |
 | `AUTO_MERGE` | 서버 변경 있지만 내가 수정한 필드와 겹치지 않음 |
 | `CONFLICT` | 내가 수정한 필드를 서버도 수정함 |
+
+> 🔍 Draft 구조와 필드 단위 충돌 감지 설계 전체 보기  
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc2-fallback-state-sync-conflict-resolution.md)
 
 ---
 

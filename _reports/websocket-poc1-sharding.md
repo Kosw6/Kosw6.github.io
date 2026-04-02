@@ -7,6 +7,7 @@ toc_sticky: true
 classes: wide
 ---
 
+> 📊 **WebSocket 샤딩 PoC 전체 실험 과정 (부하 분산 · GC 변화 · 설계 이유)**  
 > **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc1-websocket-sharding-load-distribution.md)
 <br>
 > **시리즈**: [WebSocket 성능 개선](/reports/websocket-group-canvas/) 
@@ -26,8 +27,11 @@ classes: wide
 | byte[] Allocation | 205 MiB | **93.5 + 111 MiB** |
 
 - **문제**: 단일 서버에 fanout 집중 → 브로드캐스트 비용 선형 증가
-- **해결**: groupId 기반 샤딩 → fanout locality 유지하면서 인스턴스별 부하 분산
+- **핵심 설계**: 동일 그룹을 하나의 서버로 고정시켜 fanout을 서버 내부로 제한 → broadcast 비용 자체를 분산
 - **확인**: 처리량 분산뿐 아니라 JVM GC/Allocation 압력도 함께 감소
+
+> ⚠️ 왜 fanout이 절반으로 줄었는지 (샤딩 설계 + 실험 로그)
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc1-websocket-sharding-load-distribution.md)
 
 ---
 
@@ -64,6 +68,10 @@ shard = slot / (32 / instanceCount)
 ```
 
 동일 groupId는 항상 동일 shard로 매핑 → **fanout이 서버 내부에서만 발생**
+
+
+> 🔍 샤딩 설계와 slot 계산이 실제 부하 분산에 어떻게 영향을 줬는지 전체 분석 보기  
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc1-websocket-sharding-load-distribution.md)
 
 ### Gateway 라우팅 응답
 
