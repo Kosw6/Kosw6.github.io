@@ -50,6 +50,10 @@ classes: wide
 
 ## 핵심 설계
 
+<div style="text-align:center;">
+  <img src="{{ '/assets/images/poc2.png' | relative_url }}" alt="아키텍쳐 다이어그램">
+</div>
+
 ### Draft 상태 구조 (Redis)
 
 사용자가 노드 편집을 시작하면 Redis에 Draft가 생성된다.

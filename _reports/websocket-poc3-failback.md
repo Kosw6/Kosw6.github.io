@@ -49,6 +49,10 @@ WebSocket 서버는 상태를 가지는 구조이기 때문에 stateless failove
 
 ## 핵심 설계
 
+<div style="text-align:center;">
+  <img src="{{ '/assets/images/poc3.png' | relative_url }}" alt="아키텍쳐 다이어그램">
+</div>
+
 ### 서버 상태 모델
 
 Gateway는 각 WS 서버의 상태를 5초 주기로 polling한다.

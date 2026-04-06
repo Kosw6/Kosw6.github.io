@@ -61,7 +61,9 @@ classes: wide
 
 ## 샤딩 설계
 
-![분산 설계 아키텍쳐](../assets/images/poc1.png)
+<div style="text-align:center;">
+  <img src="{{ '/assets/images/poc1.png' | relative_url }}" alt="아키텍쳐 다이어그램">
+</div>
 
 ### 라우팅 공식
 

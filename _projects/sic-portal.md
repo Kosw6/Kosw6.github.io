@@ -38,7 +38,7 @@ tags: [react, spring, postgresql, ci-cd, leadership, aws]
 ### 품질 기준 수립
 
 - GitHub Actions CI 파이프라인: PR 머지 전 빌드 · 테스트 자동 실행
-- JaCoCo **≥70% 테스트 커버리지** 기준을 팀 전체 적용
+- JaCoCo **≥70% 테스트 커버리지** 기준을 적용
 
 ---
 
@@ -58,7 +58,7 @@ tags: [react, spring, postgresql, ci-cd, leadership, aws]
 
 
 <div style="text-align:center;">
-  <img src="{{ '/assets/images/sisc-architecture.png' | relative_url }}" alt="아키텍쳐 다이어그램" width="85%">
+  <img src="{{ '/assets/images/sisc-architecture.png' | relative_url }}" alt="아키텍쳐 다이어그램">
 </div>
 
 - **배포**: EC2 + GitHub Actions 자동 배포
