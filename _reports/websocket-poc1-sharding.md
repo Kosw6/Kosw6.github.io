@@ -61,6 +61,8 @@ classes: wide
 
 ## 샤딩 설계
 
+![분산 설계 아키텍쳐](../assets/images/poc1.png)
+
 ### 라우팅 공식
 
 ```

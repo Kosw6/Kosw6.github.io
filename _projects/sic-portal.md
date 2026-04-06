@@ -57,7 +57,7 @@ tags: [react, spring, postgresql, ci-cd, leadership, aws]
 ### 인프라
 
 
-![아키텍쳐 다이어그램](../image/sisc-architecture.png)
+![아키텍쳐 다이어그램](../assets/images/sisc-architecture.png)
 
 - **배포**: EC2 + GitHub Actions 자동 배포
 - **정적 자산**: S3 + CloudFront CDN
