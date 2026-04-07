@@ -77,7 +77,6 @@ FE/BE/AI/Design 14명 팀 리딩, 동아리 운영 웹 서비스 구축
 - AWS EC2/S3/CloudFront/RDS + SSM 기반 인프라 설계 및 배포 자동화  
   → EventBridge + Lambda로 운영 시간 제어(09–18시)하여 비용 최적화
 
-- 협업 구조 및 개발 프로세스 정립을 통해 팀 단위 개발 생산성 향상
 
 ---
 
