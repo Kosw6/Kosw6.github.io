@@ -58,15 +58,26 @@ toc_sticky: true
 
 ---
 
-### SIC Club Portal (팀 프로젝트, 2025–현재)
+### SIC Club Portal (팀 프로젝트, 2025.09–2025.11)
 
-14–15명(FE/BE/AI/Design) 팀을 리딩한 동아리 운영 관리 플랫폼.
+FE/BE/AI/Design 14명 팀 리딩, 동아리 운영 웹 서비스 구축
 
-- Atlassian-style 워크플로우 수립: CODEOWNERS, PR 규칙, Jira/Slack/Notion 연동
-- GitHub Actions CI/CD 파이프라인 구축, JaCoCo ≥70% 테스트 커버리지 기준 팀 전체 적용
-- 출결/퀴즈/계약 모듈 기획 및 백엔드 구현
-- AWS 기반 인프라 구성 및 배포 자동화 (EC2, S3, CloudFront, RDS)
-- React + Vite PWA, Grafana 대시보드 구성
+- 역할 기준(FE/BE 분리) 스프린트에서 작업 추적 및 API 의존성 문제 발생  
+  → 기능 단위로 FE-BE를 묶는 스프린트 구조로 재설계하여 개발 흐름 개선
+
+- GitHub Actions 기반 CI/CD 및 JaCoCo ≥70% 테스트 기준 도입  
+  → 병합 전 오류 사전 검출 및 배포 안정성 확보
+
+- 학업 병행으로 스프린트 지연 발생 시 테스트 기준을 일시 완화하고 기능 개발 중심으로 전략 전환  
+  → MVP 일정 내 완성 및 개발 속도 회복
+
+- EC2 t3.micro 환경에서 OOM 장애 발생 → free -h 기반 원인 분석  
+  → t3.medium + 1GB swap 적용으로 안정화 및 인프라 운영 기준 수립
+
+- AWS EC2/S3/CloudFront/RDS + SSM 기반 인프라 설계 및 배포 자동화  
+  → EventBridge + Lambda로 운영 시간 제어(09–18시)하여 비용 최적화
+
+- 협업 구조 및 개발 프로세스 정립을 통해 팀 단위 개발 생산성 향상
 
 ---
 

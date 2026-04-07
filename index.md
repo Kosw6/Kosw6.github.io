@@ -55,7 +55,6 @@ highlights_row2:
       **0.38% → 99.97% ≤200ms**<br>
       동시성 문제 해결 + Dirty Flag 구조 적용 <br>
       (STOMP vs RAW 비교 기반 설계)<br>
-      이후 샤딩·Fallback·Failback PoC로 확장
     url: "/reports/websocket-group-canvas/"
     btn_label: "Report 보기"
     btn_class: "btn--primary"
@@ -63,7 +62,8 @@ highlights_row2:
 poc_intro:
   - excerpt: |
       ## WebSocket 수평 확장 PoC
-      실시간 협업 시스템에서 발생한 문제를<br>성능 → 분산 → 정합성 → 복구 순서로 해결했습니다.
+      WebSocket 안정성 개선 이후, 단일 서버의 구조적 한계를<br>
+      성능 → 분산 → 정합성 → 복구 순서로 확장 설계·검증했습니다.
 
 poc_row:
   - title: "PoC 1 — 샤딩"

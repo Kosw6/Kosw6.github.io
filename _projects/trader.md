@@ -6,7 +6,7 @@ sidebar:
 toc: true
 toc_sticky: true
 classes: wide
-excerpt: "20–30M+ OHLCV · TimescaleDB 28배 개선 · WebSocket 99.97% · Kafka Failback"
+excerpt: "20–30M+ OHLCV, TimescaleDB 28배 개선, WebSocket 99.97%, Kafka Failback"
 tags: [spring, timescaledb, redis, kafka, websocket, k6]
 ---
 
@@ -34,9 +34,9 @@ tags: [spring, timescaledb, redis, kafka, websocket, k6]
 
 | 항목 | 내용 |
 |------|------|
-| **Stack** | Spring Boot · JPA · PostgreSQL / TimescaleDB · Redis · Kafka · React|
+| **Stack** | Spring Boot,  JPA, PostgreSQL / TimescaleDB, Redis, Kafka, React|
 | **Scale** | ~10K 종목 × 20–30M+ OHLCV 행 |
-| **Load Test** | k6 constant-arrival-rate · p90 57ms, avg 18.6ms |
+| **Load Test** | k6 constant-arrival-rate, p90 57ms, avg 18.6ms |
 
 ---
 
@@ -166,7 +166,7 @@ Group Canvas의 실시간 노드 업데이트 기능.
 
 ## 실시간 시스템 2 — 수평 확장 PoC 시리즈
 
-단일 인스턴스 최적화 이후, **"인스턴스가 2개 이상이면 어떻게 되는가"** 를 3단계로 설계·검증.
+단일 인스턴스 최적화 이후, **"인스턴스가 2개 이상이면 어떻게 되는가"** 를 3단계로 설계, 검증
 
 ### PoC 1 — 그룹 샤딩
 
