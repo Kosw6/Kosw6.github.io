@@ -131,4 +131,4 @@ Authentication auth = jwtTokenProvider.getAuthentication(jwt, userDetailService)
  WebSocket 환경에서는 단순 쿼리 문제가 아닌  
 **런타임 처리 비용과 fanout 구조 자체가 병목이 된다**
 
->→ [WebSocket 성능 개선 시리즈 보기](./websocket-group-canvas.md)
+>→ [WebSocket 성능 개선 시리즈 보기](/reports/websocket-group-canvas/)
