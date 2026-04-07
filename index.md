@@ -100,7 +100,7 @@ projects_intro:
 project_row:
   - title: "Trader Platform"
     excerpt: |
-      **40M+ 시계열 데이터 처리**
+      **25~30M+ 시계열 데이터 처리**
       TimescaleDB + k6 + Grafana
     url: "/projects/trader/"
     btn_label: "Project"
