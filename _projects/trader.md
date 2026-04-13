@@ -229,7 +229,39 @@ Group Canvas의 실시간 노드 업데이트 기능.
 | **Load Test** | k6 constant-arrival-rate 시나리오 |
 
 ---
+## 운영환경 인프라 구축 및 성능 검증 & 다운사이징
 
+### 보고서 링크
+
+>→ [AWS 인프라 구축 및 SLO기반 성능 검증과 다운사이징 문서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/SLO%20%EA%B8%B0%EB%B0%98%20%EC%9A%B4%EC%98%81%20%EC%82%AC%EC%96%91%20%EC%82%B0%EC%A0%95%20%EC%8B%A4%ED%97%98.md)
+
+### 상황
+
+성능 개선 이후, 실제 운영 환경에서도 안정적으로 동작하는지 검증이 필요했다.
+단순히 빠른 것이 아니라, 얼마나 버틸 수 있고, 어디까지 줄일 수 있는지를 확인하는 단계였다.
+
+### 접근방식
+
+* SLO 정의: 목표 RPS 환경에서 p95 ≤ 300ms
+* AWS 환경 구성 (App: Public / DB: Private)
+* SSM + VPC Endpoint 기반 인터넷 없는 내부 통신 구조
+* k6 기반 부하 테스트
+
+### 결과
+
+| 구성                        | Node p95 | Stock p95 |
+| ------------------------- | -------- | --------- |
+| 2core / 4GB + 2core / 8GB | 10.54ms  | 10.85ms   |
+| 2core / 4GB + 2core / 4GB | 23.35ms  | 11.83ms   |
+
+- 저사양에서도 SLO 안정적으로 만족
+
+### 핵심
+
+기존 개발 단일 서버(APP+DB+etc)와 다른 APP,DB서버 분리를 통한 성능 검증을 통해<br>
+성능은 단순 인프라 사양이 아니라, 구조와 자원 사용 방식에 의해 결정된다는 것을 검증하였다.<br>
+
+---
 ## GitHub
 
 - [trader-backend](https://github.com/Kosw6/trader-backend)
