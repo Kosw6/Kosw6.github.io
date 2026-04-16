@@ -177,4 +177,4 @@ fallback 환경에서 정합성은 해결했다.
 **이벤트를 놓친 서버를 어떻게 다시 정상 상태로 복구할까?  
 그리고 서비스를 끊지 않고 어떻게 원래 구조로 되돌릴까?**
 
->→ [PoC 3 — Failback & Replay](./websocket-poc3-failback.md)
+>→ [PoC 3 — Failback & Replay](/reports/websocket-poc3-failback/)
