@@ -25,10 +25,10 @@ classes: wide
 |---------|------|
 | 다른 필드 수정 후 서버 변경 | **AUTO_MERGE** ✅ |
 | 동일 필드 수정 후 서버 변경 | **CONFLICT** 감지 ✅ |
-| shard 장애 시 다른 서버로 우회 | **Fallback 라우팅** ✅ |
+| shard 장애 시 다른 서버로 우회 | **Failover 라우팅** ✅ |
 
 - **문제**: 샤딩 구조에서 특정 shard 장애 시 → 다른 인스턴스로 fallback → 편집 상태 불일치
-- **핵심 설계**: Kafka로 상태를 전파하고, Redis Draft로 필드 단위 변경 이력을 추적하여 fallback 환경에서도 충돌을 정확히 판별
+- **핵심 설계**: Kafka로 상태를 전파하고, Redis Draft로 필드 단위 변경 이력을 추적하여 failover 이후 fallback 환경에서도 충돌을 정확히 판별
 
 > ⚠️ 왜 fallback 상황에서도 AUTO_MERGE / CONFLICT를 정확히 구분할 수 있었는지 
 > **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc2-fallback-state-sync-conflict-resolution.md)
@@ -39,11 +39,11 @@ classes: wide
 
 [PoC 1](/reports/websocket-poc1-sharding/)에서 그룹 샤딩으로 부하를 분산했다.
 그러나 샤딩 구조에서 특정 서버가 장애를 일으키면,
-해당 shard의 사용자가 fallback 서버로 이동하게 된다.
+해당 shard의 사용자가 failover 서버로 이동하게 된다.
 
 이때 두 가지 문제가 발생한다:
 
-1. **인스턴스 간 메모리 상태 공유 불가** — 기존 서버의 편집 맥락을 fallback 서버가 모름
+1. **인스턴스 간 메모리 상태 공유 불가** — 기존 서버의 편집 맥락을 failover 서버가 모름
 2. **편집 중 다른 사람이 변경한 경우** — 내가 편집 시작 후 서버에 변경이 생겼을 때 어떻게 판단할 것인가
 
 ---
@@ -53,6 +53,9 @@ classes: wide
 <div style="text-align:center;">
   <img src="{{ '/assets/images/poc2.png' | relative_url }}" alt="아키텍쳐 다이어그램">
 </div>
+<br>
+본 구조는 서버 장애 시에는 failover를 통해 연결을 유지하고,
+유실된 상태는 fallback 전략을 통해 보정하는 구조로 설계하였다.
 
 ### Draft 상태 구조 (Redis)
 
@@ -132,7 +135,7 @@ public String validate(...) {
 
 ## E2E 검증 흐름
 
-### Fallback 라우팅
+### Failover 라우팅(Fallback 환경 진입)
 
 ```json
 // 정상

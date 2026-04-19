@@ -75,11 +75,11 @@ poc_row:
     btn_label: "PoC 1"
     btn_class: "btn--primary"
 
-  - title: "PoC 2 — Fallback"
+  - title: "PoC 2 — Failover & Fallback"
     excerpt: |
       **충돌 감지 및 자동 병합**<br>
       편집 상태 유실 없이 장애 복구<br>
-      Redis 기반 상태 유지 + Gateway fallback
+      Redis 기반 상태 유지 + Gateway failover
     url: "/reports/websocket-poc2-conflict/"
     btn_label: "PoC 2"
     btn_class: "btn--primary"
