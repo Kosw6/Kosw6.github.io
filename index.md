@@ -97,6 +97,25 @@ projects_intro:
       ## Featured Projects
       성능, 확장성, 운영을 중심으로 설계한 프로젝트입니다.
 
+loadtest_row:
+  - title: "LoadTest Converter"
+    excerpt: |
+      **k6 시나리오 YAML 빌더**<br>
+      Go API + React UI · Render 배포<br>
+      ZIP 내보내기 / YAML 가져오기
+    url: "/projects/loadtest-converter/"
+    btn_label: "Project"
+    btn_class: "btn--primary"
+
+  - title: "LoadTest Desktop"
+    excerpt: |
+      **k6 부하테스트 데스크탑 실행기**<br>
+      Go + Wails · 엔진 내장 단일 실행파일<br>
+      io.Writer 기반 실시간 로그 스트리밍
+    url: "/projects/loadtest-desktop/"
+    btn_label: "Project"
+    btn_class: "btn--primary"
+
 project_row:
   - title: "Trader Platform"
     excerpt: |
@@ -125,4 +144,5 @@ project_row:
 {% include feature_row id="poc_row" %}
 
 {% include feature_row id="projects_intro" type="center" %}
+{% include feature_row id="loadtest_row" %}
 {% include feature_row id="project_row" %}

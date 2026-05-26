@@ -24,6 +24,7 @@ toc_sticky: true
 | 분류 | 기술 |
 |------|------|
 | **Backend** | Spring Boot, Spring MVC, JPA/Hibernate, Spring Security |
+| **Language** | Java, **Go** (net/http, embed, goroutine, io.Writer), Python |
 | **Database** | PostgreSQL, TimescaleDB (하이퍼테이블 · 청크 튜닝 · CAGG), 인덱싱 전략 |
 | **Cache / MQ** | Redis (TTL 설계, JSON Serializer), Kafka (Consumer Group, offset replay) |
 | **Realtime** | WebSocket (RAW), 샤딩 · Fallback · Failback 설계 |
@@ -34,6 +35,23 @@ toc_sticky: true
 ---
 
 ## 성과 중심 경험
+
+### LoadTest Converter / Desktop (개인 프로젝트, 2025)
+
+k6 부하테스트 시나리오를 GUI로 작성하고 실행하는 도구 시리즈. Go로 직접 구현.
+
+**LoadTest Converter** — k6 시나리오 YAML 빌더 (Go + React, Render 배포)
+- Go `net/http` 표준 라이브러리 기반 REST API 서버 구현
+- `//go:embed` 로 k6 템플릿을 단일 바이너리에 내장, `archive/zip` 으로 ZIP 패키징
+- Preview / Export / Import 3-endpoint 설계 (YAML 생성 · ZIP 내보내기 · 역파싱)
+
+**LoadTest Desktop** — k6 부하테스트 데스크탑 실행기 (Go + Wails)
+- 별도 엔진 바이너리 제거 → `engine/` 패키지로 흡수, 단일 실행파일 배포
+- `io.Writer` 인터페이스 기반 실시간 로그 스트리밍 설계 (`sync.Mutex` 스레드 안전 보장)
+- k6 출력 `io.MultiWriter(logFile, w)` 로 파일 저장 + UI 실시간 전달 동시 처리
+- `depends_on` 기반 wave 병렬 스텝 실행 (goroutine + WaitGroup + channel 에러 수집)
+
+---
 
 ### Trader Platform (개인 프로젝트, 2025–현재)
 
