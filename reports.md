@@ -19,6 +19,14 @@ entries_layout: grid
 
 주요 주제:
 
+### Reliability & Operations 시리즈
+
+- Observability System: TraceId, 구조화 로그, Loki/Grafana alert
+- SLO 기반 운영 사양 산정: p95 기준 App/DB 사양과 Thread/Hikari 설정 결정
+- Realtime Degraded Mode: Redis/Kafka/PubSub 장애 대응과 Kafka replay 설계 근거
+- Auto Recovery & Scale-out: Grafana Alert, Lambda, SSM, ASG 기반 복구/확장 검증
+- Load Test Orchestrator: Terraform, k6, AWS SSM 기반 장애 검증 자동화
+
 - Performance tuning: TimescaleDB, JPA fetch strategy, JFR/JMC hotspot analysis
 - Realtime architecture: WebSocket broadcast, sharding, failover, failback
 - Reliability: Redis/Kafka degraded mode, Pub/Sub fallback, DB fallback, Outbox replay

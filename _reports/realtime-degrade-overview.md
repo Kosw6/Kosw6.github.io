@@ -12,6 +12,8 @@ tags: [redis, kafka, websocket, degrade, fallback, spring]
 > **핵심 질문**: Redis 또는 Kafka가 장애 상태가 되어도 실시간 협업 흐름과 이벤트 보존을 분리해 장애 범위를 제한할 수 있는가?
 >
 > 원문: [degrade-overview.md](https://github.com/Kosw6/engineering-notes/blob/main/reports/degrade-overview.md)
+>
+> 설계 근거: [Redis Pub/Sub 기반 실시간 전파의 한계와 Reliable 이벤트 복구 설계](https://github.com/Kosw6/engineering-notes/blob/main/reports/kafka-necessity.md)
 
 ---
 
@@ -49,6 +51,8 @@ State fallback
 ```
 
 핵심은 Kafka를 WebSocket hot path로 보지 않는 것이다. Kafka는 즉시 반응 경로가 아니라 **복구와 감사 가능한 durable event log**로 사용했다.
+
+Kafka를 왜 기본 실시간 전파 경로가 아니라 recovery path로 두었는지는 [Kafka replay 설계 근거](https://github.com/Kosw6/engineering-notes/blob/main/reports/kafka-necessity.md)에 따로 정리했다. Redis Pub/Sub은 정상 상태의 낮은 latency hot path로 유지하고, Kafka는 Pub/Sub miss와 app 재기동 이후의 catch-up을 보정하는 역할로 분리했다.
 
 ---
 

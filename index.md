@@ -96,10 +96,10 @@ poc_row:
 reliability_intro:
   - excerpt: |
       ## Reliability & Operations
-      운영 환경의 장애, 복구, 관측 흐름을 직접 재현하고 수치와 로그로 검증했습니다.
+      관측 → 운영 기준 → degraded mode → 자동 복구 → 검증 자동화 순서로 운영 안정성을 설계하고 검증했습니다.
 
 reliability_row:
-  - title: "Observability System"
+  - title: "1. Observability System"
     excerpt: |
       **TraceId + Loki/Grafana 관측 체계**<br>
       구조화 로그, error count/rate alert<br>
@@ -108,16 +108,26 @@ reliability_row:
     btn_label: "Report"
     btn_class: "btn--primary"
 
-  - title: "Realtime Degraded Mode"
+  - title: "2. SLO 기반 운영 사양 산정"
+    excerpt: |
+      **p95 <= 300ms 기준 인프라 산정**<br>
+      App/DB 2vCPU/4GB 구성 검증<br>
+      Linux context switch와 DB pending 분석
+    url: "/reports/slo-operating-capacity/"
+    btn_label: "Report"
+    btn_class: "btn--primary"
+
+  - title: "3. Realtime Degraded Mode"
     excerpt: |
       **Redis/Kafka/PubSub 장애 대응**<br>
-      DB fallback, Outbox replay, gRPC relay<br>
-      장애 범위 제한과 복구 검증
+      Hot path와 durable replay 경로 분리<br>
+      Kafka replay 설계 근거까지 연결
     url: "/reports/realtime-degrade-overview/"
     btn_label: "Report"
     btn_class: "btn--primary"
 
-  - title: "Auto Recovery & Scale-out"
+orchestrator_ops_row:
+  - title: "4. Auto Recovery & Scale-out"
     excerpt: |
       **Grafana Alert -> Lambda -> SSM/ASG**<br>
       App restart, scale-out, 신규 인스턴스 합류 검증<br>
@@ -126,8 +136,7 @@ reliability_row:
     btn_label: "Report"
     btn_class: "btn--primary"
 
-orchestrator_ops_row:
-  - title: "Load Test Orchestrator"
+  - title: "5. Load Test Orchestrator"
     excerpt: |
       **Terraform + k6 + Redis 장애 주입 자동화**<br>
       WebSocket errors 0, received 34k -> 89k<br>
@@ -136,27 +145,18 @@ orchestrator_ops_row:
     btn_label: "Report"
     btn_class: "btn--primary"
 
-  - title: "SLO 기반 운영 사양 산정"
-    excerpt: |
-      **p95 <= 300ms 기준 인프라 산정**<br>
-      App/DB 2vCPU/4GB 구성 검증<br>
-      Thread 30 / Hikari 8 결정
-    url: "https://github.com/Kosw6/engineering-notes/blob/main/reports/SLO%20%EA%B8%B0%EB%B0%98%20%EC%9A%B4%EC%98%81%20%EC%82%AC%EC%96%91%20%EC%82%B0%EC%A0%95%20%EC%8B%A4%ED%97%98.md"
-    btn_label: "GitHub"
-    btn_class: "btn--primary"
-
 projects_intro:
   - excerpt: |
       ## Featured Projects
-      성능, 확장성, 운영을 중심으로 설계한 프로젝트입니다.
+      성능, 확장성, 운영 검증을 중심으로 설계한 대표 프로젝트입니다.
 
-loadtest_row:
-  - title: "LoadTest Converter"
+project_row:
+  - title: "Trader Platform"
     excerpt: |
-      **k6 시나리오 YAML 빌더**<br>
-      Go API + React UI · Render 배포<br>
-      ZIP 내보내기 / YAML 가져오기
-    url: "/projects/loadtest-converter/"
+      **25~30M+ 시계열 데이터 처리**<br>
+      TimescaleDB + k6 + Grafana<br>
+      성능 병목, 장애 대응, 관측 체계 검증
+    url: "/projects/trader/"
     btn_label: "Project"
     btn_class: "btn--primary"
 
@@ -169,19 +169,11 @@ loadtest_row:
     btn_label: "Project"
     btn_class: "btn--primary"
 
-project_row:
-  - title: "Trader Platform"
-    excerpt: |
-      **25~30M+ 시계열 데이터 처리**
-      TimescaleDB + k6 + Grafana
-    url: "/projects/trader/"
-    btn_label: "Project"
-    btn_class: "btn--primary"
-
   - title: "SIC Club Portal"
     excerpt: |
-      **팀 리딩 & CI/CD 구축**
-      GitHub Actions + JaCoCo
+      **팀 리딩 & CI/CD 구축**<br>
+      Nginx reverse proxy + CloudFront<br>
+      GitHub Actions + AWS 배포 인프라
     url: "/projects/sic-portal/"
     btn_label: "Project"
     btn_class: "btn--primary"
@@ -201,5 +193,4 @@ project_row:
 {% include feature_row id="orchestrator_ops_row" %}
 
 {% include feature_row id="projects_intro" type="center" %}
-{% include feature_row id="loadtest_row" %}
 {% include feature_row id="project_row" %}
