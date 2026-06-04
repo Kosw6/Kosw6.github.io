@@ -6,7 +6,8 @@ excerpt: >
   **성능 병목을 분석하고, 수치로 개선하는 백엔드 개발자**<br><br>
   P95 7,247ms → <strong>235ms (28× 개선)</strong><br>
   WebSocket ≤200ms <strong>99.97%</strong><br>
-  성능 분석 기반 병목 해결 · 분산 환경 장애 복구 설계
+  Go 기반 Load Test Orchestrator로 Terraform, k6, AWS SSM 장애 주입 자동화<br>
+
 
 header:
   overlay_image: /assets/images/hero-bg-1.png
