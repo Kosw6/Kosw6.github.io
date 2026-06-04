@@ -262,6 +262,22 @@ Group Canvas의 실시간 노드 업데이트 기능.
 성능은 단순 인프라 사양이 아니라, 구조와 자원 사용 방식에 의해 결정된다는 것을 검증하였다.<br>
 
 ---
+## Reliability & Operations
+
+Trader는 단순 기능 구현 이후 Redis/Kafka 장애, 운영 관측, 자동 복구 흐름까지 검증했습니다.
+
+| 영역 | 검증 내용 | Report |
+|------|----------|--------|
+| Observability | TraceId/MDC/AOP 기반 구조화 로그, Loki/Grafana dashboard, error rate alert | [Observability System](/reports/observability-system/) |
+| Redis Degrade | lock/autosave/version hint DB fallback, API 5xx 없이 기능 지속 | [Realtime Degraded Mode](/reports/realtime-degrade-overview/) |
+| Kafka Degrade | Outbox 기반 durable log, 장애 기간 이벤트 손실 0건/중복 0건 | [Realtime Degraded Mode](/reports/realtime-degrade-overview/) |
+| Auto Recovery | Grafana Alert -> Lambda -> SSM/ASG 복구 및 scale-out | [Auto Recovery & Scale-out](/reports/auto-recovery-scaleout/) |
+| Load Validation | Terraform, k6, AWS SSM 기반 Redis 장애 주입과 baseline 비교 | [Load Test Orchestrator Validation](/reports/loadtest-orchestrator-redis-fault-validation/) |
+
+핵심은 장애를 숨기는 것이 아니라, 장애 범위를 제한하고 복구 흐름을 검증 가능한 형태로 만드는 것입니다.
+
+---
+
 ## GitHub
 
 - [trader-backend](https://github.com/Kosw6/trader-backend)

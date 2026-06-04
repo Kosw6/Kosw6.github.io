@@ -92,6 +92,58 @@ poc_row:
     btn_label: "PoC 3"
     btn_class: "btn--primary"
 
+reliability_intro:
+  - excerpt: |
+      ## Reliability & Operations
+      운영 환경의 장애, 복구, 관측 흐름을 직접 재현하고 수치와 로그로 검증했습니다.
+
+reliability_row:
+  - title: "Observability System"
+    excerpt: |
+      **TraceId + Loki/Grafana 관측 체계**<br>
+      구조화 로그, error count/rate alert<br>
+      장애 원인 추적을 위한 운영 로그 설계
+    url: "/reports/observability-system/"
+    btn_label: "Report"
+    btn_class: "btn--primary"
+
+  - title: "Realtime Degraded Mode"
+    excerpt: |
+      **Redis/Kafka/PubSub 장애 대응**<br>
+      DB fallback, Outbox replay, gRPC relay<br>
+      장애 범위 제한과 복구 검증
+    url: "/reports/realtime-degrade-overview/"
+    btn_label: "Report"
+    btn_class: "btn--primary"
+
+  - title: "Auto Recovery & Scale-out"
+    excerpt: |
+      **Grafana Alert -> Lambda -> SSM/ASG**<br>
+      App restart, scale-out, 신규 인스턴스 합류 검증<br>
+      Gateway health 기반 failover/failback
+    url: "/reports/auto-recovery-scaleout/"
+    btn_label: "Report"
+    btn_class: "btn--primary"
+
+orchestrator_ops_row:
+  - title: "Load Test Orchestrator"
+    excerpt: |
+      **Terraform + k6 + Redis 장애 주입 자동화**<br>
+      WebSocket errors 0, received 34k -> 89k<br>
+      SSM polling과 recovery health check
+    url: "/reports/loadtest-orchestrator-redis-fault-validation/"
+    btn_label: "Report"
+    btn_class: "btn--primary"
+
+  - title: "SLO 기반 운영 사양 산정"
+    excerpt: |
+      **p95 <= 300ms 기준 인프라 산정**<br>
+      App/DB 2vCPU/4GB 구성 검증<br>
+      Thread 30 / Hikari 8 결정
+    url: "https://github.com/Kosw6/engineering-notes/blob/main/reports/SLO%20%EA%B8%B0%EB%B0%98%20%EC%9A%B4%EC%98%81%20%EC%82%AC%EC%96%91%20%EC%82%B0%EC%A0%95%20%EC%8B%A4%ED%97%98.md"
+    btn_label: "GitHub"
+    btn_class: "btn--primary"
+
 projects_intro:
   - excerpt: |
       ## Featured Projects
@@ -113,6 +165,15 @@ loadtest_row:
       Go + Wails · 엔진 내장 단일 실행파일<br>
       io.Writer 기반 실시간 로그 스트리밍
     url: "/projects/loadtest-desktop/"
+    btn_label: "Project"
+    btn_class: "btn--primary"
+
+  - title: "Load Test Orchestrator"
+    excerpt: |
+      **Terraform + k6 + Redis 장애 검증**<br>
+      ZIP 시나리오 기반 E2E 자동화<br>
+      SSM command polling + recovery check
+    url: "/projects/loadtest-orchestrator/"
     btn_label: "Project"
     btn_class: "btn--primary"
 
@@ -142,6 +203,10 @@ project_row:
 
 {% include feature_row id="poc_intro" type="center" %}
 {% include feature_row id="poc_row" %}
+
+{% include feature_row id="reliability_intro" type="center" %}
+{% include feature_row id="reliability_row" %}
+{% include feature_row id="orchestrator_ops_row" %}
 
 {% include feature_row id="projects_intro" type="center" %}
 {% include feature_row id="loadtest_row" %}

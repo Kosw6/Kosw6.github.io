@@ -8,22 +8,20 @@ entries_layout: grid
 
 ## Engineering Reports
 
-성능 분석, 아키텍처 설계, 부하 테스트 결과를 정리한 엔지니어링 문서입니다.
+성능 병목 분석뿐 아니라 장애 대응, 관측 체계, 자동 복구, 부하 테스트 자동화까지 실제 운영 환경을 기준으로 검증한 문서들입니다.
 
-각 보고서는 다음 구조로 작성됩니다.
+각 보고서는 다음 관점으로 정리합니다.
 
-- Problem (문제)
-- Analysis (분석)
-- Solution (개선)
-- Result (정량 결과)
+- Problem: 어떤 운영 또는 성능 문제가 있었는가
+- Analysis: 어떤 지표, 로그, 부하 테스트로 원인을 확인했는가
+- Solution: 어떤 구조나 설정을 선택했는가
+- Result: 수치와 로그 기준으로 무엇이 개선되었는가
 
-대표 주제
+주요 주제:
 
-- TimescaleDB 시계열 조회 성능 튜닝
-- JPA Fetch 전략별 성능 비교 및 Payload 영향 분석
-- JFR / JMC 기반 Allocation Hotspot 분석
-- WebSocket 실시간 브로드캐스트 성능 개선
-- WebSocket 수평 확장 PoC 시리즈
-  - PoC 1: 그룹 샤딩 기반 부하 분산 (fanout locality + JVM GC 감소)
-  - PoC 2: Fallback 환경 상태 동기화 및 필드 단위 충돌 제어
-  - PoC 3: Kafka Replay 기반 Failback & 무중단 서버 전환
+- Performance tuning: TimescaleDB, JPA fetch strategy, JFR/JMC hotspot analysis
+- Realtime architecture: WebSocket broadcast, sharding, failover, failback
+- Reliability: Redis/Kafka degraded mode, Pub/Sub fallback, DB fallback, Outbox replay
+- Observability: TraceId logging, Loki/Grafana dashboard, error rate alert
+- Automation: Terraform, k6, AWS SSM 기반 장애 검증 오케스트레이션
+
