@@ -12,6 +12,15 @@ tags: [go, k6, terraform, redis, websocket, ssm, loadtest]
 > **핵심 질문**: 부하 테스트 중 Redis 장애를 주입하고, 장애 효과와 복구 상태를 자동화된 시나리오 안에서 검증할 수 있는가?
 >
 > 원문: [loadtest-orchestrator-redis-fault-validation.md](https://github.com/Kosw6/engineering-notes/blob/main/reports/loadtest-orchestrator-redis-fault-validation.md)
+<br>
+
+> **시리즈**: Reliability & Operations
+> <br>[1. Observability System](/reports/observability-system/)
+> <br>[2. SLO 기반 운영 사양 산정](/reports/slo-operating-capacity/)
+> <br>[3. Realtime Degraded Mode](/reports/realtime-degrade-overview/)
+> <br>[4. Auto Recovery & Scale-out](/reports/auto-recovery-scaleout/)
+> <br>**5. Load Test Orchestrator**
+
 
 ---
 

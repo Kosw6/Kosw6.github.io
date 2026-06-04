@@ -12,6 +12,15 @@ tags: [aws, grafana, lambda, ssm, autoscaling, recovery]
 > **핵심 질문**: 장애를 감지하는 데서 끝나지 않고, 복구 명령 실행과 신규 인스턴스 합류까지 자동화할 수 있는가?
 >
 > 원문: [auto-recovery-scaleout-verification.md](https://github.com/Kosw6/engineering-notes/blob/main/reports/auto-recovery-scaleout-verification.md)
+<br>
+
+> **시리즈**: Reliability & Operations
+> <br>[1. Observability System](/reports/observability-system/)
+> <br>[2. SLO 기반 운영 사양 산정](/reports/slo-operating-capacity/)
+> <br>[3. Realtime Degraded Mode](/reports/realtime-degrade-overview/)
+> <br>**4. Auto Recovery & Scale-out**
+> <br>[5. Load Test Orchestrator](/reports/loadtest-orchestrator-redis-fault-validation/)
+
 
 ---
 

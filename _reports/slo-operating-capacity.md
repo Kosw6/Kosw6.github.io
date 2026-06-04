@@ -12,6 +12,15 @@ tags: [slo, capacity-planning, k6, linux, spring, hikari]
 > **핵심 질문**: 목표 응답 시간 p95 <= 300ms를 만족하려면 어느 정도의 App/DB 사양과 스레드/커넥션 설정이 필요한가?
 >
 > 원문: [SLO 기반 운영 사양 산정 실험](https://github.com/Kosw6/engineering-notes/blob/main/reports/SLO%20%EA%B8%B0%EB%B0%98%20%EC%9A%B4%EC%98%81%20%EC%82%AC%EC%96%91%20%EC%82%B0%EC%A0%95%20%EC%8B%A4%ED%97%98.md)
+<br>
+
+> **시리즈**: Reliability & Operations
+> <br>[1. Observability System](/reports/observability-system/)
+> <br>**2. SLO 기반 운영 사양 산정**
+> <br>[3. Realtime Degraded Mode](/reports/realtime-degrade-overview/)
+> <br>[4. Auto Recovery & Scale-out](/reports/auto-recovery-scaleout/)
+> <br>[5. Load Test Orchestrator](/reports/loadtest-orchestrator-redis-fault-validation/)
+
 
 ---
 

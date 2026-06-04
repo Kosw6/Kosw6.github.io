@@ -12,6 +12,15 @@ tags: [observability, logging, loki, grafana, prometheus, spring]
 > **핵심 질문**: 장애가 발생했을 때 "어느 요청, 어느 도메인, 어느 이벤트에서 실패했는지"를 빠르게 찾을 수 있는가?
 >
 > 원문: [관측 체계 도입.md](https://github.com/Kosw6/engineering-notes/blob/main/reports/%EA%B4%80%EC%B8%A1%20%EC%B2%B4%EA%B3%84%20%EB%8F%84%EC%9E%85.md)
+<br>
+
+> **시리즈**: Reliability & Operations
+> <br>**1. Observability System**
+> <br>[2. SLO 기반 운영 사양 산정](/reports/slo-operating-capacity/)
+> <br>[3. Realtime Degraded Mode](/reports/realtime-degrade-overview/)
+> <br>[4. Auto Recovery & Scale-out](/reports/auto-recovery-scaleout/)
+> <br>[5. Load Test Orchestrator](/reports/loadtest-orchestrator-redis-fault-validation/)
+
 
 ---
 

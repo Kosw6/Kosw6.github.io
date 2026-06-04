@@ -14,6 +14,15 @@ tags: [redis, kafka, websocket, degrade, fallback, spring]
 > 원문: [degrade-overview.md](https://github.com/Kosw6/engineering-notes/blob/main/reports/degrade-overview.md)
 >
 > 설계 근거: [Redis Pub/Sub 기반 실시간 전파의 한계와 Reliable 이벤트 복구 설계](https://github.com/Kosw6/engineering-notes/blob/main/reports/kafka-necessity.md)
+<br>
+
+> **시리즈**: Reliability & Operations
+> <br>[1. Observability System](/reports/observability-system/)
+> <br>[2. SLO 기반 운영 사양 산정](/reports/slo-operating-capacity/)
+> <br>**3. Realtime Degraded Mode**
+> <br>[4. Auto Recovery & Scale-out](/reports/auto-recovery-scaleout/)
+> <br>[5. Load Test Orchestrator](/reports/loadtest-orchestrator-redis-fault-validation/)
+
 
 ---
 
