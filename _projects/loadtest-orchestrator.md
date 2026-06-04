@@ -6,7 +6,7 @@ sidebar:
 toc: true
 toc_sticky: true
 classes: wide
-excerpt: "Terraform, k6, AWS SSM, WebSocket, Redis 장애 주입을 하나의 검증 시나리오로 자동화하는 Go 기반 오케스트레이터"
+excerpt: "로컬 UI와 실행 엔진을 통합하고 Terraform, k6, AWS SSM, WebSocket, Redis 장애 주입을 하나의 검증 시나리오로 자동화하는 Go 기반 오케스트레이터"
 tags: [go, wails, k6, terraform, redis, websocket, ssm, loadtest]
 ---
 
@@ -39,12 +39,28 @@ scenario.zip
 
 | 영역 | 기술 |
 |---|---|
-| App | Go, Wails |
+| App | Go, Wails, React UI |
 | Load test | k6, WebSocket |
 | Infra | Terraform, AWS EC2 |
 | Fault injection | AWS SSM command |
 | Target system | Redis Pub/Sub, Spring Boot backend |
 | Report | Markdown/HTML result collection |
+
+---
+
+## UI + Engine 통합
+
+초기에는 로컬 UI와 실행 엔진을 별도 프로젝트처럼 다뤘지만, 현재는 Load Test Orchestrator 안에 통합했습니다.
+
+```text
+loadtest-orchestrator/
+  -> frontend/       # Wails 기반 로컬 UI
+  -> app.go          # UI와 Go 엔진 연결
+  -> engine/         # scenario 실행, k6, auth, final_check, terraform, chaos
+  -> templates/      # k6 script templates
+```
+
+따라서 현재 포트폴리오에서는 `LoadTest Desktop`을 별도 프로젝트로 분리하지 않고, **Load Test Orchestrator = 로컬 UI + 실행 엔진 + 장애 검증 자동화**로 정리합니다.
 
 ---
 

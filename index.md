@@ -159,15 +159,6 @@ loadtest_row:
     btn_label: "Project"
     btn_class: "btn--primary"
 
-  - title: "LoadTest Desktop"
-    excerpt: |
-      **k6 부하테스트 데스크탑 실행기**<br>
-      Go + Wails · 엔진 내장 단일 실행파일<br>
-      io.Writer 기반 실시간 로그 스트리밍
-    url: "/projects/loadtest-desktop/"
-    btn_label: "Project"
-    btn_class: "btn--primary"
-
   - title: "Load Test Orchestrator"
     excerpt: |
       **Terraform + k6 + Redis 장애 검증**<br>
