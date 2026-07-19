@@ -1,5 +1,5 @@
 title: "Sungwon Kim"
-description: "Backend Engineer · Performance Engineering Portfolio"
+description: "성능 개선, 실시간 시스템, 데이터 파이프라인 제어와 장애 복구를 검증하는 Backend Platform Engineer 포트폴리오"
 url: "https://kosw6.github.io"
 locale: "ko-KR"
 
@@ -20,15 +20,12 @@ highlighter: rouge
 author:
   name: "Sungwon Kim"
   avatar: "/assets/images/avatar.png"
-  bio: "Backend Engineer focused on performance optimization, realtime architecture, and scalable systems."
+  bio: "Backend Platform Engineer focused on measurable performance, realtime systems, and recoverable data pipelines."
   location: "Seoul, Korea"
   links:
     - label: "GitHub"
       icon: "fab fa-github"
       url: "https://github.com/Kosw6"
-    - label: "Email"
-      icon: "fas fa-envelope"
-      url: "mailto:your-email@example.com"
 
 collections:
   projects:
@@ -41,6 +38,12 @@ collections:
 paginate: 8
 paginate_path: "/page:num/"
 
+include:
+  - _pages
+
+atom_feed:
+  hide: true
+
 tag_archive:
   type: liquid
-  path: /tags
+  path: /tags/

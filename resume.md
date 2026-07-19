@@ -9,10 +9,9 @@ toc_sticky: true
 
 ## Profile
 
-**Sungwon Kim — Backend Engineer**
+**Sungwon Kim — Backend Platform Engineer**
 
-성능을 측정하고, 병목을 추적하고, 구조로 해결하는 엔지니어.
-단순 기능 구현을 넘어 k6 부하 테스트 · JFR/JMC 런타임 프로파일링 · 분산 시스템 설계까지 실측 기반으로 접근합니다.
+성능을 측정하고 병목을 추적하는 데서 시작해, 실시간 이벤트와 데이터 파이프라인을 장애 이후에도 복구 가능한 운영 구조로 확장하는 엔지니어입니다. k6 부하 테스트, JFR/JMC 런타임 분석, Kafka 기반 이벤트 처리, Go Controller와 Python Worker 제어를 실측과 상태 기록으로 검증합니다.
 
 - **GitHub**: [github.com/Kosw6](https://github.com/Kosw6)
 - **Portfolio**: [kosw6.github.io](https://kosw6.github.io)
@@ -28,8 +27,9 @@ toc_sticky: true
 | **Database** | PostgreSQL, TimescaleDB (하이퍼테이블 · 청크 튜닝 · CAGG), 인덱싱 전략 |
 | **Cache / MQ** | Redis (TTL 설계, JSON Serializer), Kafka (Consumer Group, offset replay) |
 | **Realtime** | WebSocket (RAW), 샤딩 · Fallback · Failback 설계 |
+| **Data Platform** | DB Outbox, Kafka lag, raw/ETL 분리, lineage, idempotency |
 | **Performance** | k6, JFR/JMC, Prometheus/Grafana, Slack 알람 |
-| **DevOps** | Docker, GitHub Actions, JaCoCo (≥70% 기준), AWS (EC2/S3/CloudFront/RDS) |
+| **DevOps** | Docker, Terraform, GitHub Actions, AWS (EC2/S3/CloudFront/SSM/ASG/Lambda) |
 | **Frontend** | React, Vite, React Flow, WebGL 차트 |
 
 ---
@@ -55,7 +55,7 @@ k6 부하테스트 시나리오를 GUI로 작성하고 실행하는 도구 시�
 
 ### Trader Platform (개인 프로젝트, 2025–현재)
 
-25–30M+ OHLCV 시계열 데이터 처리 플랫폼. 성능 측정 → 원인 분석 → 구조 개선 사이클을 반복하며 운영 중.
+주식투자 학습을 위한 복기 플랫폼. 25–30M+ OHLCV 조회 성능 개선에서 시작해 실시간 협업, 장애 복구, KIS/BLS/SEC 데이터 파이프라인과 worker control plane까지 확장했습니다.
 
 **성능 개선**
 - k6 부하 테스트 + TimescaleDB 하이퍼테이블·청크 튜닝 → P95 **7,247ms → 235ms** @ 300 RPS **(28배 개선, SLO 달성)**
@@ -71,6 +71,10 @@ k6 부하테스트 시나리오를 GUI로 작성하고 실행하는 도구 시�
 
 **아키텍처 및 운영**
 - TimescaleDB Continuous Aggregate (CAGG) 활용한 1W/1M/1Y 조회 전략 설계
+- KIS 주가, BLS 거시경제, SEC 재무 데이터를 raw로 보존하고 Python ETL Worker가 정규화 테이블에 적재하는 파이프라인 구현
+- DB outbox, `source_object`, `record_lineage`, `processed_event`로 Kafka 발행부터 raw, ETL, consumer commit까지 추적
+- Go Controller가 Kafka lag와 worker heartbeat를 판단해 AWS ASG desired capacity를 **0 -> 1 -> 0**으로 조절하는 흐름 검증
+- ETL worker 중지 중 BLS raw lag **2** 누적, worker 재개 후 lag **0**과 `PROCESSED` 전환 확인
 - Prometheus/Grafana 모니터링 + Slack 알람, GitHub Actions CI/CD, JaCoCo ≥70% 기준
 - Google/Kakao/Naver JWT SSO 구현
 

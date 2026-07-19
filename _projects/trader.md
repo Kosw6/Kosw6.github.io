@@ -6,12 +6,12 @@ sidebar:
 toc: true
 toc_sticky: true
 classes: wide
-excerpt: "20–30M+ OHLCV, TimescaleDB 28배 개선, WebSocket 99.97%, Kafka Failback"
-tags: [spring, timescaledb, redis, kafka, websocket, k6]
+excerpt: "투자 복기 플랫폼, TimescaleDB 28배 개선, WebSocket 99.97%, Kafka/ETL lineage, AWS worker scaling"
+tags: [spring, timescaledb, redis, kafka, websocket, k6, go, python, aws, etl]
 ---
 
 > **성능 수치를 가설로 세우고, k6·JFR·JMC로 측정하고, 구조로 개선했습니다.**
-> 이 페이지는 "무엇을 만들었냐"가 아니라 "어떻게 개선했냐"의 기록입니다.
+> 이후 실시간 협업, 장애 복구, 검증 자동화, 데이터 파이프라인 control plane까지 확장했습니다.
 
 ---
 
@@ -24,19 +24,59 @@ tags: [spring, timescaledb, redis, kafka, websocket, k6]
 | WebSocket ≤200ms 수신율 | 0.38% | **99.97%** | **+99.6%p** |
 | Old GC 횟수 (JFR 실측) | 기준치 | **36% 감소** | — |
 | WebSocket fanout 부하 (샤딩 후) | 159K 단일 | **79K + 79K** | **50% 분산** |
+| BLS raw ETL lag | 2 | **0** | 밀린 raw 처리 완료 |
+| AWS Python Worker | desired 0 | **0 -> 1 -> 0** | lag/idle 기반 자동 제어 |
 
 ---
 
 ## 프로젝트 개요
 
-20–30M+ OHLCV 시계열 데이터를 다루는 개인 퀀트 트레이딩 플랫폼.
-**"기능이 동작하는가"보다 "얼마나 버티는가"와 "왜 느린가"를 먼저 물었습니다.**
+Trader는 주식투자 학습을 위한 복기 플랫폼입니다. 실시간 WebSocket 기반 그룹/개인 캔버스, 투자 일지, 차트 마커를 제공하고 재무·매크로 데이터를 함께 조회할 수 있도록 설계했습니다.
+
+투자 판단 근거는 React Flow 기반 노드와 엣지로 시각화해, 매매 과정의 인과관계를 나중에 복기할 수 있게 만드는 것이 핵심 목적입니다. 초기에는 20–30M+ OHLCV 시계열 조회 성능을 개선했고, 이후 실시간 협업과 데이터 파이프라인 운영 구조까지 확장했습니다.
 
 | 항목 | 내용 |
 |------|------|
-| **Stack** | Spring Boot,  JPA, PostgreSQL / TimescaleDB, Redis, Kafka, React|
-| **Scale** | ~10K 종목 × 20–30M+ OHLCV 행 |
-| **Load Test** | k6 constant-arrival-rate, p90 57ms, avg 18.6ms |
+| **Product** | 주식투자 학습/복기 플랫폼, 그룹/개인 캔버스, 투자 일지, 차트 마커 |
+| **Backend** | Spring Boot, JPA, PostgreSQL / TimescaleDB, Redis, Kafka |
+| **Frontend** | React, React Flow, WebSocket 기반 실시간 캔버스 |
+| **Data Platform** | Go Controller, Python Worker, Kafka Outbox, raw/ETL lineage |
+| **Scale** | ~10K 종목 × 20–30M+ OHLCV 행, KIS/BLS/SEC raw 수집 및 정규화 |
+| **Validation** | k6, JFR/JMC, Grafana, AWS ASG worker scaling 검증 |
+
+---
+
+## Data Pipeline & Control Plane 확장 {#data-platform}
+
+차트와 일지만으로는 투자 복기에 필요한 재무·매크로·시세 데이터를 안정적으로 제공하기 어렵다고 판단했습니다. 그래서 수집, raw 보존, 정규화, 재처리, worker 제어를 별도 데이터 플랫폼 구조로 확장했습니다.
+
+<figure class="report-figure">
+  <img src="/assets/images/data-platform/trader-data-architecture.svg" alt="Go Controller, Kafka, Python Collector와 ETL Worker, raw storage와 PostgreSQL로 구성한 데이터 파이프라인">
+  <figcaption>Go Controller가 정책과 상태를 제어하고 Python Worker가 수집과 ETL을 실행합니다.</figcaption>
+</figure>
+
+| 설계 결정 | 내용 |
+|---|---|
+| Go Controller | job 생성, outbox relay, Kafka lag 측정, worker scale-out/in 제어 |
+| Python Worker | KIS/BLS/SEC 수집과 ETL 처리 담당 |
+| raw 보존 | 외부 API 응답을 source_object와 storage_key로 추적 |
+| ETL lineage | record_lineage로 raw와 정규화 레코드 연결 |
+| 중복 방지 | processed_event와 idempotency_key로 Kafka 재전달 대응 |
+| 비용/부하 제어 | Kafka lag와 worker heartbeat 기반 AWS ASG scale-out/in 검증 |
+
+### 검증 결과
+
+| 검증 항목 | 결과 |
+|---|---|
+| BLS job end-to-end | JOB_ITEM_QUEUED -> raw 수집 -> RAW_OBJECT_READY -> ETL 완료 |
+| raw lag 처리 | trader.raw.bls.ready lag 2 -> ETL worker 재기동 후 lag 0 |
+| AWS worker scale-out | job lag 1 발생 시 Python worker ASG desired 0 -> 1 |
+| AWS worker scale-in | 전체 lag 0 + idle heartbeat 120초 후 desired 1 -> 0 |
+| Kafka/outbox 복구 | DB outbox를 기준으로 Kafka 상태 불일치 구간 재발행 복구 |
+
+핵심은 데이터를 단순 적재하는 것이 아니라, **raw부터 정규화 결과, Kafka commit, worker 상태까지 운영자가 추적하고 제어할 수 있는 구조**로 확장한 것입니다.
+
+→ [Trader Data Platform Report 보기](/reports/trader-data-platform/)
 
 ---
 
@@ -264,7 +304,7 @@ Group Canvas의 실시간 노드 업데이트 기능.
 ---
 ## Reliability & Operations
 
-Trader는 단순 기능 구현 이후 Redis/Kafka 장애, 운영 관측, 자동 복구 흐름까지 검증했습니다.
+Trader는 단순 기능 구현 이후 Redis/Kafka 장애, 운영 관측, 자동 복구, 데이터 파이프라인 제어 흐름까지 검증했습니다.
 
 | 영역 | 검증 내용 | Report |
 |------|----------|--------|
@@ -273,8 +313,9 @@ Trader는 단순 기능 구현 이후 Redis/Kafka 장애, 운영 관측, 자동 
 | Kafka Degrade | Outbox 기반 durable log, 장애 기간 이벤트 손실 0건/중복 0건 | [Realtime Degraded Mode](/reports/realtime-degrade-overview/) |
 | Auto Recovery | Grafana Alert -> Lambda -> SSM/ASG 복구 및 scale-out | [Auto Recovery & Scale-out](/reports/auto-recovery-scaleout/) |
 | Load Validation | Terraform, k6, AWS SSM 기반 Redis 장애 주입과 baseline 비교 | [Load Test Orchestrator Validation](/reports/loadtest-orchestrator-redis-fault-validation/) |
+| Data Pipeline | raw 보존, Kafka outbox, ETL lineage, worker ASG scale-out/in | [Trader Data Platform](/reports/trader-data-platform/) |
 
-핵심은 장애를 숨기는 것이 아니라, 장애 범위를 제한하고 복구 흐름을 검증 가능한 형태로 만드는 것입니다.
+핵심은 장애를 숨기는 것이 아니라, 장애 범위를 제한하고 복구 흐름을 검증 가능한 형태로 만드는 것입니다. 최근 확장에서는 ETL 처리 비용과 부하를 즉시 발생시키지 않고, raw와 Kafka lag를 기준으로 필요한 시점에 worker를 기동하는 control plane 구조까지 검증했습니다.
 
 ---
 

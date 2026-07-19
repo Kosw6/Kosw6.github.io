@@ -9,7 +9,7 @@ classes: wide
 > 🚀 **WebSocket 분산 시스템 설계의 마지막 단계**
 > (샤딩 → 정합성 → 무중단 복구)<br>
 > 🔍 **서비스 중단 없이 WebSocket 서버를 교체하는 방법 (Kafka Replay · Drain · Failback 설계)**  <br>
-> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md.md)
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md)
 <br>
 
 > **시리즈**: [WebSocket 성능 개선](/reports/websocket-group-canvas/) 
@@ -32,7 +32,7 @@ classes: wide
   Gateway + Drain으로 클라이언트 재연결을 유도하여 무중단 서버 전환 구현
 
 > ⚠️ 어떻게 이벤트 유실 없이 서버를 교체했는지 (Kafka Replay + Drain 흐름)   
-> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md.md)
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md)
 ---
 
 ## 배경
@@ -104,7 +104,7 @@ Catch-up 종료 → ready=true → Broadcast Consumer 시작
 이벤트 유실 없이 장애 구간 3건 모두 복구 확인.
 
 > 🔍 Kafka offset 기반 replay 설계와 실제 복구 로그 전체 보기   
-> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md.md)
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md)
 
 ---
 
@@ -144,7 +144,7 @@ public void broadcast(CanvasEventEnvelope event) {
 
 
 > 🔍 Drain → reconnect → failback 전체 시퀀스 상세 보기     
-> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md.md)
+> **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md)
 
 ---
 
