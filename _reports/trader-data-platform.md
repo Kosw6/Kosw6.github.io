@@ -271,4 +271,8 @@ trader.jobs.events lag=1
 - [AWS 배포 및 비용 최적화 설계](https://github.com/Kosw6/engineering-notes/blob/main/reports/Data/03_AWS_DEPLOYMENT_COST_OPTIMIZATION.md)
 - [AWS Worker ASG 자동 확장 검증](https://github.com/Kosw6/engineering-notes/blob/main/reports/Data/04_AWS_WORKER_ASG_AUTO_SCALING_VALIDATION.md)
 
-핵심은 데이터를 많이 적재한 것이 아니라, **raw부터 정규화 결과, Kafka commit, worker 상태까지 운영자가 추적하고 복구할 수 있는 구조를 실제 AWS 흐름으로 검증한 것**입니다.
+## 개선 과정에서 배운 점
+
+수집과 정규화를 한 번의 작업으로 처리하면 구조가 단순하다고 생각했습니다. 하지만 DB 적재와 Kafka commit 사이에서 장애가 발생하면 원본 보존 여부와 재처리 범위를 확인하기 어려웠습니다.
+
+이후 raw, 변환 상태, lineage, consumer 처리 위치를 각각 기록하고 Worker를 다시 생성할 수 있는 실행 노드로 분리했습니다. 비용 절감도 모든 서버를 줄이는 방식이 아니라, DB와 Kafka의 상태를 기준으로 복구 가능한 Worker에만 적용해야 한다는 기준을 세웠습니다.

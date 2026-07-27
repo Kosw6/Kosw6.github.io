@@ -121,11 +121,11 @@ shard = slot / (32 / instanceCount)
 
 ---
 
-## 핵심 인사이트
+## 개선 과정에서 배운 점
 
-> 그룹 단위 샤딩은 단순 연결 분산이 아니다.
-> fanout locality를 유지하면서 broadcast 처리 부담 자체를 인스턴스 단위로 나눠,
-> JVM Allocation과 GC 횟수까지 함께 줄이는 확장 전략이다.
+WebSocket 확장에서는 연결 수를 서버별로 균등하게 나누는 것이 핵심이라고 생각했다. 하지만 같은 그룹의 이벤트가 여러 서버를 오가면 연결은 분산돼도 broadcast 비용과 서버 간 전달은 줄지 않았다.
+
+이후 라우팅 키를 정할 때 연결 수뿐 아니라 이벤트가 처리되는 위치도 함께 고려했다. groupId 기준으로 fanout을 한 서버 안에 유지한 뒤 인스턴스별 allocation과 GC를 비교해, 부하가 실제로 분리됐는지 확인했다.
 
 ## 다음 단계
 
@@ -133,4 +133,4 @@ shard = slot / (32 / instanceCount)
 
 **서버가 바뀌는 순간 편집 상태는 어떻게 유지할까?**
 
->[PoC 2 — Fallback & 충돌 제어 보기](./websocket-poc2-conflict.md)
+>[PoC 2 — Fallback & 충돌 제어 보기](/reports/websocket-poc2-conflict/)
