@@ -11,6 +11,12 @@ plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
 
+analytics:
+  provider: "google-gtag"
+  google:
+    tracking_id: "G-67TSEFY9XC"
+    anonymize_ip: true
+
 minimal_mistakes_skin: "dark"
 
 timezone: Asia/Seoul
