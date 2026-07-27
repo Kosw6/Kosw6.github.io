@@ -3,8 +3,6 @@ layout: single
 title: "Resume"
 permalink: /resume/
 classes: wide
-toc: true
-toc_sticky: true
 ---
 
 ## Profile
@@ -36,29 +34,24 @@ toc_sticky: true
 
 ## 성과 중심 경험
 
-### LoadTest Converter / Desktop (개인 프로젝트, 2025)
+### 부하·장애 검증 시나리오 오케스트레이터 (개인 프로젝트, 2026.04–2026.06)
 
-k6 부하테스트 시나리오를 GUI로 작성하고 실행하는 도구 시리즈. Go로 직접 구현.
+수동으로 반복하던 인프라 준비, 부하 실행, 장애 주입, 복구 확인을 하나의 검증 시나리오로 실행하는 Go 기반 도구입니다.
 
-**LoadTest Converter** — k6 시나리오 YAML 빌더 (Go + React, Render 배포)
-- Go `net/http` 표준 라이브러리 기반 REST API 서버 구현
-- `//go:embed` 로 k6 템플릿을 단일 바이너리에 내장, `archive/zip` 으로 ZIP 패키징
-- Preview / Export / Import 3-endpoint 설계 (YAML 생성 · ZIP 내보내기 · 역파싱)
-
-**LoadTest Desktop** — k6 부하테스트 데스크탑 실행기 (Go + Wails)
-- 별도 엔진 바이너리 제거 → `engine/` 패키지로 흡수, 단일 실행파일 배포
-- `io.Writer` 인터페이스 기반 실시간 로그 스트리밍 설계 (`sync.Mutex` 스레드 안전 보장)
-- k6 출력 `io.MultiWriter(logFile, w)` 로 파일 저장 + UI 실시간 전달 동시 처리
-- `depends_on` 기반 wave 병렬 스텝 실행 (goroutine + WaitGroup + channel 에러 수집)
+- React/Wails UI에서 단계, 의존성, 인프라 설정과 CLI 명령을 구성하고 YAML/ZIP으로 내보내는 시나리오 작성 흐름 구현
+- 초기 Converter와 Desktop 실행기를 `engine/` 패키지와 로컬 UI로 통합해 단일 실행파일 배포
+- `depends_on` 기반 wave 병렬 실행을 goroutine, WaitGroup, channel 에러 수집으로 구현
+- `io.Writer`와 `io.MultiWriter`로 실행 로그의 파일 저장과 UI 실시간 전달을 동시에 처리
+- Terraform, k6, AWS SSM을 연결해 환경 준비부터 Redis 장애 주입, final check, baseline 비교까지 반복 검증
 
 ---
 
-### Trader Platform (개인 프로젝트, 2025–현재)
+### Trader Platform (개인 프로젝트, 2025.01–2026.07)
 
 주식투자 학습을 위한 복기 플랫폼. 25–30M+ OHLCV 조회 성능 개선에서 시작해 실시간 협업, 장애 복구, KIS/BLS/SEC 데이터 파이프라인과 worker control plane까지 확장했습니다.
 
 **성능 개선**
-- k6 부하 테스트 + TimescaleDB 하이퍼테이블·청크 튜닝 → P95 **7,247ms → 235ms** @ 300 RPS **(28배 개선, SLO 달성)**
+- k6 부하 테스트 + TimescaleDB 하이퍼테이블·청크 튜닝 → P95 **7,247ms → 235ms** @ 300 RPS, **SLO 달성**
 - 복합 인덱스 단독 적용만으로 P95 **342ms → 32ms (10배)** — 원인을 단계별로 분리해 측정
 - JPA Fetch 전략 4차 비교 실험 (Lazy N+1 / Fetch Join / Projection / DB preview) → 10K payload 기준 붕괴 RPS **5배 차이** 수치 확인
 - JFR/JMC Stack Trace로 JWT 중복 검증 hot path 발견 → 제거 후 Old GC **기준치 대비 36% 감소**

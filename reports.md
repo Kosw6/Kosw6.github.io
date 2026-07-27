@@ -22,13 +22,13 @@ classes: wide
     <span class="report-card__eyebrow">DEGRADED MODE</span>
     <h3>Redis, Kafka 장애 대응</h3>
     <p>저지연 hot path와 durable replay 경로를 분리하고 DB fallback과 outbox 복구를 검증했습니다.</p>
-    <span class="report-card__result">장애 범위 제한 · 복구 후 replay</span>
+    <span class="report-card__result">Redis lock 1/49 · gRPC p95 14.5ms · loss 0</span>
   </a>
   <a class="report-card" href="/reports/auto-recovery-scaleout/">
     <span class="report-card__eyebrow">AUTO RECOVERY</span>
     <h3>Alert에서 복구 액션까지</h3>
     <p>Grafana Alert, Lambda, SSM, ASG를 연결해 컨테이너 재시작과 신규 인스턴스 합류를 검증했습니다.</p>
-    <span class="report-card__result">App restart · ASG scale-out</span>
+    <span class="report-card__result">App restart · 4초 failover · ASG scale-out</span>
   </a>
   <a class="report-card" href="/reports/observability-system/">
     <span class="report-card__eyebrow">OBSERVABILITY</span>
@@ -40,7 +40,7 @@ classes: wide
     <span class="report-card__eyebrow">CAPACITY</span>
     <h3>SLO 기반 운영 사양 산정</h3>
     <p>p95 300ms를 기준으로 App/DB 사양과 thread, pool 설정을 부하 테스트로 결정했습니다.</p>
-    <span class="report-card__result">2vCPU / 4GB 구성 검증</span>
+    <span class="report-card__result">2vCPU / 4GB · Thread 30 · Hikari 8</span>
   </a>
   <a class="report-card" href="/reports/loadtest-orchestrator-redis-fault-validation/">
     <span class="report-card__eyebrow">VALIDATION</span>
@@ -55,7 +55,7 @@ classes: wide
 <div class="report-grid">
   <a class="report-card report-card--featured" href="/reports/timescaledb-27x/">
     <span class="report-card__eyebrow">TIMESCALEDB</span>
-    <h3>시계열 조회 28배 개선</h3>
+    <h3>시계열 조회 p95 SLO 달성</h3>
     <p>인덱스, 하이퍼테이블, chunk 구성을 단계별로 분리해 같은 부하에서 비교했습니다.</p>
     <span class="report-card__result">p95 7,247ms -> 235ms</span>
   </a>

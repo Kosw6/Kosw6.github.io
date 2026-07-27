@@ -1,16 +1,30 @@
 ---
-title: "Load Test Orchestrator"
+title: "부하·장애 검증 시나리오 오케스트레이터"
 layout: single
-sidebar:
-  nav: "main"
-toc: true
-toc_sticky: true
 classes: wide
 excerpt: "로컬 UI와 실행 엔진을 통합하고 Terraform, k6, AWS SSM, WebSocket, Redis 장애 주입을 하나의 검증 시나리오로 자동화하는 Go 기반 오케스트레이터"
 tags: [go, wails, k6, terraform, redis, websocket, ssm, loadtest]
 ---
 
 > **부하 테스트를 실행하는 것에서 끝나지 않고, 인프라 생성, 장애 주입, 복구 확인, baseline 비교까지 하나의 검증 워크플로우로 묶는 도구입니다.**
+
+<div class="proof-strip">
+  <div class="proof-item">
+    <span class="proof-item__label">SCENARIO</span>
+    <strong>단계·의존성·인프라 정의</strong>
+    <span>UI에서 YAML/ZIP 시나리오 구성</span>
+  </div>
+  <div class="proof-item">
+    <span class="proof-item__label">EXECUTION</span>
+    <strong>Terraform → k6 → SSM</strong>
+    <span>준비, 부하, 장애, 복구를 순서대로 실행</span>
+  </div>
+  <div class="proof-item">
+    <span class="proof-item__label">VALIDATION</span>
+    <strong>fault와 baseline 비교</strong>
+    <span>final check와 결과 수집으로 복구 확인</span>
+  </div>
+</div>
 
 ---
 

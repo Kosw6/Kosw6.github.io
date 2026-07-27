@@ -2,8 +2,6 @@
 title: "Auto Recovery & Scale-out - Grafana Alert, Lambda, SSM/ASG"
 layout: single
 permalink: /reports/auto-recovery-scaleout/
-toc: true
-toc_sticky: true
 classes: wide
 excerpt: "Grafana Alert에서 Lambda를 거쳐 SSM 복구와 ASG scale-out을 실행하고 신규 인스턴스의 서비스 합류까지 검증한 운영 자동화"
 tags: [aws, grafana, lambda, ssm, autoscaling, recovery]
@@ -12,15 +10,35 @@ tags: [aws, grafana, lambda, ssm, autoscaling, recovery]
 > **핵심 질문**: 장애를 감지하는 데서 끝나지 않고, 복구 명령 실행과 신규 인스턴스 합류까지 자동화할 수 있는가?
 >
 > 원문: [auto-recovery-scaleout-verification.md](https://github.com/Kosw6/engineering-notes/blob/main/reports/auto-recovery-scaleout-verification.md)
+>
+> 라우팅 검증: [Rendezvous Hashing 기반 Failover / Failback](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc4-rendezvous-failover-routing.md)
 <br>
 
-> **시리즈**: Reliability & Operations
-> <br>[1. Observability System](/reports/observability-system/)
-> <br>[2. SLO 기반 운영 사양 산정](/reports/slo-operating-capacity/)
-> <br>[3. Realtime Degraded Mode](/reports/realtime-degrade-overview/)
-> <br>**4. Auto Recovery & Scale-out**
-> <br>[5. Load Test Orchestrator](/reports/loadtest-orchestrator-redis-fault-validation/)
+<nav class="page-quick-nav" aria-label="핵심 섹션 바로가기">
+  <strong>빠르게 보기</strong>
+  <a href="#summary">결과 요약</a>
+  <a href="#app-down-자동-복구">App 재시작</a>
+  <a href="#high-cpu-scale-out">ASG 확장</a>
+  <a href="#gateway-failover--failback">Gateway 전환</a>
+</nav>
 
+<div class="proof-strip">
+  <div class="proof-item">
+    <span class="proof-item__label">ROUTING</span>
+    <strong>Rendezvous Hashing</strong>
+    <span>groupId별 안정적 후보 순위와 capacity 예약</span>
+  </div>
+  <div class="proof-item">
+    <span class="proof-item__label">FAILOVER</span>
+    <strong>close 1006 -> 전환 약 4초</strong>
+    <span>health poller 1 cycle 내 A에서 B로 이동</span>
+  </div>
+  <div class="proof-item">
+    <span class="proof-item__label">FAILBACK</span>
+    <strong>신규 연결부터 A로 복귀</strong>
+    <span>기존 세션 강제 이동 없음</span>
+  </div>
+</div>
 
 ---
 
@@ -104,9 +122,28 @@ Gateway는 Eureka와 `/internal/health`를 함께 사용해 backend instance 상
 | DRAINING | 신규 연결 차단, 기존 연결 정리 |
 | DOWN | 라우팅 제외 |
 
-Failover는 health poller 주기에 맞춰 약 1 cycle 내 전환되도록 설계했다.
+라우팅은 다음 순서로 결정했다.
 
-기존 세션은 강제로 failback하지 않고 reconnect churn을 줄이는 방향을 선택했다.
+```text
+Eureka instance 목록
+-> HEALTHY 후보만 선택
+-> Rendezvous Hashing으로 groupId별 후보 순위 계산
+-> Redis Lua로 active + reserved < capacity 원자적 확인
+-> 예약 실패 시 다음 순위 후보 선택
+```
+
+| 검증 시점 | 결과 |
+|---|---|
+| 초기 | HOLD와 신규 PROBE 모두 hash 1순위 A에 연결 |
+| t=19s | A 장애, 기존 세션 close 1006 감지 |
+| t=23s | health poller가 A를 제외하고 B로 failover |
+| t=45s | 장애 중 신규 연결도 B로 라우팅 |
+| t=90s | A 복구 후 신규 연결부터 다시 A로 복귀 |
+| t=135s | 신규 연결은 A 유지, 기존 B 세션은 그대로 유지 |
+
+Failover는 health poller 1 cycle 이내인 약 4초에 완료됐다. 인스턴스 추가·제거 시 모든 그룹을 다시 배치하지 않고 영향받는 그룹만 다음 hash 후보로 이동하도록 Rendezvous Hashing을 선택했다.
+
+기존 세션은 강제로 failback하지 않았다. 복구 노드로 기존 WebSocket을 옮기면 reconnect와 room rejoin 비용이 발생하므로, 신규 연결부터 원래 hash 결과로 자연스럽게 복귀시키는 방향을 선택했다.
 
 ---
 

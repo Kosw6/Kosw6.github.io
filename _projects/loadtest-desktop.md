@@ -1,14 +1,14 @@
 ---
-title: "LoadTest Desktop"
+title: "LoadTest Desktop - Orchestrator 실행기 단계"
 layout: single
-sidebar:
-  nav: "main"
 toc: true
 toc_sticky: true
 classes: wide
 excerpt: "k6 부하테스트 데스크탑 실행기 — Go + Wails, 엔진 내장, 실시간 로그 스트리밍"
 tags: [go, wails, k6, loadtest, desktop, concurrency]
 ---
+
+> 현재는 [부하·장애 검증 시나리오 오케스트레이터](/projects/loadtest-orchestrator/)의 로컬 UI와 실행 엔진으로 통합했습니다. 이 페이지는 단일 실행파일과 실시간 로그 처리 단계의 구현 기록입니다.
 
 > **"별도 엔진 바이너리 없이, 단일 실행파일 하나로 k6 시나리오를 실행합니다."**
 

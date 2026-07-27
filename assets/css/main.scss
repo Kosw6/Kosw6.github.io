@@ -178,6 +178,87 @@
   margin-left: 1rem;
 }
 
+/* Keep long generated tables of contents from hiding the report summary. */
+.sidebar__right .toc {
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.page-quick-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 1rem 0 1.75rem;
+  padding: 0.8rem 0;
+  border-top: 1px solid #475569;
+  border-bottom: 1px solid #475569;
+}
+
+.page-quick-nav strong {
+  margin-right: 0.35rem;
+  color: #f8fafc;
+  font-size: 0.78rem;
+}
+
+.page-quick-nav a {
+  padding: 0.42rem 0.65rem;
+  border: 1px solid #475569;
+  border-radius: 4px;
+  color: #a5f3fc;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.page-quick-nav a:hover,
+.page-quick-nav a:focus-visible {
+  border-color: #67e8f9;
+  background: #182235;
+  color: #f8fafc;
+}
+
+.portfolio-page-intro {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.55fr) minmax(0, 1.45fr);
+  gap: 1.5rem;
+  align-items: start;
+  margin: 0 0 1.5rem;
+  padding: 1rem 0 1.25rem;
+  border-bottom: 1px solid #475569;
+}
+
+.portfolio-page-intro span {
+  color: #67e8f9;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.portfolio-page-intro p {
+  margin: 0;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.portfolio-project-list {
+  margin-bottom: 2rem;
+}
+
+.portfolio-project-list .home-menu-item__title h2 {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 1rem;
+  line-height: 1.35;
+}
+
+.portfolio-page-footer {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 1.5rem;
+}
+
 @media (max-width: 760px) {
   .proof-strip,
   .report-grid {
@@ -195,6 +276,34 @@
 
   .report-card {
     min-height: 0;
+  }
+
+  .page-quick-nav {
+    align-items: stretch;
+  }
+
+  .page-quick-nav strong {
+    width: 100%;
+    margin: 0 0 0.2rem;
+  }
+
+  .page-quick-nav a {
+    flex: 1 1 calc(50% - 0.5rem);
+    text-align: center;
+  }
+
+  .portfolio-page-intro {
+    grid-template-columns: 1fr;
+    gap: 0.55rem;
+  }
+
+  .portfolio-page-footer {
+    flex-direction: column;
+  }
+
+  .portfolio-page-footer .btn {
+    width: 100%;
+    text-align: center;
   }
 }
 

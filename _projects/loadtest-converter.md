@@ -1,14 +1,14 @@
 ---
-title: "LoadTest Converter"
+title: "LoadTest Converter - Orchestrator 초기 단계"
 layout: single
-sidebar:
-  nav: "main"
 toc: true
 toc_sticky: true
 classes: wide
 excerpt: "k6 부하테스트 시나리오 YAML 빌더 — Go API + React UI, Render 배포"
 tags: [go, react, k6, loadtest, saas]
 ---
+
+> 현재는 [부하·장애 검증 시나리오 오케스트레이터](/projects/loadtest-orchestrator/)의 시나리오 작성 모듈로 통합했습니다. 이 페이지는 UI 기반 YAML/ZIP 생성 단계의 구현 기록입니다.
 
 > **"시나리오 YAML을 직접 작성하지 않고, UI에서 조립하면 자동으로 생성되게 만들었습니다."**
 

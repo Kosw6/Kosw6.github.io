@@ -1,12 +1,8 @@
 ---
-title: "Trader Platform"
+title: "Trader - 주식투자 복기 플랫폼"
 layout: single
-sidebar:
-  nav: "main"
-toc: true
-toc_sticky: true
 classes: wide
-excerpt: "투자 복기 플랫폼, TimescaleDB 28배 개선, WebSocket 99.97%, Kafka/ETL lineage, AWS worker scaling"
+excerpt: "투자 복기 플랫폼, TimescaleDB p95 SLO 달성, WebSocket 99.97%, Kafka/ETL lineage, AWS worker scaling"
 tags: [spring, timescaledb, redis, kafka, websocket, k6, go, python, aws, etl]
 ---
 
@@ -19,13 +15,22 @@ tags: [spring, timescaledb, redis, kafka, websocket, k6, go, python, aws, etl]
 
 | 문제 | Before | After | 개선 |
 |------|--------|-------|------|
-| TimescaleDB 시계열 쿼리 (P95 @ 300 RPS) | 7,247ms | **235ms** | **28배** |
+| TimescaleDB 시계열 쿼리 (P95 @ 300 RPS) | 7,247ms | **235ms** | **p95 < 300ms 달성** |
 | 인덱스 단독 효과 (P95 @ 10 RPS) | 342ms | **32ms** | **10배** |
 | WebSocket ≤200ms 수신율 | 0.38% | **99.97%** | **+99.6%p** |
 | Old GC 횟수 (JFR 실측) | 기준치 | **36% 감소** | — |
 | WebSocket fanout 부하 (샤딩 후) | 159K 단일 | **79K + 79K** | **50% 분산** |
 | BLS raw ETL lag | 2 | **0** | 밀린 raw 처리 완료 |
 | AWS Python Worker | desired 0 | **0 -> 1 -> 0** | lag/idle 기반 자동 제어 |
+
+<nav class="page-quick-nav" aria-label="핵심 섹션 바로가기">
+  <strong>빠르게 보기</strong>
+  <a href="#프로젝트-개요">프로젝트 개요</a>
+  <a href="#data-platform">Data Platform</a>
+  <a href="#timescaledb-performance">성능 개선</a>
+  <a href="#websocket-realtime">실시간 처리</a>
+  <a href="#reliability-operations">장애 복구·운영</a>
+</nav>
 
 ---
 
@@ -80,7 +85,7 @@ Trader는 주식투자 학습을 위한 복기 플랫폼입니다. 실시간 Web
 
 ---
 
-## 성능 개선 1 — TimescaleDB 시계열 쿼리 28배
+## 성능 개선 1 — TimescaleDB 시계열 쿼리 p95 SLO 달성 {#timescaledb-performance}
 
 ### 상황
 
@@ -112,7 +117,7 @@ SELECT hypertable_name FROM timescaledb_information.hypertables;
 | Before | 인덱스 없음, 일반 테이블 | **342ms** @ 10 RPS |
 | 1단계 | `(symb, timestamp)` 복합 인덱스 적용 | **32ms** @ 10 RPS (**10배**) |
 | 2단계 | 하이퍼테이블 생성 + 청크 구조 분석 | 7,247ms @ 300 RPS (인덱스 있어도 대용량에서 한계) |
-| 3단계 | 90일 인터벌 + 공간 파티션 4 튜닝 | **235ms** @ 300 RPS (**28배**, SLO 달성) |
+| 3단계 | 90일 인터벌 + 공간 파티션 4 튜닝 | **235ms** @ 300 RPS, SLO 달성 |
 
 > **인덱스가 쿼리 경로를 결정하고, 하이퍼테이블이 스캔 범위를 제한한다.**
 > 두 조건이 동시에 충족되어야 대규모 시계열 조회가 성립한다.
@@ -179,7 +184,7 @@ Allocation Hotspot:
 
 ---
 
-## 실시간 시스템 1 — WebSocket 브로드캐스트 재설계
+## 실시간 시스템 1 — WebSocket 브로드캐스트 재설계 {#websocket-realtime}
 
 ### 상황
 
@@ -302,7 +307,7 @@ Group Canvas의 실시간 노드 업데이트 기능.
 성능은 단순 인프라 사양이 아니라, 구조와 자원 사용 방식에 의해 결정된다는 것을 검증하였다.<br>
 
 ---
-## Reliability & Operations
+## Reliability & Operations {#reliability-operations}
 
 Trader는 단순 기능 구현 이후 Redis/Kafka 장애, 운영 관측, 자동 복구, 데이터 파이프라인 제어 흐름까지 검증했습니다.
 

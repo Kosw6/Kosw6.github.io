@@ -1,9 +1,7 @@
 ---
-title: "Trader Data Platform - Kafka ETL Lineage & Worker Control Plane"
+title: "Trader Data Platform - ETL 추적과 Worker 제어"
 layout: single
 permalink: /reports/trader-data-platform/
-toc: true
-toc_sticky: true
 classes: wide
 excerpt: "KIS, BLS, SEC 데이터를 raw로 보존하고 Kafka outbox, ETL lineage, 장애 복구, AWS ASG worker scaling까지 검증한 데이터 파이프라인"
 tags: [go, python, kafka, etl, postgresql, timescaledb, aws, autoscaling]
@@ -32,6 +30,14 @@ Trader Data Platform은 투자 복기 서비스에 필요한 KIS 시세, BLS 거
     <span>lag scale-out, idle 120초 scale-in</span>
   </div>
 </div>
+
+<nav class="page-quick-nav" aria-label="핵심 섹션 바로가기">
+  <strong>빠르게 보기</strong>
+  <a href="#architecture">Architecture</a>
+  <a href="#failure-recovery">장애 복구</a>
+  <a href="#aws-worker-scaling">AWS Worker ASG</a>
+  <a href="#구현-범위와-한계">범위와 한계</a>
+</nav>
 
 | 영역 | 구현 및 검증 |
 |---|---|
@@ -102,28 +108,33 @@ JOB_ITEM_QUEUED
 ## 장애 복구 전략 {#failure-recovery}
 
 <figure class="report-figure">
-  <img src="/assets/images/data-platform/etl-recovery-flow.svg" alt="DB commit과 Kafka offset commit 사이의 장애 위치에 따른 ETL 복구 흐름">
-  <figcaption>DB 처리를 먼저 확정하고 Kafka offset은 마지막에 commit해 미완료 메시지가 다시 전달되도록 했습니다.</figcaption>
+  <img src="/assets/images/data-platform/etl-recovery-flow.svg" alt="ETL transaction, consumer ledger transaction, Kafka offset commit 사이의 장애 위치에 따른 복구 흐름">
+  <figcaption>ETL 결과와 처리 원장을 구간별로 확정하고 Kafka offset은 마지막에 commit해, 중단 위치에 따라 재처리 또는 보강할 수 있게 했습니다.</figcaption>
 </figure>
 
 ```text
 Kafka message 수신
--> source_object PROCESSING
+-> processed_event SUCCESS 중복 확인
+-> source_object PROCESSING 기록
+-> processing state DB commit
 -> raw 읽기
--> normalized table upsert
--> record_lineage insert
+-> normalized table upsert + record_lineage insert
 -> source_object PROCESSED
--> processed_event SUCCESS
--> DB commit
+-> ETL transaction commit
+-> processed_event SUCCESS 기록
+-> consumer ledger transaction commit
 -> Kafka offset commit
 ```
 
 | 중단 위치 | 남는 상태 | 재수신 시 처리 |
 |---|---|---|
-| DB commit 전 | Kafka offset 미커밋, 트랜잭션 rollback 가능 | 다른 worker가 ETL 재처리 |
-| DB commit 후 processed_event 전 | `PROCESSED`와 lineage 존재 | ETL 생략, SUCCESS 보강 후 commit |
-| processed_event 후 Kafka commit 전 | SUCCESS 존재 | 중복 메시지로 판단하고 바로 commit |
+| `PROCESSING` 기록 전 | Kafka offset 미커밋 | 다른 worker가 메시지를 다시 처리 |
+| `PROCESSING` commit 후 ETL commit 전 | `PROCESSING`이 남을 수 있고 도메인 적재는 rollback | 재전달된 메시지로 ETL 재처리 |
+| ETL commit 후 consumer ledger commit 전 | `PROCESSED`와 lineage 존재 | ETL 생략, `processed_event SUCCESS` 보강 |
+| consumer ledger commit 후 Kafka commit 전 | `processed_event SUCCESS` 존재 | 중복 처리를 생략하고 Kafka offset commit |
 | ETL 실패 | `FAILED`, 오류 메시지 | 자동 반복 대신 관리자 retry 또는 정책 적용 |
+
+도메인 upsert, `source_object=PROCESSED`, lineage 기록은 하나의 ETL transaction으로 묶었습니다. `processed_event`는 별도의 consumer ledger transaction으로 기록하며, 두 commit 사이의 장애 구간은 `PROCESSED + lineage` 확인으로 보완합니다.
 
 `PROCESSING`은 강한 분산 lock이 아니라 운영 관측 상태로 사용했습니다. 기본 복구는 Kafka consumer group과 미커밋 offset에 맡기고, 오래된 PROCESSING은 관리자 화면에서 확인하도록 범위를 정했습니다.
 

@@ -23,7 +23,7 @@ header:
   <div class="home-proof-item">
     <span>TimescaleDB 조회</span>
     <strong>p95 7,247ms → 235ms</strong>
-    <small>약 2,600만 행, 28배 개선</small>
+    <small>약 2,600만 행, 300 RPS SLO 달성</small>
   </div>
   <div class="home-proof-item">
     <span>WebSocket 실시간 처리</span>

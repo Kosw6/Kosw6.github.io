@@ -1,10 +1,6 @@
 ---
 title: "SIC Club Portal"
 layout: single
-sidebar:
-  nav: "main"
-toc: true
-toc_sticky: true
 classes: wide
 excerpt: "FE/BE/AI/Design 15명 팀 리딩, 협업 구조 설계, CI/CD, 출결/게시판/백테스팅/AI퀀트봇"
 tags: [react, spring, postgresql, ci-cd, leadership, aws]
