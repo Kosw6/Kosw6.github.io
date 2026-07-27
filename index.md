@@ -1,189 +1,205 @@
 ---
 layout: splash
 title: "Sungwon Kim"
-classes: wide
+
+excerpt: >
+  <strong class="hero-statement">측정과 가설로 병목을 찾고, 검증한 개선안을 도입해 성능과 안정성을 높이는 백엔드 플랫폼을 만듭니다.</strong>
+  <span class="hero-summary">실시간 협업, 다양한 원천 데이터의 수집 및 정규화, 부하와 장애 검증 자동화를 직접 설계하고 AWS 환경에서 검증했습니다.</span>
+  <span class="hero-capability-grid" aria-label="핵심 구현 영역">
+    <span class="hero-capability-item">
+      <b>실시간 이벤트 처리</b>
+      <small>WebSocket, Redis Pub/Sub, Kafka</small>
+    </span>
+    <span class="hero-capability-item">
+      <b>데이터 파이프라인</b>
+      <small>Go Controller, Python Worker, Kafka ETL</small>
+    </span>
+    <span class="hero-capability-item">
+      <b>검증 자동화</b>
+      <small>Go Orchestrator, Terraform, k6, AWS SSM</small>
+    </span>
+  </span>
+
+header:
+  overlay_image: /assets/images/hero-bg-1.png
+  overlay_filter: 0.6
+  overlay_color: "#000000"
+  actions:
+    - label: "대표 프로젝트"
+      url: "#featured-projects"
+      btn_class: "btn--primary"
+    - label: "Engineering Reports"
+      url: "/reports/"
+      btn_class: "btn--inverse"
 ---
 
-<section class="resume-hero" aria-labelledby="resume-title">
-  <div class="resume-hero__intro">
-    <span class="resume-kicker">BACKEND DEVELOPER</span>
-    <h1 id="resume-title">김성원</h1>
-    <p class="resume-hero__lead">
-      느린 조회, 끊기는 실시간 협업, 추적하기 어려운 데이터 처리 문제를 직접 재현하고 개선했습니다.
-    </p>
-    <p class="resume-hero__summary">
-      문제를 수치로 확인하고 여러 대안을 비교한 뒤, 장애 이후에도 복구 가능한 구조로 마무리하는 개발을 지향합니다.
-    </p>
-    <div class="resume-hero__actions">
-      <a class="btn btn--primary" href="{{ '/resume/' | relative_url }}">이력서 보기</a>
-      <a class="resume-text-link" href="https://github.com/Kosw6">GitHub</a>
-    </div>
+<div class="home-proof-strip" aria-label="대표 검증 결과">
+  <div class="home-proof-item">
+    <span>TimescaleDB 조회</span>
+    <strong>p95 7,247ms → 235ms</strong>
+    <small>약 2,600만 행, 300 RPS SLO 달성</small>
   </div>
-
-  <aside class="resume-profile" aria-label="핵심 정보">
-    <dl>
-      <div>
-        <dt>관심 분야</dt>
-        <dd>성능 개선, 실시간 처리, 데이터 파이프라인</dd>
-      </div>
-      <div>
-        <dt>주요 언어</dt>
-        <dd>Java, Go, Python</dd>
-      </div>
-      <div>
-        <dt>검증 방식</dt>
-        <dd>부하 테스트, 장애 주입, 복구 확인</dd>
-      </div>
-    </dl>
-  </aside>
-</section>
-
-<section class="resume-section" aria-labelledby="strengths-title">
-  <div class="resume-section__heading">
-    <span>CORE STRENGTHS</span>
-    <h2 id="strengths-title">주로 해결해 온 문제</h2>
+  <div class="home-proof-item">
+    <span>WebSocket 실시간 처리</span>
+    <strong>≤200ms 99.97%</strong>
+    <small>동시성 제어와 전송 구조 개선</small>
   </div>
-
-  <div class="strength-list">
-    <div class="strength-item">
-      <strong>느린 요청의 원인 찾기</strong>
-      <p>응답 시간과 런타임 지표를 측정하고 병목 구간을 좁혀 데이터 구조와 처리 방식을 개선합니다.</p>
-    </div>
-    <div class="strength-item">
-      <strong>실시간 서비스 안정화</strong>
-      <p>동시성 문제와 장애 상황을 재현하고, 사용자의 작업이 끊기거나 사라지지 않는 복구 흐름을 설계합니다.</p>
-    </div>
-    <div class="strength-item">
-      <strong>데이터 처리 과정 추적</strong>
-      <p>외부 데이터 수집부터 변환과 저장까지 처리 상태를 남겨 실패 지점과 재처리 범위를 확인할 수 있게 합니다.</p>
-    </div>
+  <div class="home-proof-item">
+    <span>AWS Python Worker</span>
+    <strong>ASG 0 → 1 → 0</strong>
+    <small>Kafka lag 기반 자동 확장과 회수</small>
   </div>
-</section>
+</div>
 
-<section class="resume-section" id="problem-solving" aria-labelledby="problems-title">
-  <div class="resume-section__heading resume-section__heading--split">
+<section class="home-section" id="featured-projects">
+  <div class="home-section__header">
     <div>
-      <span>PROBLEM SOLVING</span>
-      <h2 id="problems-title">대표 문제 해결 경험</h2>
+      <span class="home-section__eyebrow">FEATURED PROJECTS</span>
+      <h2>대표 프로젝트</h2>
     </div>
-    <p>문제를 재현하고 대안을 비교한 뒤, 같은 조건에서 개선 결과를 확인했습니다.</p>
+    <p>서비스 구현에 그치지 않고 성능 측정, 장애 복구, 운영 제어까지 연결한 프로젝트입니다.</p>
   </div>
 
-  <div class="case-list">
-    <a class="case-row" href="{{ '/reports/timescaledb-27x/' | relative_url }}">
-      <div class="case-row__number">01</div>
-      <div class="case-row__body">
-        <span class="case-row__label">주가 차트 조회</span>
-        <h3>2,600만 건의 데이터에서 차트가 열리는 데 7초가 걸렸습니다</h3>
-        <p><b>판단</b> 조회 범위와 정렬 방식에 맞춰 인덱스, 데이터 분할, 사전 집계 방식을 단계별로 비교했습니다.</p>
-      </div>
-      <div class="case-row__result">
-        <span>결과</span>
-        <strong>7,247ms → 235ms</strong>
-        <small>과정 보기 →</small>
-      </div>
-    </a>
-
-    <a class="case-row" href="{{ '/reports/websocket-group-canvas/' | relative_url }}">
-      <div class="case-row__number">02</div>
-      <div class="case-row__body">
-        <span class="case-row__label">실시간 동시 편집</span>
-        <h3>여러 사용자가 동시에 편집하면 메시지가 겹치고 연결이 끊겼습니다</h3>
-        <p><b>판단</b> 전송 책임을 한곳으로 모으고, 짧은 시간의 변경 내용을 묶어 보내도록 구조를 바꿨습니다.</p>
-      </div>
-      <div class="case-row__result">
-        <span>결과</span>
-        <strong>200ms 이내 99.97%</strong>
-        <small>과정 보기 →</small>
-      </div>
-    </a>
-
-    <a class="case-row" href="{{ '/reports/trader-data-platform/' | relative_url }}">
-      <div class="case-row__number">03</div>
-      <div class="case-row__body">
-        <span class="case-row__label">외부 데이터 수집</span>
-        <h3>수집이 중단되면 어디까지 처리됐는지 확인하기 어려웠습니다</h3>
-        <p><b>판단</b> 원본을 먼저 보존하고 수집과 변환을 분리해, 실패 지점과 다시 처리할 범위를 기록했습니다.</p>
-      </div>
-      <div class="case-row__result">
-        <span>결과</span>
-        <strong>대기 2 → 0</strong>
-        <small>과정 보기 →</small>
-      </div>
-    </a>
-  </div>
-</section>
-
-<section class="resume-section" id="featured-projects" aria-labelledby="projects-title">
-  <div class="resume-section__heading resume-section__heading--split">
-    <div>
-      <span>PROJECTS</span>
-      <h2 id="projects-title">프로젝트</h2>
-    </div>
-    <p>기술보다 먼저, 어떤 사용자를 위해 무엇을 만들었는지 설명했습니다.</p>
-  </div>
-
-  <div class="project-list">
-    <a class="project-row" href="{{ '/projects/trader/' | relative_url }}">
-      <div class="project-row__meta">
-        <span>개인 프로젝트</span>
-        <small>2025.01 - 2026.07</small>
-      </div>
-      <div class="project-row__body">
+  <div class="home-menu-list home-menu-list--projects">
+    <a class="home-menu-item" href="{{ '/projects/trader/' | relative_url }}">
+      <div class="home-menu-item__title">
+        <span>PROJECT 01</span>
         <h3>Trader 주식투자 복기 플랫폼</h3>
-        <p>투자 판단 근거를 캔버스와 일지로 기록하고, 나중에 매매 과정의 인과관계를 복기할 수 있도록 만든 서비스입니다.</p>
       </div>
-      <div class="project-row__link">프로젝트 보기 →</div>
+      <p class="home-menu-item__description">실시간 협업 캔버스와 투자 일지, 시계열 차트를 제공하고 KIS, BLS, SEC 데이터를 수집·정규화하는 플랫폼입니다.</p>
+      <div class="home-menu-item__outcome">
+        <strong>WebSocket · TimescaleDB · Kafka ETL</strong>
+        <span>프로젝트 보기 <b aria-hidden="true">→</b></span>
+      </div>
     </a>
 
-    <a class="project-row" href="{{ '/projects/loadtest-orchestrator/' | relative_url }}">
-      <div class="project-row__meta">
-        <span>개인 프로젝트</span>
-        <small>2026.04 - 2026.06</small>
+    <a class="home-menu-item" href="{{ '/projects/loadtest-orchestrator/' | relative_url }}">
+      <div class="home-menu-item__title">
+        <span>PROJECT 02</span>
+        <h3>Go 기반 부하·장애 검증 오케스트레이터</h3>
       </div>
-      <div class="project-row__body">
-        <h3>부하 및 장애 검증 오케스트레이터</h3>
-        <p>반복되는 인프라 준비, 부하 실행, 장애 주입, 복구 확인을 하나의 시나리오로 작성하고 실행하는 도구입니다.</p>
+      <p class="home-menu-item__description">사용자가 단계, 의존성, 인프라를 정의하면 Terraform, k6, AWS SSM 기반 검증 흐름을 CLI와 UI에서 반복 실행합니다.</p>
+      <div class="home-menu-item__outcome">
+        <strong>검증 준비부터 복구 확인까지 자동화</strong>
+        <span>프로젝트 보기 <b aria-hidden="true">→</b></span>
       </div>
-      <div class="project-row__link">프로젝트 보기 →</div>
     </a>
 
-    <a class="project-row" href="{{ '/projects/sic-portal/' | relative_url }}">
-      <div class="project-row__meta">
-        <span>팀 프로젝트</span>
-        <small>2025.09 - 2025.11</small>
+    <a class="home-menu-item" href="{{ '/projects/sic-portal/' | relative_url }}">
+      <div class="home-menu-item__title">
+        <span>PROJECT 03</span>
+        <h3>SIC 동아리 포털 및 CI/CD 구축</h3>
       </div>
-      <div class="project-row__body">
-        <h3>SIC 동아리 포털</h3>
-        <p>흩어진 동아리 자료와 활동을 한곳에서 관리하고 금융 데이터를 활용한 서비스를 제공하기 위해 팀을 이끌며 개발했습니다.</p>
+      <p class="home-menu-item__description">팀 리딩을 맡아 Spring Boot 서비스와 GitHub Actions 배포 파이프라인, AWS 운영 환경을 구축했습니다.</p>
+      <div class="home-menu-item__outcome">
+        <strong>팀 개발 · 테스트 기준 · 자동 배포</strong>
+        <span>프로젝트 보기 <b aria-hidden="true">→</b></span>
       </div>
-      <div class="project-row__link">프로젝트 보기 →</div>
     </a>
   </div>
 </section>
 
-<section class="resume-section resume-more" aria-labelledby="more-title">
-  <div class="resume-section__heading">
-    <span>MORE</span>
-    <h2 id="more-title">더 살펴보기</h2>
+<section class="home-section" id="engineering-cases">
+  <div class="home-section__header">
+    <div>
+      <span class="home-section__eyebrow">ENGINEERING CASES</span>
+      <h2>구현 및 문제 해결 사례</h2>
+    </div>
+    <p>무엇을 잘한다는 설명보다, 실제로 어떤 문제를 다루고 무엇을 검증했는지 보여주는 사례입니다.</p>
   </div>
 
-  <nav class="more-links" aria-label="추가 포트폴리오 링크">
-    <a href="{{ '/projects/' | relative_url }}">
-      <strong>전체 프로젝트</strong>
-      <span>서비스의 목적과 구현 범위</span>
+  <div class="home-menu-list">
+    <a class="home-menu-item" href="{{ '/reports/timescaledb-27x/' | relative_url }}">
+      <div class="home-menu-item__title">
+        <span>DATABASE</span>
+        <h3>TimescaleDB 시계열 조회 성능 개선</h3>
+      </div>
+      <p class="home-menu-item__description">인덱스, 하이퍼테이블, chunk 전략과 Continuous Aggregate를 조회 패턴별로 비교했습니다.</p>
+      <div class="home-menu-item__outcome">
+        <strong>p95 7,247ms → 235ms</strong>
+        <span>보고서 보기 <b aria-hidden="true">→</b></span>
+      </div>
     </a>
-    <a href="{{ '/reports/' | relative_url }}">
-      <strong>문제 해결 보고서</strong>
-      <span>성능 측정과 장애 검증 과정</span>
+
+    <a class="home-menu-item" href="{{ '/reports/websocket-group-canvas/' | relative_url }}">
+      <div class="home-menu-item__title">
+        <span>REALTIME</span>
+        <h3>WebSocket 동시 편집 안정성 개선</h3>
+      </div>
+      <p class="home-menu-item__description">메시지 순서, 중복 전송, 지연 문제를 분석하고 Dirty Flag와 배치 브로드캐스트를 적용했습니다.</p>
+      <div class="home-menu-item__outcome">
+        <strong>≤200ms 0.38% → 99.97%</strong>
+        <span>보고서 보기 <b aria-hidden="true">→</b></span>
+      </div>
     </a>
-    <a href="{{ '/reports/realtime-degrade-overview/' | relative_url }}">
-      <strong>장애 대응과 복구</strong>
-      <span>서비스가 멈췄을 때의 판단과 대응</span>
+
+    <a class="home-menu-item" href="{{ '/reports/realtime-degrade-overview/' | relative_url }}">
+      <div class="home-menu-item__title">
+        <span>FAILURE RECOVERY</span>
+        <h3>Redis·Kafka 장애 대응 및 상태 복구</h3>
+      </div>
+      <p class="home-menu-item__description">Redis Pub/Sub은 저지연 전파, Kafka는 durable event와 replay를 담당하도록 분리하고 degraded mode를 검증했습니다.</p>
+      <div class="home-menu-item__outcome">
+        <strong>DB fallback · outbox · replay</strong>
+        <span>보고서 보기 <b aria-hidden="true">→</b></span>
+      </div>
     </a>
-    <a href="{{ '/resume/' | relative_url }}">
-      <strong>전체 이력서</strong>
-      <span>경험과 기술을 한 페이지에서 확인</span>
+
+    <a class="home-menu-item" href="{{ '/reports/trader-data-platform/' | relative_url }}">
+      <div class="home-menu-item__title">
+        <span>DATA PIPELINE</span>
+        <h3>KIS·BLS·SEC 데이터 파이프라인 구축</h3>
+      </div>
+      <p class="home-menu-item__description">raw 원본 보존, DB outbox, Python ETL, lineage와 Consumer commit 상태를 하나의 처리 흐름으로 연결했습니다.</p>
+      <div class="home-menu-item__outcome">
+        <strong>BLS raw lag 2 → 0</strong>
+        <span>보고서 보기 <b aria-hidden="true">→</b></span>
+      </div>
     </a>
-  </nav>
+
+    <a class="home-menu-item" href="{{ '/reports/trader-data-platform/#aws-worker-scaling' | relative_url }}">
+      <div class="home-menu-item__title">
+        <span>WORKER CONTROL</span>
+        <h3>Kafka lag 기반 AWS Worker 자동 확장</h3>
+      </div>
+      <p class="home-menu-item__description">Go Controller가 lag, heartbeat, idle 상태를 판단해 Python Worker ASG의 실행과 회수를 제어하도록 구성했습니다.</p>
+      <div class="home-menu-item__outcome">
+        <strong>desired capacity 0 → 1 → 0</strong>
+        <span>검증 보기 <b aria-hidden="true">→</b></span>
+      </div>
+    </a>
+
+    <a class="home-menu-item" href="{{ '/projects/loadtest-orchestrator/' | relative_url }}">
+      <div class="home-menu-item__title">
+        <span>TEST AUTOMATION</span>
+        <h3>Go 기반 부하·장애 검증 자동화</h3>
+      </div>
+      <p class="home-menu-item__description">인프라 준비, 부하 실행, 장애 주입, 복구 확인, 결과 정리를 의존성 기반 단계로 실행하도록 만들었습니다.</p>
+      <div class="home-menu-item__outcome">
+        <strong>Terraform · k6 · AWS SSM</strong>
+        <span>프로젝트 보기 <b aria-hidden="true">→</b></span>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section class="home-section home-method-section" id="engineering-method">
+  <div class="home-section__header">
+    <div>
+      <span class="home-section__eyebrow">WORKING METHOD</span>
+      <h2>문제 해결 방식</h2>
+    </div>
+    <p>문제를 수치로 고정하고, 처리 책임을 나눈 뒤, 장애 이후의 복구 결과까지 같은 조건에서 확인합니다.</p>
+  </div>
+
+  <ol class="home-method-list">
+    <li><span>01</span><div><strong>측정</strong><p>p95, lag, GC, received count로 문제를 재현합니다.</p></div></li>
+    <li><span>02</span><div><strong>책임 분리</strong><p>hot path, durable log, 원천 데이터의 역할을 구분합니다.</p></div></li>
+    <li><span>03</span><div><strong>복구 검증</strong><p>replay, heartbeat, scale command로 운영 상태를 확인합니다.</p></div></li>
+  </ol>
+
+  <div class="home-footer-actions">
+    <a class="btn btn--primary" href="{{ '/reports/' | relative_url }}">전체 Engineering Reports</a>
+    <a class="btn btn--inverse" href="{{ '/resume/' | relative_url }}">Resume</a>
+  </div>
 </section>
