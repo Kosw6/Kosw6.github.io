@@ -3,7 +3,7 @@ title: "SLO 기반 운영 사양 산정 - p95 300ms 기준 인프라 결정"
 layout: single
 permalink: /reports/slo-operating-capacity/
 classes: wide
-excerpt: "p95 <= 300ms 기준으로 App/DB 2vCPU/4GB, Thread 30, Hikari 8 설정을 도출하고 context switch와 DB pending으로 병목을 해석한 운영 사양 산정"
+excerpt: "p95 <= 300ms 기준으로 App/DB 2vCPU/4GB, Thread 30, Hikari 8 설정을 도출하고 기본 부하와 별도 Stress 부하의 병목 신호를 구분해 해석한 운영 사양 산정"
 tags: [slo, capacity-planning, k6, linux, spring, hikari]
 ---
 
@@ -25,18 +25,18 @@ tags: [slo, capacity-planning, k6, linux, spring, hikari]
 <div class="proof-strip">
   <div class="proof-item">
     <span class="proof-item__label">BALANCED</span>
-    <strong>Thread 30 / Hikari 8</strong>
-    <span>2 vCPU 환경에서 가장 안정적인 구간</span>
+    <strong>Thread 30 / Hikari 8 @ 150 RPS</strong>
+    <span>기본 비교에서 가장 안정적인 구간</span>
   </div>
   <div class="proof-item">
     <span class="proof-item__label">UNDERPROVISIONED</span>
-    <strong>Thread 2: p95 190ms+</strong>
-    <span>nvcswch 약 276, saturation 진입</span>
+    <strong>Thread 2 / Hikari 2 @ 300 RPS</strong>
+    <span>p95 190ms+, nvcswch 약 276</span>
   </div>
   <div class="proof-item">
     <span class="proof-item__label">OVERSIZED</span>
-    <strong>Thread 60+ / Hikari 12+</strong>
-    <span>처리량 이득 없이 scheduling 비용 증가</span>
+    <strong>Thread 60+ / Hikari 12+ @ 150 RPS</strong>
+    <span>처리량 이득 없이 context switch 증가</span>
   </div>
 </div>
 
@@ -87,23 +87,44 @@ SLO 정의
 
 ## Thread / Hikari 비교
 
-단순히 thread와 connection pool을 크게 잡지 않고, 같은 부하에서 부족·균형·과다 구간을 비교했다.
+기본 비교와 Stress 검증은 부하 조건이 다르다. 기본 150 RPS에서는 균형 설정과 과다 설정을 비교했고, 별도 300 RPS Stress에서는 작은 Thread/Hikari 설정이 포화되는 구간을 확인했다.
 
-| 구간 | 관측 결과 | 해석 |
-|---|---|---|
-| Thread 2 / Hikari 2 | p95 190ms 이상, nvcswch 약 276 | runnable queue 경쟁과 saturation |
-| Thread 30 / Hikari 8 | nvcswch와 cswch가 가장 안정적 | 현재 2 vCPU workload의 균형점 |
-| Thread 60+ | 처리량 증가 없이 cswch와 latency 증가 | scheduling overhead |
-| Hikari 4 | DB pending은 없지만 cswch 증가 | borrow/return contention |
-| Hikari 12~16 | active thread와 cswch 증가 | pool 과다로 인한 scheduling 비용 |
+| 구분 | Main 부하 | 비교 설정 | 해석 목적 |
+|---|---:|---|---|
+| 기본 비교 | 150 RPS / 90s | Thread 16/30/60/120, Hikari 4/8/12/16 | 동일 부하에서 균형·과다 설정 비교 |
+| Stress | 300 RPS / 90s | Thread 2/Hikari 2, Thread 4/Hikari 4 | underprovisioned 설정의 saturation 확인 |
 
-당시 active DB connection은 1~2 수준이고 pending이 없었다. 따라서 pool 부족보다 CPU scheduling과 애플리케이션 thread 경합을 현재 병목으로 판단했다. 트래픽이나 DB 처리량이 바뀌면 이 설정도 다시 측정해야 하므로, `30/8`을 절대값이 아니라 해당 workload의 운영 기준으로 기록했다.
+아래 p95 그래프의 일반 점은 기본 비교, 빨간색 Stress 점은 별도 Stress 결과다. 두 종류의 점을 한 그래프에 배치했지만 서로 다른 부하의 p95를 직접 비교한 값은 아니다.
+
+<figure class="report-figure">
+  <a href="/assets/images/performance/thread-vs-p95.png" target="_blank" rel="noopener">
+    <img src="/assets/images/performance/thread-vs-p95.png" alt="Thread와 Hikari 설정 조합별 p95 latency 점도표">
+  </a>
+  <figcaption>일반 점은 기본 150 RPS, 빨간색 Stress 점은 300 RPS 결과다. 기본 비교에서는 Thread 30 조합이 낮은 latency 구간에 모였고, 별도 Stress의 Thread 2 / Hikari 2에서는 p95 190ms 이상이 관찰됐다. 서로 다른 색상의 절대 p95를 직접 비교하지 않고 각 실험 안에서 설정 구간을 해석했다. <a href="/assets/images/performance/thread-vs-p95.png" target="_blank" rel="noopener">원본 크기로 보기</a></figcaption>
+</figure>
+
+<figure class="report-figure">
+  <a href="/assets/images/performance/thread-vs-cswch.png" target="_blank" rel="noopener">
+    <img src="/assets/images/performance/thread-vs-cswch.png" alt="Thread와 Hikari 설정 조합별 voluntary context switching 점도표">
+  </a>
+  <figcaption>기본 150 RPS 비교에서 Thread 30 / Hikari 8의 voluntary context switching이 가장 낮았다. DB pending이 없는 상태에서 Hikari 4와 12~16 조합의 cswch가 증가하는 패턴을 scheduling 비용 후보 신호로 해석했다. <a href="/assets/images/performance/thread-vs-cswch.png" target="_blank" rel="noopener">원본 크기로 보기</a></figcaption>
+</figure>
+
+| 조건 | 구간 | 관측 결과 | 해석 |
+|---|---|---|---|
+| Stress 300 RPS | Thread 2 / Hikari 2 | p95 190ms 이상, nvcswch 약 276 | underprovisioned saturation 신호 |
+| 기본 150 RPS | Thread 30 / Hikari 8 | nvcswch와 cswch가 가장 안정적 | 현재 2 vCPU workload의 균형점 |
+| 기본 150 RPS | Thread 60+ | 처리량 이득 없이 cswch 증가 | scheduling overhead 후보 신호 |
+| 기본 150 RPS | Hikari 4 | DB pending은 없지만 cswch 증가 | borrow/return contention 후보 |
+| 기본 150 RPS | Hikari 12~16 | active thread와 cswch 증가 | pool 과다에 따른 scheduling 비용 후보 |
+
+당시 active DB connection은 1~2 수준이고 pending이 없어서 DB pool 병목 신호는 약했다. 반면 `pidstat -wt`와 `vmstat`에서는 처리량 이득 없이 context switch가 증가하는 구간이 관찰됐다. 이를 k6 p95와 함께 해석해 CPU scheduling과 애플리케이션 thread 경합을 현재 workload의 우선 병목 후보로 판단했다. 이는 인과관계를 단독으로 증명한 결과가 아니며, 트래픽이나 DB 처리량이 바뀌면 다시 측정해야 한다. 따라서 `30/8`은 절대값이 아니라 해당 workload의 운영 기준이다.
 
 ---
 
 ## 결정
 
-테스트 결과 App/DB를 2 vCPU / 4 GB 구성으로 두고, Thread 30 / Hikari 8 조합을 선택했다.
+기본 150 RPS 비교 결과 App/DB를 2 vCPU / 4 GB 구성으로 두고, Thread 30 / Hikari 8 조합을 선택했다. 별도 300 RPS Stress 결과는 이 조합과 p95를 직접 비교하는 대신 underprovisioned 설정의 saturation 경계를 확인하는 근거로 사용했다.
 
 이 조합은 단순히 더 큰 리소스를 투입한 결과가 아니라, p95 <= 300ms 기준에서 CPU, DB pending, context switch 비용을 함께 보고 결정한 운영 기준이다.
 
@@ -115,7 +136,7 @@ SLO 정의
 
 - SLO를 먼저 정의했다.
 - 부하 테스트로 지표를 수집했다.
-- Linux/DB/App 레벨의 병목 신호를 함께 해석했다.
+- Linux/DB/App 레벨의 병목 신호를 함께 해석하되 관측과 인과를 구분했다.
 - 최종 설정을 수치와 근거로 남겼다.
 
 이후 장애 대응과 자동 복구 검증은 이 운영 기준 위에서 진행했다.
