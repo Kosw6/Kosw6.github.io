@@ -324,6 +324,10 @@ Trader는 단순 기능 구현 이후 Redis/Kafka 장애, 운영 관측, 자동 
 
 ---
 
-## GitHub
+## Source Code {#source-code}
 
-- [trader-backend](https://github.com/Kosw6/trader-backend)
+| Repository | Responsibility |
+|---|---|
+| [trader-backend](https://github.com/Kosw6/trader-backend) | Spring Boot REST API, WebSocket, 실시간 협업 및 도메인 서비스 |
+| [trader-controller](https://github.com/Kosw6/trader-controller) | Go Control Plane, Kafka Outbox, lag 측정, Worker 및 AWS ASG 제어 |
+| [trader-data](https://github.com/Kosw6/trader-data) | Python 기반 KIS, BLS, SEC 수집, raw 보존, ETL 정규화 및 lineage 처리 |

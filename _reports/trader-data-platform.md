@@ -256,6 +256,13 @@ trader.jobs.events lag=1
 - ASG node 단위 scale-out/in은 검증했지만 개별 컨테이너 복구는 Docker restart policy와 node healthcheck 영역으로 분리했습니다.
 - DB primary와 Kafka를 Spot으로 운영하는 HA 구성은 구현 범위에서 제외했습니다.
 
+## Implementation Repositories
+
+| Repository | Responsibility |
+|---|---|
+| [trader-controller](https://github.com/Kosw6/trader-controller) | Go 기반 job, outbox relay, Kafka lag 측정, Worker 정책 및 AWS ASG 제어 |
+| [trader-data](https://github.com/Kosw6/trader-data) | Python Collector, raw 저장, ETL 정규화, lineage 및 consumer 처리 |
+
 ## Engineering Notes
 
 - [문서 인덱스](https://github.com/Kosw6/engineering-notes/blob/main/reports/Data/00_TRADER_DATA_PLATFORM_INDEX.md)

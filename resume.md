@@ -48,6 +48,8 @@ classes: wide
 
 ### Trader Platform (개인 프로젝트, 2025.01–2026.07)
 
+[Source Code와 저장소별 역할 보기](/projects/trader/#source-code)
+
 주식투자 학습을 위한 복기 플랫폼. 25–30M+ OHLCV 조회 성능 개선에서 시작해 실시간 협업, 장애 복구, KIS/BLS/SEC 데이터 파이프라인과 worker control plane까지 확장했습니다.
 
 **성능 개선**
