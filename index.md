@@ -3,8 +3,22 @@ layout: splash
 title: "Sungwon Kim"
 
 excerpt: >
-  **성능 병목을 측정하고, 장애 이후에도 복구 가능한 백엔드 플랫폼을 만듭니다.**<br>
-  실시간 이벤트 처리부터 데이터 파이프라인, 운영 자동화까지 직접 설계하고 검증했습니다.
+  <strong class="hero-statement">측정과 가설로 병목을 찾고, 검증한 개선안을 도입해 성능과 안정성을 높이는 백엔드 플랫폼을 만듭니다.</strong>
+  <span class="hero-summary">실시간 협업, 다양한 원천 데이터의 수집 및 정규화, 부하와 장애 검증 자동화를 직접 설계하고 AWS 환경에서 검증했습니다.</span>
+  <span class="hero-capability-grid" aria-label="핵심 구현 영역">
+    <span class="hero-capability-item">
+      <b>실시간 이벤트 처리</b>
+      <small>WebSocket, Redis Pub/Sub, Kafka</small>
+    </span>
+    <span class="hero-capability-item">
+      <b>데이터 파이프라인</b>
+      <small>Go Controller, Python Worker, Kafka ETL</small>
+    </span>
+    <span class="hero-capability-item">
+      <b>검증 자동화</b>
+      <small>Go Orchestrator, Terraform, k6, AWS SSM</small>
+    </span>
+  </span>
 
 header:
   overlay_image: /assets/images/hero-bg-1.png
