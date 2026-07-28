@@ -27,7 +27,7 @@ classes: wide
   <div class="casebook-method" aria-label="문제 해결 순서">
     <span class="casebook-method__label">문제 해결 방식</span>
     <ol>
-      <li><b>01</b><span>사용자에게 발생한 문제를 문장으로 정의</span></li>
+      <li><b>01</b><span>테스트와 측정에서 드러난 문제를 구체적으로 정의</span></li>
       <li><b>02</b><span>같은 조건에서 원인과 대안을 비교</span></li>
       <li><b>03</b><span>p95, lag, 처리 건수로 결과 확인</span></li>
       <li><b>04</b><span>장애와 복구 시나리오까지 반복 검증</span></li>
