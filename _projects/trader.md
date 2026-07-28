@@ -6,48 +6,46 @@ excerpt: "투자 복기 플랫폼, TimescaleDB p95 SLO 달성, WebSocket 99.97%,
 tags: [spring, timescaledb, redis, kafka, websocket, k6, go, python, aws, etl]
 ---
 
-> **성능 수치를 가설로 세우고, k6·JFR·JMC로 측정하고, 구조로 개선했습니다.**
-> 이후 실시간 협업, 장애 복구, 검증 자동화, 데이터 파이프라인 control plane까지 확장했습니다.
+Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판단과 결과를 다시 살펴볼 수 있게 만든 주식투자 복기 플랫폼입니다.
 
----
-
-## 성과 한눈에 보기
-
-| 문제 | Before | After | 개선 |
-|------|--------|-------|------|
-| TimescaleDB 시계열 쿼리 (P95 @ 300 RPS) | 7,247ms | **235ms** | **p95 < 300ms 달성** |
-| 인덱스 단독 효과 (P95 @ 10 RPS) | 342ms | **32ms** | **10배** |
-| WebSocket ≤200ms 수신율 | 0.38% | **99.97%** | **+99.6%p** |
-| Old GC 횟수 (JFR 실측) | 기준치 | **36% 감소** | — |
-| WebSocket fanout 부하 (샤딩 후) | 159K 단일 | **79K + 79K** | **50% 분산** |
-| BLS raw ETL lag | 2 | **0** | 밀린 raw 처리 완료 |
-| AWS Python Worker | desired 0 | **0 -> 1 -> 0** | lag/idle 기반 자동 제어 |
+투자 판단 근거는 React Flow 기반 노드와 엣지로 시각화하고, 주가와 거시경제, 재무 데이터를 함께 조회할 수 있게 했습니다. 서비스가 커지면서 발생한 조회 지연과 동시 편집 문제를 측정해 개선하고, 데이터 수집 중단 이후에도 처리 상태를 확인하고 복구할 수 있는 구조로 확장했습니다.
 
 <nav class="page-quick-nav" aria-label="핵심 섹션 바로가기">
   <strong>빠르게 보기</strong>
   <a href="#프로젝트-개요">프로젝트 개요</a>
-  <a href="#data-platform">Data Platform</a>
+  <a href="#성과-한눈에-보기">주요 결과</a>
+  <a href="#data-platform">데이터 파이프라인</a>
   <a href="#timescaledb-performance">성능 개선</a>
   <a href="#websocket-realtime">실시간 처리</a>
-  <a href="#reliability-operations">장애 복구·운영</a>
+  <a href="#reliability-operations">장애 복구와 운영</a>
 </nav>
 
 ---
 
 ## 프로젝트 개요
 
-Trader는 주식투자 학습을 위한 복기 플랫폼입니다. 실시간 WebSocket 기반 그룹/개인 캔버스, 투자 일지, 차트 마커를 제공하고 재무·매크로 데이터를 함께 조회할 수 있도록 설계했습니다.
-
-투자 판단 근거는 React Flow 기반 노드와 엣지로 시각화해, 매매 과정의 인과관계를 나중에 복기할 수 있게 만드는 것이 핵심 목적입니다. 초기에는 20–30M+ OHLCV 시계열 조회 성능을 개선했고, 이후 실시간 협업과 데이터 파이프라인 운영 구조까지 확장했습니다.
-
 | 항목 | 내용 |
 |------|------|
-| **Product** | 주식투자 학습/복기 플랫폼, 그룹/개인 캔버스, 투자 일지, 차트 마커 |
-| **Backend** | Spring Boot, JPA, PostgreSQL / TimescaleDB, Redis, Kafka |
+| **사용자 기능** | 그룹 및 개인 캔버스, 투자 일지, 차트 마커, 재무와 거시경제 데이터 조회 |
+| **Backend** | Spring Boot, JPA, PostgreSQL, TimescaleDB, Redis, Kafka |
 | **Frontend** | React, React Flow, WebSocket 기반 실시간 캔버스 |
-| **Data Platform** | Go Controller, Python Worker, Kafka Outbox, raw/ETL lineage |
-| **Scale** | ~10K 종목 × 20–30M+ OHLCV 행, KIS/BLS/SEC raw 수집 및 정규화 |
-| **Validation** | k6, JFR/JMC, Grafana, AWS ASG worker scaling 검증 |
+| **데이터 처리** | Go Controller, Python Worker, 원본 보존과 ETL 처리 추적 |
+| **데이터 규모** | 약 1만 종목, 2,600만 행 이상의 OHLCV, KIS, BLS, SEC 데이터 |
+| **검증** | k6, JFR/JMC, Grafana, AWS ASG Worker 조절 |
+
+---
+
+## 성과 한눈에 보기
+
+| 문제 | 개선 전 | 개선 후 | 결과 |
+|------|--------|---------|------|
+| TimescaleDB 시계열 쿼리 (p95, 300 RPS) | 7,247ms | **235ms** | **목표 300ms 충족** |
+| 인덱스 단독 효과 (p95, 10 RPS) | 342ms | **32ms** | **약 10배** |
+| WebSocket 200ms 이내 수신율 | 0.38% | **99.97%** | **99.6%p 증가** |
+| Old GC 횟수 (JFR 측정) | 기준치 | **36% 감소** | 객체 할당 경로 개선 |
+| WebSocket 전송 부하 | 159K 단일 | **79K + 79K** | 두 서버로 분산 |
+| BLS ETL 대기량 | 2 | **0** | 중단 중 쌓인 데이터 처리 |
+| AWS Python Worker | 0대 | **0 → 1 → 0** | 작업량과 유휴 상태에 따라 조절 |
 
 ---
 

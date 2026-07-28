@@ -1,5 +1,5 @@
 ---
-title: "Trader Data Platform - ETL 추적과 Worker 제어"
+title: "Trader 데이터 파이프라인"
 layout: single
 permalink: /reports/trader-data-platform/
 classes: wide
@@ -7,33 +7,33 @@ excerpt: "KIS, BLS, SEC 데이터를 raw로 보존하고 Kafka outbox, ETL linea
 tags: [go, python, kafka, etl, postgresql, timescaledb, aws, autoscaling]
 ---
 
-> **핵심 질문**: 금융 데이터를 단순 적재하는 데서 끝내지 않고, raw 보존부터 정규화 추적, 장애 복구, worker 비용 제어까지 운영 가능한 파이프라인으로 만들 수 있는가?
+> 외부 데이터 수집이 중단돼도 원본과 처리 위치를 확인하고, 필요한 범위만 다시 처리할 수 있게 만들었습니다.
 
-Trader Data Platform은 투자 복기 서비스에 필요한 KIS 시세, BLS 거시경제, SEC 재무 데이터를 수집하고 정규화하는 데이터 처리 확장입니다. Go Controller가 job, outbox, lag, worker 정책을 제어하고 Python Worker가 외부 API 수집과 ETL을 담당합니다.
+투자 복기 서비스에 필요한 KIS 시세, BLS 거시경제, SEC 재무 데이터를 수집하고 정규화합니다. Go Controller가 작업과 Worker 실행을 제어하고 Python Worker가 외부 API 수집과 ETL을 담당합니다.
 
 ## 검증 결과 한눈에 보기
 
 <div class="proof-strip">
   <div class="proof-item">
-    <span class="proof-item__label">BLS E2E</span>
-    <strong>job -> raw -> ETL -> lineage</strong>
-    <span>source_object 8775, lineage 49 rows</span>
+    <span class="proof-item__label">BLS 처리 흐름</span>
+    <strong>작업 → 원본 → ETL → 연결 기록</strong>
+    <span>원본 1건과 정규화 결과 49건 연결</span>
   </div>
   <div class="proof-item">
-    <span class="proof-item__label">ETL Recovery</span>
-    <strong>Kafka raw lag 2 -> 0</strong>
-    <span>COLLECTED 2건을 재개 후 PROCESSED</span>
+    <span class="proof-item__label">ETL 복구</span>
+    <strong>대기 2건 → 처리 완료</strong>
+    <span>Worker 재개 후 처리 상태 전환 확인</span>
   </div>
   <div class="proof-item">
-    <span class="proof-item__label">AWS ASG</span>
-    <strong>desired 0 -> 1 -> 0</strong>
-    <span>lag scale-out, idle 120초 scale-in</span>
+    <span class="proof-item__label">Worker 자동 조절</span>
+    <strong>0대 → 1대 → 0대</strong>
+    <span>작업 발생 시 실행, 120초 유휴 후 종료</span>
   </div>
 </div>
 
 <nav class="page-quick-nav" aria-label="핵심 섹션 바로가기">
   <strong>빠르게 보기</strong>
-  <a href="#architecture">Architecture</a>
+  <a href="#architecture">구성</a>
   <a href="#failure-recovery">장애 복구</a>
   <a href="#aws-worker-scaling">AWS Worker ASG</a>
   <a href="#구현-범위와-한계">범위와 한계</a>
@@ -58,7 +58,7 @@ Trader Data Platform은 투자 복기 서비스에 필요한 KIS 시세, BLS 거
 2. Kafka 또는 worker가 중단되면 어느 상태부터 다시 시작해야 하는가?
 3. 처리할 데이터가 있을 때만 worker node를 실행할 수 있는가?
 
-## Architecture
+## 구성 {#architecture}
 
 <figure class="report-figure">
   <img src="/assets/images/data-platform/trader-data-architecture.svg" alt="Go Controller, Kafka, Python Collector와 ETL Worker, PostgreSQL과 raw storage로 구성한 Trader Data Platform 아키텍처">
