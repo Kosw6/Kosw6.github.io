@@ -313,8 +313,8 @@ classes: wide
 <section class="casebook-section platform-map" id="platform" aria-labelledby="platform-title">
   <header class="casebook-section__header">
     <span>TRADER 플랫폼</span>
-    <h2 id="platform-title">하나의 서비스로 연결한 처리 흐름</h2>
-    <p>수집, 변환, 조회, 실시간 협업을 분리하되 운영자가 전체 상태를 추적할 수 있도록 연결했습니다.</p>
+    <h2 id="platform-title">수집부터 정규화까지 연결한 데이터 처리 흐름</h2>
+    <p>서로 다른 원천 데이터를 수집한 뒤 원본 보존, 이벤트 발행, 정규화, 처리 결과 추적까지 단계별로 연결했습니다.</p>
   </header>
 
   <div class="platform-flow" aria-label="Trader 데이터 처리 흐름">
