@@ -2,7 +2,10 @@
 layout: single
 title: "Projects"
 permalink: /projects/
-classes: wide
+classes:
+  - wide
+  - portfolio-index
+  - portfolio-index--wide
 ---
 
 <div class="portfolio-page-intro">
@@ -38,7 +41,7 @@ classes: wide
   <a class="home-menu-item" href="{{ '/projects/sic-portal/' | relative_url }}">
     <div class="home-menu-item__title">
       <span>PROJECT 03</span>
-      <h2>SIC 동아리 포털 및 CI/CD 구축</h2>
+      <h2>SIC 동아리 포털 개발 리딩 및 CI/CD 구축</h2>
     </div>
     <p class="home-menu-item__description">동아리 운영 문제를 해결하기 위해 15명 팀을 이끌고 Spring Boot 서비스, 테스트 기준, AWS 배포 파이프라인을 구축했습니다.</p>
     <div class="home-menu-item__outcome">

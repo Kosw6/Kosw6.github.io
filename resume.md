@@ -2,7 +2,10 @@
 layout: single
 title: "Resume"
 permalink: /resume/
-classes: wide
+classes:
+  - wide
+  - portfolio-index
+  - portfolio-index--resume
 ---
 
 ## Profile
@@ -75,7 +78,7 @@ classes: wide
 
 ---
 
-### SIC Club Portal (팀 프로젝트, 2025.09–2025.11)
+### SIC 동아리 포털 개발 리딩 및 CI/CD 구축 (팀 프로젝트, 2025.09–2025.11)
 
 FE/BE/AI/Design 14명 팀 리딩, 동아리 운영 웹 서비스 구축
 

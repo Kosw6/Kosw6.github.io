@@ -2,6 +2,10 @@
 layout: single
 title: "About"
 permalink: /about/
+classes:
+  - wide
+  - portfolio-index
+  - portfolio-index--about
 ---
 
 ## About

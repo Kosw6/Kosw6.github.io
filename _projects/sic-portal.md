@@ -1,5 +1,5 @@
 ---
-title: "SIC Club Portal"
+title: "SIC 동아리 포털 개발 리딩 및 CI/CD 구축"
 layout: single
 classes: wide
 excerpt: "FE/BE/AI/Design 15명 팀 리딩, 협업 구조 설계, CI/CD, 출결/게시판/백테스팅/AI퀀트봇"

@@ -1,5 +1,5 @@
 ---
-title: "PoC 3 — Kafka Replay 기반 Failback & 중단, 데이터 유실없이 서버 전환"
+title: "PoC 3 — Kafka Replay 기반 Failback과 이벤트 유실 없는 서버 전환"
 layout: single
 permalink: /reports/websocket-poc3-failback/
 toc: true

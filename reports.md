@@ -2,7 +2,10 @@
 layout: single
 title: "Engineering Reports"
 permalink: /reports/
-classes: wide
+classes:
+  - wide
+  - portfolio-index
+  - portfolio-index--wide
 ---
 
 ## Engineering Reports

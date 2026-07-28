@@ -1748,6 +1748,32 @@ body,
   color: #20262d;
 }
 
+// Center standalone index pages instead of reserving the theme's author sidebar.
+.portfolio-index .page {
+  float: none;
+  width: 100%;
+  padding-right: 0;
+}
+
+.portfolio-index .page__inner-wrap {
+  float: none;
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.portfolio-index--wide .page__inner-wrap {
+  max-width: 1120px;
+}
+
+.portfolio-index--resume .page__inner-wrap {
+  max-width: 960px;
+}
+
+.portfolio-index--about .page__inner-wrap {
+  max-width: 840px;
+}
+
 .home-proof-strip,
 .home-menu-list,
 .home-method-list {

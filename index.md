@@ -57,7 +57,7 @@ classes: wide
   <header class="casebook-section__header">
     <span>한눈에 보기</span>
     <h2 id="problems-title">문제와 해결을 한눈에</h2>
-    <p>세부 문서를 열지 않아도 어떤 기능에서 문제가 발생했고, 무엇을 선택해 어떻게 검증했는지 확인할 수 있습니다.</p>
+    <p>문제를 발견한 배경부터 원인을 좁힌 과정, 해결책을 선택한 이유와 검증 결과까지 대표적인 문제 해결 사례를 요약했습니다.</p>
   </header>
 
   <div class="problem-domains">
@@ -375,7 +375,7 @@ classes: wide
       <div class="project-timeline__date">2025.09 - 2025.11</div>
       <div>
         <span>팀장, 기여도 25%</span>
-        <h3>SIC 동아리 포털 및 CI/CD 구축</h3>
+        <h3>SIC 동아리 포털 개발 리딩 및 CI/CD 구축</h3>
         <p>팀의 기획과 일정을 조율하고 Spring Boot 백엔드, 테스트 기준, GitHub Actions 자동 배포와 AWS 환경을 구축했습니다.</p>
       </div>
       <a href="{{ '/projects/sic-portal/' | relative_url }}">상세 보기 →</a>
