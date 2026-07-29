@@ -8,9 +8,9 @@ excerpt: "k6 부하테스트 데스크탑 실행기 — Go + Wails, 엔진 내�
 tags: [go, wails, k6, loadtest, desktop, concurrency]
 ---
 
-> 현재는 [부하·장애 검증 시나리오 오케스트레이터](/projects/loadtest-orchestrator/)의 로컬 UI와 실행 엔진으로 통합했습니다. 이 페이지는 단일 실행파일과 실시간 로그 처리 단계의 구현 기록입니다.
+> 현재는 [부하·장애 검증 시나리오 오케스트레이터](/projects/loadtest-orchestrator/)의 로컬 UI와 실행 엔진으로 통합했습니다. 이 페이지는 별도 엔진 바이너리를 제거하고 실시간 로그 처리를 구현한 기록입니다.
 
-> **"별도 엔진 바이너리 없이, 단일 실행파일 하나로 k6 시나리오를 실행합니다."**
+> **"별도 Go 엔진 바이너리 없이, UI와 실행 엔진을 하나의 데스크톱 앱으로 제공합니다."**
 
 ---
 
@@ -24,8 +24,10 @@ LoadTest Converter에서 내보낸 ZIP 파일을 로드해 k6 부하테스트를
 | 항목 | 내용 |
 |------|------|
 | **Stack** | Go (Wails v2), React (Vite), k6 |
-| **배포 형태** | 단일 `.exe` 실행파일 |
+| **배포 형태** | UI와 Go 실행 엔진을 통합한 단일 `.exe` |
 | **핵심 구조** | `engine/` 패키지 내장 + `//go:embed templates` |
+
+시나리오에서 사용하는 k6, Terraform, AWS CLI 등 외부 도구는 사용자 환경에 별도로 설치되어 있어야 합니다.
 
 ---
 

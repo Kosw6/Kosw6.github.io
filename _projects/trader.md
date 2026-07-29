@@ -51,7 +51,7 @@ Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판�
 |------|--------|---------|------|
 | TimescaleDB 시계열 쿼리 (p95, 300 RPS) | 7,247ms | **235ms** | **목표 300ms 충족** |
 | WebSocket 200ms 이내 수신율 | 0.38% | **99.97%** | **99.6%p 증가** |
-| Old GC 횟수 (JFR 측정) | 기준치 | **36% 감소** | 객체 할당 경로 개선 |
+| Old GC 총 시간 (90초 본부하) | 3.47초 | **2.22초** | 약 36% 감소 |
 | BLS ETL 중단 복구 | Worker 중단 중 2건 대기 | **재기동 후 2건 모두 처리** | 중단 지점부터 작업을 이어서 처리 |
 | AWS Python Worker 운영 | 작업 발생 시 수동 기동,종료 | **Kafka lag 감지 후 자동 확장, 유휴 시 자동 축소** | 수동 운영을 0 → 1 → 0 자동 조절로 전환 |
 
@@ -149,9 +149,11 @@ SELECT hypertable_name FROM timescaledb_information.hypertables;
 | 프레임 | 데이터 소스 |
 |--------|------------|
 | 1D | Hypertable 직접 조회 |
-| 1W / 1M / 1Y | TimescaleDB CAGG (materialized view) |
+| 1W / 1M / 1Y | TimescaleDB CAGG 적용 가능성 검증 및 조회 전략 설계 |
 
 → [상세 Report 보기](/reports/timescaledb-27x/)
+
+현재 사용자 화면에는 1D 조회를 연결했으며, 1W/1M/1Y는 CAGG의 성능과 정합성 특성을 확인한 설계·검증 범위입니다.
 
 ---
 
@@ -197,7 +199,7 @@ Allocation Hotspot:
   → SecurityContext에 이미 파싱된 값이 있는데도 재파싱
 ```
 
-**필터 순서 재조정으로 중복 검증 제거 → Old GC 36% 감소.**
+**필터 순서 재조정으로 중복 검증 제거 → Old GC 총 시간 약 36% 감소.**
 
 쿼리 최적화만으로는 보이지 않는 병목이었다.
 런타임 프로파일러가 없었으면 발견하지 못했을 지점.

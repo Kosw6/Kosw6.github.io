@@ -2,7 +2,7 @@
 title: "SIC 동아리 포털 개발 리딩 및 CI/CD 구축"
 layout: single
 classes: wide
-excerpt: "FE/BE/AI/Design 15명 팀 리딩, 협업 구조 설계, CI/CD, 출결/게시판/백테스팅/AI퀀트봇"
+excerpt: "FE/BE/AI/Design 14명 팀 리딩, 협업 구조 설계, CI/CD, 출결/게시판/백테스팅/AI퀀트봇"
 tags: [react, spring, postgresql, ci-cd, leadership, aws]
 ---
 
@@ -14,16 +14,16 @@ tags: [react, spring, postgresql, ci-cd, leadership, aws]
 출석 또한 수기로 관리되어 불편함이 발생되고 있었습니다.
 
 이를 해결하기 위해 웹 서비스를 직접 제안했고,  
-**14–15명(FE/BE/AI/Design) 팀을 구성하여 프로젝트를 리딩**했습니다.  
+**14명(FE/BE/AI/Design) 팀을 구성하여 프로젝트를 리딩**했습니다.
 
-서비스 기획부터 협업 구조 설계, 인프라 구축 및 배포까지 전 과정을 담당했습니다.
+서비스 기획과 협업 구조, 인프라 구축 및 배포를 주도했습니다.
 
 | 항목 | 내용 |
 |------|------|
 | **Stack** | React, Vite PWA, Spring Boot, PostgreSQL, Redis, Docker(Compose) |
 | **DevOps** | GitHub Actions, JaCoCo, Jira |
-| **Cloud** | AWS (EC2, S3, CloudFront, RDS, IAM, EventBridge, Lambda) |
-| **팀 규모** | 15명 (FE / BE / AI / Design) |
+| **Cloud** | AWS (EC2, S3, CloudFront, IAM, EventBridge, Lambda) |
+| **팀 규모** | 14명 (FE / BE / AI / Design) |
 | **담당 기간** | 2025.09(개발 시작) ~ 2025.11(후임 인계) |
 
 ---
@@ -106,11 +106,11 @@ EBS에 1GB swap 영역을 추가하여 메모리 급증 상황에서도 안정�
 
 ---
 
-### 인프라 구성
+### 프로젝트 당시 인프라 구성
 
 - **배포**: EC2 + GitHub Actions 자동 배포
 - **정적 자산**: S3 + CloudFront CDN
-- **DB**: NeonDB PostgreSQL, Redis 캐싱
+- **DB**: PostgreSQL, Redis 캐싱
 - **접근 제어**: SSM(Session Manager) 기반 운영 (SSH 키 제거)
 - **비용 최적화**: EventBridge + Lambda로 09–18시 자동 운영
 
@@ -130,7 +130,7 @@ EBS에 1GB swap 영역을 추가하여 메모리 급증 상황에서도 안정�
 
 ## 역할 정리
 
-> 서비스 기획부터 협업 구조 설계, 핵심 API 구현, 인프라 구축까지 팀의 개발 생산성과 배포 안정성을 높이는 역할을 담당했습니다.<br>
+> 서비스 기획과 협업 구조, 인프라 구축 및 배포를 주도하며 팀의 개발 생산성과 배포 안정성을 높이는 역할을 담당했습니다.<br>
 > 스프린트 구조 재설계, 품질 기준 수립, 인프라 구축을 통해  
 > 서비스가 실제로 배포되고 운영되는 환경을 만들었습니다.
 

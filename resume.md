@@ -29,7 +29,7 @@ classes:
 | **Cache / MQ** | Redis (TTL 설계, JSON Serializer), Kafka (Consumer Group, offset replay) |
 | **Realtime** | WebSocket, Redis Pub/Sub, 서버 분산과 복구 설계 |
 | **Data Platform** | DB Outbox, Kafka lag, raw/ETL 분리, lineage, idempotency |
-| **Performance** | k6, JFR/JMC, Prometheus/Grafana, Slack 알람 |
+| **Performance** | k6, JFR/JMC, Prometheus/Grafana, Grafana Alert |
 | **DevOps** | Docker, Terraform, GitHub Actions, AWS (EC2/S3/CloudFront/SSM/ASG/Lambda) |
 | **Frontend** | React, Vite, React Flow, WebGL 차트 |
 
@@ -42,7 +42,7 @@ classes:
 수동으로 반복하던 인프라 준비, 부하 실행, 장애 주입, 복구 확인을 하나의 검증 시나리오로 실행하는 Go 기반 도구입니다.
 
 - React/Wails UI에서 단계, 의존성, 인프라 설정과 CLI 명령을 구성하고 YAML/ZIP으로 내보내는 시나리오 작성 흐름 구현
-- 분리돼 있던 시나리오 변환기와 실행기를 하나의 Go 엔진과 로컬 UI로 통합해 단일 실행 파일로 배포
+- 분리돼 있던 시나리오 변환기와 실행기를 하나의 Go 엔진과 로컬 UI로 통합해 별도 엔진 바이너리가 없는 데스크톱 앱으로 배포
 - 단계별 의존성을 계산하고 서로 독립적인 작업은 goroutine으로 병렬 실행
 - 실행 로그를 파일에 저장하면서 UI에도 실시간으로 전달해 진행 상황과 실패 원인을 함께 확인
 - Terraform, k6, AWS SSM을 연결해 환경 준비부터 Redis 장애 주입과 복구 확인까지 같은 순서로 반복 검증
@@ -59,7 +59,7 @@ classes:
 - 300 RPS의 90일 차트 조회에서 실행 계획을 비교하고 TimescaleDB 인덱스와 데이터 분할 간격을 조정해 p95를 **7,247ms에서 235ms**로 개선
 - 인덱스 적용 효과를 별도로 측정해 p95가 **342ms에서 32ms**로 줄어드는 것을 확인
 - 네 가지 JPA 조회 방식의 데이터 크기와 객체 생성 비용을 비교해 10K payload에서 처리 한계가 **최대 5배** 차이 나는 조건 확인
-- JFR/JMC로 객체 할당이 집중되는 경로를 추적해 반복되는 JWT 검증을 제거하고 Old GC를 **기준치 대비 36% 감소**
+- JFR/JMC로 객체 할당이 집중되는 경로를 추적해 반복되는 JWT 검증을 제거하고 90초 본부하의 Old GC 총 시간을 **3.47초에서 2.22초로 약 36% 감소**
 
 **실시간 시스템**
 - 동시 편집 중 여러 작업이 직접 메시지를 보내며 발생한 충돌을 분석하고, 최신 변경을 모아 전송하도록 바꿔 200ms 이내 수신율을 **0.38%에서 99.97%**로 개선
@@ -68,13 +68,13 @@ classes:
 - 복구된 서버가 누락된 Kafka 이벤트를 처리한 뒤 다시 요청을 받도록 전환 순서를 정하고 **이벤트 유실 없는 서버 복귀**를 검증
 
 **아키텍처 및 운영**
-- TimescaleDB Continuous Aggregate (CAGG) 활용한 1W/1M/1Y 조회 전략 설계
+- TimescaleDB Continuous Aggregate (CAGG)의 적용 가능성을 검증하고 1W/1M/1Y 조회 전략 설계
 - KIS 주가, BLS 거시경제, SEC 재무 데이터를 raw로 보존하고 Python ETL Worker가 정규화 테이블에 적재하는 파이프라인 구현
 - 원본, 변환 결과, 이벤트 처리 위치를 기록해 Kafka 발행부터 ETL 완료까지 추적하고 중복 처리 여부를 판단
 - Go Controller가 Kafka 대기량과 Worker 상태를 확인해 AWS ASG 인스턴스를 **0 → 1 → 0**으로 조절하는 흐름 검증
 - ETL Worker 중지 중 쌓인 BLS 데이터 **2건**이 Worker 재개 후 모두 처리되는 과정 확인
-- Prometheus/Grafana 모니터링 + Slack 알람, GitHub Actions CI/CD, JaCoCo ≥70% 기준
-- Google/Kakao/Naver JWT SSO 구현
+- Prometheus/Grafana로 상태를 관측하고 Grafana Alert, Lambda, SSM/ASG를 연결한 자동 복구 흐름 검증
+- Google/Kakao JWT SSO 구현
 
 ---
 
@@ -94,7 +94,7 @@ FE/BE/AI/Design 14명 팀 리딩, 동아리 운영 웹 서비스 구축
 - EC2 t3.micro 환경에서 OOM 장애 발생 → free -h 기반 원인 분석  
   → t3.medium + 1GB swap 적용으로 안정화 및 인프라 운영 기준 수립
 
-- AWS EC2/S3/CloudFront/RDS + SSM 기반 인프라 설계 및 배포 자동화  
+- AWS EC2/S3/CloudFront + GitHub Actions 기반 인프라 설계 및 배포 자동화<br>
   → EventBridge + Lambda로 운영 시간 제어(09–18시)하여 비용 최적화
 
 

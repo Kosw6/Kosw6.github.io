@@ -70,7 +70,7 @@ classes:
     <span class="report-card__eyebrow">런타임 분석</span>
     <h3>반복되는 JWT 검증 제거</h3>
     <p>실행 중 객체 할당이 집중되는 경로를 추적해 같은 요청에서 반복되던 검증을 제거했습니다.</p>
-    <span class="report-card__result">Old GC 36% 감소</span>
+    <span class="report-card__result">Old GC 총 시간 약 36% 감소</span>
   </a>
 </div>
 

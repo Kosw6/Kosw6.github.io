@@ -114,15 +114,17 @@ TimescaleDB 하이퍼테이블은 데이터를 **시간(Time) → 공간(Space)*
 
 ---
 
-## 추가: 1D/1W/1M/1Y 조회 전략
+## 추가: 1D/1W/1M/1Y 조회 전략 검증
 
 | 프레임 | 데이터 소스 |
 |--------|------------|
 | 1D | 원본 hypertable 직접 조회 |
-| 1W / 1M / 1Y | TimescaleDB Continuous Aggregate (CAGG) materialized view |
+| 1W / 1M / 1Y | TimescaleDB Continuous Aggregate (CAGG) 적용 가능성 검증 |
 
 - CAGG 인덱스: `(symb, bucket DESC)` → 커서 기반 페이징 최적화
 - Refresh: 일봉 배치 완료 후 수동 호출 (`refresh_continuous_aggregate()`) — 최근 구간만 갱신하여 DB 부하 최소화
+
+현재 사용자 화면에는 1D 조회만 연결했습니다. 1W/1M/1Y는 실제 서비스 기능으로 연결하기 전, CAGG의 조회 성능과 refresh 정책에 따른 정합성 범위를 확인한 설계·검증 결과입니다.
 
 ---
 
