@@ -13,6 +13,7 @@ Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판�
 <nav class="page-quick-nav" aria-label="핵심 섹션 바로가기">
   <strong>빠르게 보기</strong>
   <a href="#프로젝트-개요">프로젝트 개요</a>
+  <a href="#product-screen">구현 화면</a>
   <a href="#성과-한눈에-보기">주요 결과</a>
   <a href="#data-platform">데이터 파이프라인</a>
   <a href="#timescaledb-performance">성능 개선</a>
@@ -33,6 +34,15 @@ Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판�
 | **데이터 규모** | 약 1만 종목, 2,600만 행 이상의 OHLCV, KIS, BLS, SEC 데이터 |
 | **검증** | k6, JFR/JMC, Grafana, AWS ASG Worker 조절 |
 
+## 사용자 조회 화면 {#product-screen}
+
+<figure class="report-figure">
+  <a href="/assets/images/trader/trader-chart.png" target="_blank" rel="noopener">
+    <img src="/assets/images/trader/trader-chart.png" alt="일봉 주가 캔들 차트와 핵심 통계, 투자 일지 마커를 제공하는 Trader 사용자 화면" loading="lazy">
+  </a>
+  <figcaption>90일 단위 OHLCV 조회 결과와 캔들 차트, 핵심 통계, 투자 일지 마커를 연결한 사용자 화면입니다. <a href="/assets/images/trader/trader-chart.png" target="_blank" rel="noopener">원본 크기로 보기</a></figcaption>
+</figure>
+
 ---
 
 ## 성과 한눈에 보기
@@ -40,12 +50,10 @@ Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판�
 | 문제 | 개선 전 | 개선 후 | 결과 |
 |------|--------|---------|------|
 | TimescaleDB 시계열 쿼리 (p95, 300 RPS) | 7,247ms | **235ms** | **목표 300ms 충족** |
-| 인덱스 단독 효과 (p95, 10 RPS) | 342ms | **32ms** | **약 10배** |
 | WebSocket 200ms 이내 수신율 | 0.38% | **99.97%** | **99.6%p 증가** |
 | Old GC 횟수 (JFR 측정) | 기준치 | **36% 감소** | 객체 할당 경로 개선 |
-| WebSocket 전송 부하 | 159K 단일 | **79K + 79K** | 두 서버로 분산 |
-| BLS ETL 대기량 | 2 | **0** | 중단 중 쌓인 데이터 처리 |
-| AWS Python Worker | 0대 | **0 → 1 → 0** | 작업량과 유휴 상태에 따라 조절 |
+| BLS ETL 중단 복구 | Worker 중단 중 2건 대기 | **재기동 후 2건 모두 처리** | 중단 지점부터 작업을 이어서 처리 |
+| AWS Python Worker 운영 | 작업 발생 시 수동 기동,종료 | **Kafka lag 감지 후 자동 확장, 유휴 시 자동 축소** | 수동 운영을 0 → 1 → 0 자동 조절로 전환 |
 
 ---
 
@@ -56,6 +64,22 @@ Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판�
 <figure class="report-figure">
   <img src="/assets/images/data-platform/trader-data-architecture.svg" alt="Go Controller, Kafka, Python Collector와 ETL Worker, raw storage와 PostgreSQL로 구성한 데이터 파이프라인">
   <figcaption>Go Controller가 정책과 상태를 제어하고 Python Worker가 수집과 ETL을 실행합니다.</figcaption>
+</figure>
+
+### 데이터 운영 화면
+
+<figure class="report-figure">
+  <a href="/assets/images/trader/trader-data-inventory.png" target="_blank" rel="noopener">
+    <img src="/assets/images/trader/trader-data-inventory.png" alt="BLS 데이터를 카테고리, 시리즈, 연도별로 확인하는 Data Inventory 관리자 화면" loading="lazy">
+  </a>
+  <figcaption>BLS 데이터를 category, series, year 단위로 내려가며 적재 범위와 마지막 수집 시점을 확인하는 Data Inventory 화면입니다. <a href="/assets/images/trader/trader-data-inventory.png" target="_blank" rel="noopener">원본 크기로 보기</a></figcaption>
+</figure>
+
+<figure class="report-figure">
+  <a href="/assets/images/trader/trader-worker-control.png" target="_blank" rel="noopener">
+    <img src="/assets/images/trader/trader-worker-control.png" alt="Worker 정책과 heartbeat, 작업량, AWS ASG scale command를 확인하는 Worker Control 관리자 화면" loading="lazy">
+  </a>
+  <figcaption>Go Controller가 worker policy, heartbeat, 작업량과 AWS ASG scale command를 조회하고 제어하는 Worker Control 화면입니다. <a href="/assets/images/trader/trader-worker-control.png" target="_blank" rel="noopener">원본 크기로 보기</a></figcaption>
 </figure>
 
 | 설계 결정 | 내용 |
@@ -207,7 +231,26 @@ Group Canvas의 실시간 노드 업데이트 기능.
 
 ---
 
-## 실시간 시스템 2 — 수평 확장 PoC 시리즈
+## 실시간 시스템 2 — Redis Pub/Sub 누락 보정
+
+### 문제
+
+Redis Pub/Sub은 빠르게 이벤트를 전파하지만, 특정 서버의 구독이 잠시 끊기면 그동안의 이벤트를 다시 받을 수 없다. 캔버스 잠금과 노드 변경처럼 놓치면 사용자별 화면 상태가 달라지는 이벤트에는 별도의 복구 경로가 필요했다.
+
+### 해결
+
+- Volatile 이벤트와 Reliable 이벤트의 즉시 전파는 Redis Pub/Sub으로 유지
+- Reliable 이벤트만 Kafka에도 발행해 누락 보정과 재기동 후 catch-up에 사용
+- `serverId + eventId` Redis key로 서버별 전파 여부 기록
+- 서버별 Kafka Consumer Group이 전체 이벤트를 소비한 뒤, 자기 서버에서 누락된 이벤트만 WebSocket으로 재전파
+
+Redis는 정상 상태의 빠른 전파를 담당하고 Kafka는 Reliable 이벤트의 복구 경로를 담당하도록 역할을 분리했다.
+
+→ [Redis Pub/Sub 누락과 Kafka 보정 구조 보기](/reports/realtime-degrade-overview/#reliable-event-recovery)
+
+---
+
+## 실시간 시스템 3 — 수평 확장 PoC 시리즈
 
 단일 인스턴스 최적화 이후, **"인스턴스가 2개 이상이면 어떻게 되는가"** 를 3단계로 설계, 검증
 

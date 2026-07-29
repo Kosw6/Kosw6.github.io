@@ -21,6 +21,7 @@ tags: [redis, kafka, websocket, degrade, fallback, spring]
 <nav class="page-quick-nav" aria-label="핵심 섹션 바로가기">
   <strong>빠르게 보기</strong>
   <a href="#summary">결과 요약</a>
+  <a href="#reliable-event-recovery">누락 보정</a>
   <a href="#redis-장애-대응">Redis fallback</a>
   <a href="#kafka-장애-대응">Kafka Outbox</a>
   <a href="#pubsub-장애-대응">Relay 비교</a>
@@ -82,6 +83,76 @@ State fallback
 핵심은 Kafka를 WebSocket hot path로 보지 않는 것이다. Kafka는 즉시 반응 경로가 아니라 **복구와 감사 가능한 durable event log**로 사용했다.
 
 Kafka를 왜 기본 실시간 전파 경로가 아니라 recovery path로 두었는지는 [Kafka replay 설계 근거](https://github.com/Kosw6/engineering-notes/blob/main/reports/kafka-necessity.md)에 따로 정리했다. Redis Pub/Sub은 정상 상태의 낮은 latency hot path로 유지하고, Kafka는 Pub/Sub miss와 app 재기동 이후의 catch-up을 보정하는 역할로 분리했다.
+
+---
+
+## Reliable 이벤트 누락 보정 {#reliable-event-recovery}
+
+### 해결하려던 문제
+
+Redis Pub/Sub은 낮은 지연으로 여러 서버에 이벤트를 전파하기 좋지만, 구독이 잠시 끊긴 동안의 이벤트를 보관하지 않는다.
+
+캔버스의 잠금과 노드 변경처럼 놓치면 다른 사용자의 화면 상태가 달라지는 Reliable 이벤트는 빠르게 전달하는 것뿐 아니라, 특정 서버의 누락을 나중에 확인하고 보정할 수 있어야 했다.
+
+### 선택한 구조
+
+Volatile 이벤트와 Reliable 이벤트의 정상 전파는 모두 Redis Pub/Sub을 사용했다. Reliable 이벤트만 Kafka에도 비동기로 발행해 복구 가능한 이벤트 로그를 남겼다.
+
+```text
+Volatile 이벤트
+  -> Redis Pub/Sub
+  -> 각 서버 WebSocket 전파
+
+Reliable 이벤트
+  +-> Redis Pub/Sub
+  |    -> 즉시 WebSocket 전파
+  |    -> 서버별 처리 키 기록
+  |
+  +-> Kafka
+       -> 각 서버가 전체 이벤트를 독립 소비
+       -> 처리 키가 있으면 이미 전파된 이벤트이므로 skip
+       -> 처리 키가 없으면 Pub/Sub 누락으로 판단
+       -> WebSocket 재전파 후 처리 키 기록
+```
+
+Kafka를 모든 WebSocket 이벤트의 기본 전파 경로로 사용하지 않은 이유는 정상 상태의 반응 속도와 장애 복구 책임을 분리하기 위해서였다.
+
+### 서버별 처리 여부 확인
+
+처리 여부는 전역 값이 아니라 서버별 Redis key로 기록했다.
+
+```text
+processed:reliable:{serverId}:{eventId}  TTL 5분
+```
+
+app-1이 이벤트를 정상 전파했더라도 app-2가 Pub/Sub 이벤트를 놓쳤다면 app-2의 처리 key만 존재하지 않는다. app-2의 Kafka Consumer는 이를 누락으로 판단해 자신의 WebSocket 세션에만 이벤트를 다시 전파한다.
+
+모든 수신 경로는 같은 inbound handler를 거치게 해 Redis Pub/Sub, gRPC, HTTP, Kafka 중 어느 경로로 도착해도 동일한 중복 방지 규칙을 적용했다.
+
+### 서버별 Consumer Group
+
+WebSocket 누락 보정용 Consumer는 서버별로 고유한 groupId를 사용했다.
+
+```text
+reliable-replay-app-1 -> app-1이 전체 Reliable 이벤트 소비
+reliable-replay-app-2 -> app-2가 전체 Reliable 이벤트 소비
+```
+
+공통 groupId를 사용하면 Kafka가 이벤트를 서버 사이에 분배하므로, 이벤트를 받지 못한 서버가 자신의 누락을 확인할 수 없다. 각 서버가 전체 이벤트를 독립적으로 소비한 뒤 `serverId + eventId` 처리 key로 자기 서버의 누락만 골라냈다.
+
+### 검증 결과
+
+| 검증 상황 | 확인한 동작 | 결과 |
+|---|---|---|
+| app-2의 Redis Pub/Sub listener 중단 | app-2 처리 key가 없는 이벤트를 Kafka Consumer가 감지 | 잠금 상태를 app-2 WebSocket에 재전파 |
+| Redis Pub/Sub 정상 전파 | Kafka Consumer가 처리 key를 확인 | 중복 WebSocket 전파 없이 skip |
+| app-1 중단 후 재기동 | 고정된 서버별 groupId의 이전 offset부터 catch-up | 중단 구간 Reliable 이벤트 순차 복구 |
+
+Kafka replay는 Redis나 DB의 현재 상태를 대체하지 않는다. Pub/Sub 누락 이후 서버별 화면 상태가 다시 수렴하는 시간을 줄이고, 재기동한 서버가 중단 구간의 이벤트를 따라잡게 하는 복구 경로로 사용했다.
+
+Redis 자체가 중단되어 처리 key를 확인할 수 없는 경우에는 재전파를 허용해 at-least-once로 동작하고, 클라이언트의 eventId 기준 중복 제거로 중복 렌더링을 막았다.
+
+> 실제 잠금 상태 복구 화면과 Consumer 로그는 [Redis Pub/Sub 기반 실시간 전파의 한계와 Reliable 이벤트 복구 설계](https://github.com/Kosw6/engineering-notes/blob/main/reports/kafka-necessity.md)에 정리했다.
 
 ---
 

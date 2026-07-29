@@ -47,7 +47,7 @@ classes:
     <span class="report-card__eyebrow">검증 자동화</span>
     <h3>같은 장애 시나리오 반복 실행</h3>
     <p>인프라 준비부터 부하 실행, 장애 주입과 복구 확인까지 정해진 순서로 다시 실행할 수 있게 했습니다.</p>
-    <span class="report-card__result">WebSocket 수신 34K → 89K</span>
+    <span class="report-card__result">수동 컨테이너 조작 -> 오케스트레이터 시작 1회</span>
   </a>
 </div>
 

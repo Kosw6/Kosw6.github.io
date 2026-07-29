@@ -2713,3 +2713,241 @@ body,
     font-size: 17px;
   }
 }
+
+/* Keep every non-home page on the same compact type scale as the home page. */
+.layout--single .page__title {
+  margin-bottom: 18px;
+  color: #20262d;
+  font-size: 34px;
+  line-height: 1.25;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.layout--single .page__content {
+  color: #4b5661;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.layout--single .page__content :where(p, li, dd, figcaption) {
+  font-size: 15px !important;
+  line-height: 1.75 !important;
+}
+
+.layout--single .page__content h2 {
+  margin-top: 44px;
+  margin-bottom: 12px;
+  font-size: 22px;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.layout--single .page__content h3 {
+  margin-top: 32px;
+  margin-bottom: 10px;
+  font-size: 18px;
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.layout--single .page__content h4 {
+  margin-top: 26px;
+  margin-bottom: 8px;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+.layout--single .page__content :where(h5, h6) {
+  margin-top: 22px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+.layout--single .page__content :where(ul, ol) {
+  margin-top: 8px;
+  margin-bottom: 18px;
+}
+
+.layout--single .page__content li {
+  margin-bottom: 5px;
+}
+
+.layout--single .page__content blockquote {
+  margin: 24px 0;
+  padding: 10px 18px;
+  font-size: 15px;
+  line-height: 1.75;
+}
+
+.layout--single .page__content blockquote > :last-child {
+  margin-bottom: 0;
+}
+
+.layout--single .page__content pre {
+  margin: 18px 0 24px;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.layout--single .page__content pre code {
+  font-size: 13px !important;
+  line-height: 1.65 !important;
+}
+
+.layout--single .page__content :not(pre) > code {
+  font-size: 0.88em;
+}
+
+.layout--single .page__content table {
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.layout--single .page__content table :where(th, td) {
+  padding: 9px 10px;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+}
+
+.layout--single .page__content .btn {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.layout--single .page__meta,
+.layout--single .page__date {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.layout--single .page-quick-nav strong {
+  font-size: 13px;
+}
+
+.layout--single .page-quick-nav a {
+  font-size: 12px;
+}
+
+.layout--single .proof-item__label {
+  font-size: 12px;
+}
+
+.layout--single .proof-item strong {
+  font-size: 16px;
+}
+
+.layout--single .proof-item span:last-child {
+  font-size: 13px;
+}
+
+.layout--single .report-card__eyebrow {
+  font-size: 12px;
+}
+
+.layout--single .report-card h3 {
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+.layout--single .report-card p {
+  font-size: 14px !important;
+  line-height: 1.65 !important;
+}
+
+.layout--single .report-card__result {
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.layout--single .report-figure figcaption {
+  font-size: 12px !important;
+  line-height: 1.55 !important;
+}
+
+.layout--single .evidence-block summary {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.layout--single .portfolio-page-intro span {
+  font-size: 12px;
+}
+
+.layout--single .portfolio-page-intro p {
+  font-size: 15px !important;
+  line-height: 1.75 !important;
+}
+
+.layout--single .portfolio-project-list .home-menu-item__title span {
+  font-size: 12px;
+}
+
+.layout--single .portfolio-project-list .home-menu-item__title h2 {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.45;
+}
+
+.layout--single .portfolio-project-list .home-menu-item__description {
+  font-size: 14px !important;
+  line-height: 1.7 !important;
+}
+
+.layout--single .portfolio-project-list .home-menu-item__outcome strong {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.layout--single .portfolio-project-list .home-menu-item__outcome span {
+  font-size: 12px;
+}
+
+.layout--single .sidebar__right .toc {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.layout--single .sidebar__right .toc .nav__title {
+  font-size: 12px;
+}
+
+@media (max-width: 760px) {
+  .layout--single .page__title {
+    margin-bottom: 15px;
+    font-size: 29px;
+    line-height: 1.3;
+  }
+
+  .layout--single .page__content,
+  .layout--single .page__content :where(p, li, dd, figcaption) {
+    font-size: 15px !important;
+  }
+
+  .layout--single .page__content h2 {
+    margin-top: 36px;
+    font-size: 20px;
+  }
+
+  .layout--single .page__content h3 {
+    margin-top: 28px;
+    font-size: 17px;
+  }
+
+  .layout--single .page__content h4 {
+    font-size: 16px;
+  }
+
+  .layout--single .report-card {
+    min-height: 0;
+  }
+
+  .layout--single .portfolio-project-list .home-menu-item__title h2 {
+    font-size: 17px;
+  }
+}

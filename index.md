@@ -6,7 +6,7 @@ classes: wide
 
 <div class="portfolio-home">
   <section class="home-profile" aria-labelledby="home-name">
-    <span class="home-profile__role">백엔드 플랫폼 개발자</span>
+    <span class="home-profile__role">백엔드 개발자</span>
     <h1 id="home-name">김성원</h1>
     <p class="home-profile__lead">
       실시간 서비스와 데이터 파이프라인을 만들고, 느려지거나 중단되는 지점을 측정해 개선합니다.
@@ -38,7 +38,7 @@ classes: wide
       </span>
       <span>
         KIS 주가, BLS 거시경제, SEC 재무 데이터를 수집하고 정규화해 차트와 조회 기능에 제공하며,
-        실시간 협업과 데이터 처리 상태를 운영자가 확인할 수 있게 만들었습니다.
+        실시간 협업 그래프 기능 개발과 데이터 처리 상태를 운영자가 확인할 수 있게 만들었습니다.
       </span>
     </p>
 
@@ -306,6 +306,9 @@ classes: wide
     </header>
 
     <nav class="home-more__links" aria-label="추가 엔지니어링 리포트">
+      <a href="{{ '/reports/realtime-degrade-overview/#reliable-event-recovery' | relative_url }}"><strong>Redis Pub/Sub 누락 보정</strong><span>Redis는 즉시 전파, Kafka는 Reliable 이벤트 누락 복구</span></a>
+      <a href="{{ '/reports/websocket-poc3-failback/' | relative_url }}"><strong>WebSocket 서버 복귀 검증</strong><span>이벤트 유실 없이 복구 서버를 운영 경로에 재편입</span></a>
+      <a href="{{ '/reports/loadtest-orchestrator-redis-fault-validation/' | relative_url }}"><strong>부하, 장애 검증 자동화</strong><span>장애 주입부터 복구 확인까지 같은 순서로 반복 실행</span></a>
       <a href="{{ '/reports/jpa-tuning/' | relative_url }}"><strong>JPA 조회 전략 비교</strong><span>N+1, Fetch Join, Projection 비교</span></a>
       <a href="{{ '/reports/jfr-jmc-hotpath/' | relative_url }}"><strong>JFR/JMC Hot Path 분석</strong><span>JWT 중복 검증과 객체 할당 병목</span></a>
       <a href="{{ '/reports/slo-operating-capacity/' | relative_url }}"><strong>SLO 기반 운영 사양 산정</strong><span>부하와 자원 사용량의 관계 확인</span></a>
