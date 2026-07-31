@@ -17,19 +17,19 @@ classes:
     <span class="report-card__eyebrow">데이터 파이프라인</span>
     <h3>중단 후에도 처리 위치를 확인하는 구조</h3>
     <p>서로 다른 원천 데이터를 먼저 보관하고 수집과 변환을 분리해, 중단 후에도 재처리 범위를 확인할 수 있게 했습니다.</p>
-    <span class="report-card__result">대기 2건 → 처리 완료, Worker 0 → 1 → 0</span>
+    <span class="report-card__result">ETL 재개: lag 2 → 0 / 별도 ASG 검증: 0 → 1 → 0</span>
   </a>
   <a class="report-card" href="/reports/realtime-degrade-overview/">
     <span class="report-card__eyebrow">메시지 시스템 장애</span>
     <h3>Redis, Kafka 장애 대응</h3>
     <p>메시지 시스템이 중단돼도 요청과 변경 내용을 보관하고, 복구 후 다시 처리하는 흐름을 검증했습니다.</p>
-    <span class="report-card__result">오류 요청 감소, 복구 후 이벤트 유실 0건</span>
+    <span class="report-card__result">Redis 검증: HTTP 5xx 0건 / Kafka 5분 38초 장애 검증: 유실, 중복 0건</span>
   </a>
   <a class="report-card" href="/reports/auto-recovery-scaleout/">
     <span class="report-card__eyebrow">자동 복구</span>
     <h3>장애 감지에서 복구 작업까지</h3>
     <p>애플리케이션 중단에는 컨테이너 재시작을, 자원 부족에는 인스턴스 확장을 실행하도록 알람과 복구 작업을 연결했습니다.</p>
-    <span class="report-card__result">컨테이너 재시작, 4초 내 전환, ASG 확장</span>
+    <span class="report-card__result">App 재시작 / CPU 확장 / Gateway 약 4초 전환</span>
   </a>
   <a class="report-card" href="/reports/observability-system/">
     <span class="report-card__eyebrow">관측</span>
@@ -57,7 +57,7 @@ classes:
   <a class="report-card report-card--featured" href="/reports/timescaledb-27x/">
     <span class="report-card__eyebrow">시계열 DB</span>
     <h3>90일 차트 조회 지연 개선</h3>
-    <p>실행 계획을 바탕으로 인덱스와 데이터 분할 간격, 사전 집계를 같은 부하에서 비교했습니다.</p>
+    <p>동일 인덱스 조건에서 일반 테이블과 하이퍼테이블을 비교하고, 조회 범위에 맞는 청크 구성을 검증했습니다.</p>
     <span class="report-card__result">p95 7,247ms → 235ms</span>
   </a>
   <a class="report-card" href="/reports/jpa-tuning/">
@@ -80,14 +80,14 @@ classes:
   <a class="report-card report-card--featured" href="/reports/websocket-group-canvas/">
     <span class="report-card__eyebrow">실시간 전송</span>
     <h3>동시 편집 메시지 전송 개선</h3>
-    <p>여러 작업의 동시 전송을 막고 짧은 시간에 발생한 변경을 묶어 최신 상태를 전달하도록 바꿨습니다.</p>
+    <p>세션별 전송을 직렬화해 쓰기 충돌을 제거한 뒤, 반복 전송을 줄이고 최신 상태만 전달하도록 바꿨습니다.</p>
     <span class="report-card__result">200ms 이내 수신 0.38% → 99.97%</span>
   </a>
   <a class="report-card" href="/reports/websocket-poc1-sharding/">
     <span class="report-card__eyebrow">서버 분산 검증</span>
     <h3>그룹별 연결 분산</h3>
     <p>그룹별 연결을 두 인스턴스에 나눠 한 서버에 집중되던 메시지 전송 부하를 분산했습니다.</p>
-    <span class="report-card__result">159K → 79K + 79K</span>
+    <span class="report-card__result">서버당 전송 시도: 159K → 약 79K씩 분산</span>
   </a>
   <a class="report-card" href="/reports/websocket-poc2-conflict/">
     <span class="report-card__eyebrow">편집 충돌 검증</span>
@@ -99,7 +99,7 @@ classes:
     <span class="report-card__eyebrow">서버 복귀 검증</span>
     <h3>누락된 변경을 처리한 뒤 서버 복귀</h3>
     <p>복구된 서버가 장애 중 누락된 변경을 모두 처리한 뒤 다시 요청을 받도록 전환 순서를 정했습니다.</p>
-    <span class="report-card__result">이벤트 유실 없는 서버 전환</span>
+    <span class="report-card__result">Kafka 3건을 목표 offset까지 처리 후 서버 전환</span>
   </a>
 </div>
 

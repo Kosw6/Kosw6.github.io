@@ -71,8 +71,7 @@ V1의 Top Stack Trace에서 `BaseNCodec.ensureBufferSize()`가 높은 빈도로 
 ```
 BaseNCodec.decode()
   └─ Base64.decodeBase64()
-       └─ JWTDecoder.Base64.decodeBase64()
-            └─ JWT.require().verify(token)
+       └─ JWT.require().verify(token)
 ```
 
 ### 근본 원인
@@ -98,7 +97,7 @@ Authentication auth = jwtTokenProvider.getAuthentication(jwt, userDetailService)
 | Old GC Total Time | 3.47 s | **2.22 s** |
 | 개선율 | — | **약 36% 감소** |
 
-- `BaseNCodec.ensureBufferSize` 호출 수 감소
+- `BaseNCodec.ensureBufferSize` 호출 수와 Old GC 총 시간 감소 확인
 - `AbstractQueuedSynchronizer$ConditionNode` 할당 감소
 - 핫패스 개선만으로 메모리 안정성과 성능이 동시에 개선됨
 

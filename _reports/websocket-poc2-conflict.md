@@ -28,9 +28,9 @@ classes: wide
 | shard 장애 시 다른 서버로 우회 | **Failover 라우팅** ✅ |
 
 - **문제**: 샤딩 구조에서 특정 shard 장애 시 → 다른 인스턴스로 fallback → 편집 상태 불일치
-- **핵심 설계**: Kafka로 상태를 전파하고, Redis Draft로 필드 단위 변경 이력을 추적하여 failover 이후 fallback 환경에서도 충돌을 정확히 판별
+- **핵심 설계**: Kafka로 상태를 전파하고, Redis Draft로 필드 단위 변경 이력을 추적하여 failover 이후 SAFE, AUTO_MERGE, CONFLICT 시나리오를 판별
 
-> ⚠️ 왜 fallback 상황에서도 AUTO_MERGE / CONFLICT를 정확히 구분할 수 있었는지 
+> ⚠️ fallback 상황에서 AUTO_MERGE / CONFLICT를 어떤 기준으로 구분했는지
 > **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc2-fallback-state-sync-conflict-resolution.md)
 
 ---
@@ -55,7 +55,7 @@ classes: wide
 </div>
 <br>
 본 구조는 서버 장애 시에는 failover를 통해 연결을 유지하고,
-유실된 상태는 fallback 전략을 통해 보정하는 구조로 설계하였다.
+우회 서버와 기존 서버 사이의 편집 상태 차이는 fallback 전략으로 보정하도록 설계하였다.
 
 ### Draft 상태 구조 (Redis)
 

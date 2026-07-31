@@ -39,7 +39,7 @@ tags: [observability, logging, loki, grafana, prometheus, spring]
 
 기능이 정상 동작하는 것만으로는 운영 안정성을 설명할 수 없다.
 
-실제 운영에서는 다음 질문에 답할 수 있어야 한다.
+서비스를 운영하려면 다음 질문에 답할 수 있어야 한다.
 
 - 특정 요청이 어느 API와 도메인을 거쳐 실패했는가?
 - Redis, Kafka, DB 중 어떤 경로에서 지연 또는 오류가 발생했는가?

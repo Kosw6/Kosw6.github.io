@@ -41,7 +41,7 @@ tags: [redis, kafka, websocket, degrade, fallback, spring]
   <div class="proof-item">
     <span class="proof-item__label">KAFKA RECOVERY</span>
     <strong>loss 0 / duplicate 0</strong>
-    <span>5분 38초 장애 후 Outbox 전량 SENT</span>
+    <span>5분 38초 장애 검증 후 Outbox 전량 SENT</span>
   </div>
 </div>
 
@@ -53,7 +53,7 @@ tags: [redis, kafka, websocket, degrade, fallback, spring]
 |---|---|---|
 | Redis state/cache 장애 | DB fallback | lock/autosave/version hint 경로에서 5xx 없이 기능 지속 |
 | Redis Pub/Sub 장애 | gRPC relay fallback | volatile event 전달 경로 유지 |
-| Kafka 장애 | Outbox DB 저장 후 recovery replay | 이벤트 손실 0건, 중복 0건, PENDING/FAILED 0건 |
+| Kafka 장애 | Outbox DB 저장 후 recovery replay | 5분 38초 장애 검증에서 손실 0건, 중복 0건, PENDING/FAILED 0건 |
 | Redis latency 500ms | timeout 기준 DB fallback | Redis 완전 다운이 아니어도 degrade 전환 |
 
 ---

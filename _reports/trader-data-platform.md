@@ -50,7 +50,7 @@ tags: [go, python, kafka, etl, postgresql, timescaledb, aws, autoscaling]
 
 ## 문제
 
-외부 API 응답을 바로 정규화 테이블에 넣으면 호출 실패, 잘못된 데이터, ETL 오류가 발생했을 때 원인을 재현하기 어렵습니다. 수집과 적재가 하나의 프로세스에 묶여 있으면 DB 부하를 미루기 어렵고, worker를 항상 켜 두어야 해 비용도 증가합니다.
+외부 API 응답을 바로 정규화 테이블에 넣으면 호출 실패, 잘못된 데이터, ETL 오류가 발생했을 때 원인을 재현하기 어렵습니다. 수집과 적재가 하나의 프로세스에 묶여 있으면 DB 부하를 미루기 어렵고, worker를 항상 켜 두는 구조라면 유휴 시간에도 비용이 발생합니다.
 
 이 문제를 다음 세 가지 질문으로 나눴습니다.
 
@@ -61,7 +61,7 @@ tags: [go, python, kafka, etl, postgresql, timescaledb, aws, autoscaling]
 ## 구성 {#architecture}
 
 <figure class="report-figure">
-  <img src="/assets/images/data-platform/trader-data-architecture.svg" alt="Go Controller, Kafka, Python Collector와 ETL Worker, PostgreSQL과 raw storage로 구성한 Trader Data Platform 아키텍처">
+  <img src="/assets/images/data-platform/trader-data-architecture.svg" alt="Go Controller, Kafka, Python Collector와 ETL Worker, PostgreSQL과 raw storage로 구성한 Trader 데이터 파이프라인 아키텍처">
   <figcaption>Go는 control plane, Python은 data plane을 담당하며 DB가 처리 상태의 source of truth가 됩니다.</figcaption>
 </figure>
 

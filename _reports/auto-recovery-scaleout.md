@@ -50,6 +50,8 @@ tags: [aws, grafana, lambda, ssm, autoscaling, recovery]
 | High CPU | Grafana alert | Lambda -> ASG desired capacity 1 -> 2 | 신규 EC2 생성 및 scrape 합류 |
 | Gateway routing | health polling | healthy/draining 상태 기반 라우팅 | 장애 인스턴스 회피 및 failback |
 
+> **검증 범위**: High CPU는 자동화 경로를 확인하기 위해 낮은 테스트 임계치(`process_cpu_usage > 0.002`)를 사용했습니다. 운영 임계치와 cooldown, 반복 재시작 실패 후 인스턴스 교체, scale-in 정책은 별도로 정해야 하며 이 문서의 완료 결과에 포함하지 않습니다.
+
 ---
 
 ## 문제

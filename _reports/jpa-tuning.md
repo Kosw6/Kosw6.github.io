@@ -1,5 +1,5 @@
 ---
-title: "Canvas Node 조회 성능 개선 (JPA Fetch 전략 비교)"
+title: "Canvas Node 조회 성능 개선 (JPA 조회 구조와 본문 크기 비교)"
 layout: single
 permalink: /reports/jpa-tuning/
 toc: true
@@ -15,13 +15,13 @@ classes: wide
 
 ## 요약
 
-| 항목 | Before | After |
+| 실험 | Before | After |
 |------|--------|-------|
-| 지속 가능한 최대 RPS | ~26 RPS (붕괴) | **120 RPS 안정** |
-| 개선 포인트 | Lazy N+1 + 1만 자 본문 조회 | Fetch Join + DB 레벨 20자 preview |
+| 조회 전략 비교, 120 RPS | Lazy 목록 p95 2,551ms | **Fetch Join 목록 p95 413ms** |
+| 본문 크기 비교, 동일 Fetch Join | 1만 자 원문 또는 앱 절단은 약 26 RPS부터 붕괴 | **DB 20자 preview는 120 RPS에서 안정** |
 
 - **핵심 발견**: 병목이 DB(N+1) → GC(객체 생성) → Payload(직렬화) 순으로 이동함
-- **환경**: 4C/16GB, PostgreSQL 17 + TimescaleDB, k6 120 RPS × 90s, seed=777 고정
+- **환경**: 4C/16GB, PostgreSQL 17 + TimescaleDB, 조회 전략은 k6 120 RPS × 90s, 본문 크기는 RPS를 단계별로 높여 비교
 
 
 ---

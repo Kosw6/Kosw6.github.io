@@ -28,7 +28,7 @@ classes:
 | **Database** | PostgreSQL, TimescaleDB (하이퍼테이블, 청크 튜닝, CAGG), 인덱싱 전략 |
 | **Cache / MQ** | Redis (TTL 설계, JSON Serializer), Kafka (Consumer Group, offset replay) |
 | **Realtime** | WebSocket, Redis Pub/Sub, 서버 분산과 복구 설계 |
-| **Data Platform** | DB Outbox, Kafka lag, raw/ETL 분리, lineage, idempotency |
+| **Data Pipeline / Control Plane** | DB Outbox, Kafka lag, raw/ETL 분리, lineage, idempotency |
 | **Performance** | k6, JFR/JMC, Prometheus/Grafana, Grafana Alert |
 | **DevOps** | Docker, Terraform, GitHub Actions, AWS (EC2/S3/CloudFront/SSM/ASG/Lambda) |
 | **Frontend** | React, Vite, React Flow, WebGL 차트 |
@@ -49,24 +49,25 @@ classes:
 
 ---
 
-### Trader (개인 프로젝트, 2025.01–2026.07)
+### Trader (개인 프로젝트, 2025.01–현재)
 
 [Source Code와 저장소별 역할 보기](/projects/trader/#source-code)
 
 주식투자 학습을 위한 복기 서비스입니다. 약 2,600만 행의 주가 조회 성능 개선에서 시작해 실시간 협업, 장애 복구, KIS, BLS, SEC 데이터 파이프라인과 Worker 제어까지 확장했습니다.
 
 **성능 개선**
-- 300 RPS의 90일 차트 조회에서 실행 계획을 비교하고 TimescaleDB 인덱스와 데이터 분할 간격을 조정해 p95를 **7,247ms에서 235ms**로 개선
-- 인덱스 적용 효과를 별도로 측정해 p95가 **342ms에서 32ms**로 줄어드는 것을 확인
+- 동일 인덱스 조건의 300 RPS, 90일 차트 조회에서 일반 테이블과 TimescaleDB 하이퍼테이블을 비교하고 청크를 튜닝해 p95를 **7,247ms에서 235ms**로 개선
+- 별도의 10 RPS 실험에서 복합 인덱스 적용 효과를 측정해 p95가 **342ms에서 32ms**로 줄어드는 것을 확인
 - 네 가지 조회 구조를 동일한 k6 부하에서 비교하고 p95, GC, 객체 할당량을 분석해 Fetch Join을 선택
 - 그래프 목록의 1만 자 본문과 DB 20자 프리뷰를 비교해 동일 p95 구간에서 유지 가능한 RPS를 **약 5배 높이고**, 목록은 프리뷰, 원문은 상세 조회로 분리
 - JFR/JMC로 객체 할당이 집중되는 경로를 추적해 반복되는 JWT 검증을 제거하고 90초 본부하의 Old GC 총 시간을 **3.47초에서 2.22초로 약 36% 감소**
 
 **실시간 시스템**
-- 동시 편집 중 여러 작업이 직접 메시지를 보내며 발생한 충돌을 분석하고, 최신 변경을 모아 전송하도록 바꿔 200ms 이내 수신율을 **0.38%에서 99.97%**로 개선
+- 동시 편집 중 같은 세션으로 전송이 겹치며 발생한 쓰기 충돌을 세션별 전송 직렬화로 제거
+- 충돌 제거 후에도 200ms 이내 수신율이 0.38%에 머문 원인을 반복 전송으로 좁히고, 최신 변경만 모아 보내도록 바꿔 **99.97%**로 개선
 - 그룹별 연결을 두 인스턴스에 나눠 메시지 전송을 **159K에서 79K + 79K**로 분산하고 GC와 객체 할당 감소를 JFR로 확인
 - 장애 중 사용자가 작성한 내용과 서버 변경 내용을 필드별로 비교해 자동 병합 가능 여부와 충돌을 구분
-- 복구된 서버가 누락된 Kafka 이벤트를 처리한 뒤 다시 요청을 받도록 전환 순서를 정하고 **이벤트 유실 없는 서버 복귀**를 검증
+- 복구된 서버가 검증 시나리오의 목표 Kafka offset까지 처리한 뒤 다시 요청을 받도록 전환 순서를 정하고, 기존 서버의 재연결 안내와 drain 흐름을 검증
 
 **아키텍처 및 운영**
 - TimescaleDB Continuous Aggregate (CAGG)의 적용 가능성을 검증하고 1W/1M/1Y 조회 전략 설계

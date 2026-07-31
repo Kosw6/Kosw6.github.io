@@ -27,7 +27,7 @@ classes: wide
       <span>프로젝트 개요</span>
       <div>
         <h2 id="primary-project-title">Trader, 주식투자 복기 서비스</h2>
-        <p>2025.01 - 2026.07, 개인 개발, 기여도 100%</p>
+        <p>2025.01 - 현재, 개인 개발, 기여도 100%</p>
       </div>
     </header>
 
@@ -102,9 +102,9 @@ classes: wide
           </p>
           <p class="home-case__result">
             <b>결과</b>
-            <span>
-              중단 중 쌓인 <strong>BLS raw 2건을 재개 후 모두 처리</strong>했고,
-              작업량에 따라 AWS Worker가 <strong>0 → 1 → 0</strong>으로 동작하는 과정도 확인했습니다.
+            <span class="home-sentence-lines">
+              <span>ETL 재개 검증에서는 중단 중 쌓인 <strong>BLS raw 2건을 모두 처리</strong>했습니다.</span>
+              <span>별도의 ASG 검증에서는 job lag를 감지한 AWS Worker가 <strong>0 → 1 → 0</strong>으로 동작했습니다.</span>
             </span>
           </p>
           <footer>
@@ -120,26 +120,28 @@ classes: wide
           <strong>실시간 처리</strong>
         </header>
         <div class="home-case__content">
-          <h3>WebSocket 동시 편집 전송 개선: 쓰기 충돌 제거, 200ms 이내 수신율 0.38% → 99.97%</h3>
+          <h3>WebSocket 동시 편집 전송 개선: 200ms 이내 수신율 0.38% → 99.97%</h3>
           <p>
             <b>문제</b>
             <span class="home-sentence-lines">
               <span>실시간 협업 캔버스는 한 사용자의 편집 결과를 다른 사용자에게 빠르게 보여줘야 했습니다.</span>
-              <span>동시 편집 부하 테스트에서는 메시지 순서와 중복 전송이 제어되지 않았고, 200ms 이내 수신 비율이 0.38%에 머물렀습니다.</span>
+              <span>동시 편집 부하 테스트 초기에 여러 작업이 같은 세션으로 동시에 전송하면서 쓰기 충돌과 세션 이탈이 발생했습니다.</span>
+              <span>세션별 전송을 직렬화해 오류를 제거한 뒤에도 반복 전송이 쌓여 200ms 이내 수신 비율은 0.38%에 머물렀습니다.</span>
             </span>
           </p>
           <p>
             <b>판단과 선택</b>
             <span class="home-case__sentences">
               <span>핵심은 모든 편집 이벤트를 빠짐없이 보내는 것이 아니라 최신 화면 상태를 제때 전달하는 것이었습니다.</span>
-              <span>세션별 쓰기는 직렬화하되 커서와 드래그 미리보기는 최신값만 모아 보내고, 실제 편집 결과처럼 유실되면 안 되는 이벤트만 순서대로 전달했습니다.</span>
+              <span>먼저 세션별 쓰기를 직렬화해 충돌을 막고, 커서와 드래그 미리보기는 최신값만 모아 보냈습니다.</span>
+              <span>실제 편집 결과처럼 유실되면 안 되는 이벤트는 순서대로 전달했습니다.</span>
               <span>변경이 없을 때는 다시 보내지 않도록 중복 전송도 제거했습니다.</span>
             </span>
           </p>
           <p class="home-case__result">
             <b>결과</b>
             <span class="home-sentence-lines">
-              <span>같은 동시 편집 부하에서 <strong>200ms 이내 수신 비율을 99.97%</strong>로 높였습니다.</span>
+              <span>동시 접속 200명, 송신자 20명의 같은 부하에서 <strong>200ms 이내 수신 비율을 99.97%</strong>로 높였습니다.</span>
               <span>서버 전환 후 변경 이력을 따라잡고 다시 서비스에 편입하는 흐름도 검증했습니다.</span>
             </span>
           </p>
@@ -257,7 +259,7 @@ classes: wide
           <h3>SIC 동아리 포털 개발 리딩 및 CI/CD 구축</h3>
           <p>
             팀의 기능 범위와 일정을 조율하고 Spring Boot 백엔드, 테스트 기준,
-            GitHub Actions 자동 배포와 AWS 운영 환경을 구축했습니다.
+            GitHub Actions 자동 배포와 AWS 배포 환경을 구축했습니다.
           </p>
         </div>
         <a href="{{ '/projects/sic-portal/' | relative_url }}">상세 보기 →</a>
@@ -307,7 +309,7 @@ classes: wide
 
     <nav class="home-more__links" aria-label="추가 엔지니어링 리포트">
       <a href="{{ '/reports/realtime-degrade-overview/#reliable-event-recovery' | relative_url }}"><strong>Redis Pub/Sub 누락 보정</strong><span>Redis는 즉시 전파, Kafka는 Reliable 이벤트 누락 복구</span></a>
-      <a href="{{ '/reports/websocket-poc3-failback/' | relative_url }}"><strong>WebSocket 서버 복귀 검증</strong><span>이벤트 유실 없이 복구 서버를 운영 경로에 재편입</span></a>
+      <a href="{{ '/reports/websocket-poc3-failback/' | relative_url }}"><strong>WebSocket 서버 복귀 검증</strong><span>목표 Kafka offset까지 처리한 뒤 복구 서버를 운영 경로에 재편입</span></a>
       <a href="{{ '/reports/loadtest-orchestrator-redis-fault-validation/' | relative_url }}"><strong>부하, 장애 검증 자동화</strong><span>장애 주입부터 복구 확인까지 같은 순서로 반복 실행</span></a>
       <a href="{{ '/reports/jpa-tuning/' | relative_url }}"><strong>JPA 조회 전략 비교</strong><span>N+1, Fetch Join, Projection 비교</span></a>
       <a href="{{ '/reports/jfr-jmc-hotpath/' | relative_url }}"><strong>JFR/JMC Hot Path 분석</strong><span>JWT 중복 검증과 객체 할당 병목</span></a>

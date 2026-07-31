@@ -27,6 +27,7 @@ Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판�
 
 | 항목 | 내용 |
 |------|------|
+| **개발 기간** | 2025.01 - 현재, 개인 개발 |
 | **사용자 기능** | 그룹 및 개인 캔버스, 투자 일지, 차트 마커, 재무와 거시경제 데이터 조회 |
 | **Backend** | Spring Boot, JPA, PostgreSQL, TimescaleDB, Redis, Kafka |
 | **Frontend** | React, React Flow, WebSocket 기반 실시간 캔버스 |
@@ -50,16 +51,16 @@ Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판�
 | 문제 | 개선 전 | 개선 후 | 결과 |
 |------|--------|---------|------|
 | TimescaleDB 시계열 쿼리 (p95, 300 RPS) | 7,247ms | **235ms** | **목표 300ms 충족** |
-| WebSocket 200ms 이내 수신율 | 0.38% | **99.97%** | **99.6%p 증가** |
+| WebSocket 200ms 이내 수신율 (쓰기 충돌 제거 후) | 0.38% | **99.97%** | **99.6%p 증가** |
 | Old GC 총 시간 (90초 본부하) | 3.47초 | **2.22초** | 약 36% 감소 |
 | BLS ETL 중단 복구 | Worker 중단 중 2건 대기 | **재기동 후 2건 모두 처리** | 중단 지점부터 작업을 이어서 처리 |
-| AWS Python Worker 운영 | 작업 발생 시 수동 기동,종료 | **Kafka lag 감지 후 자동 확장, 유휴 시 자동 축소** | 수동 운영을 0 → 1 → 0 자동 조절로 전환 |
+| AWS Python Worker 기동 검증 | 테스트 이전에는 수동 기동,종료 | **Kafka lag 감지 후 자동 확장, 유휴 시 자동 축소** | ASG desired를 0 → 1 → 0으로 자동 조절 |
 
 ---
 
 ## Data Pipeline & Control Plane 확장 {#data-platform}
 
-차트와 일지만으로는 투자 복기에 필요한 재무·매크로·시세 데이터를 안정적으로 제공하기 어렵다고 판단했습니다. 그래서 수집, raw 보존, 정규화, 재처리, worker 제어를 별도 데이터 플랫폼 구조로 확장했습니다.
+차트와 일지만으로는 투자 복기에 필요한 재무·매크로·시세 데이터를 안정적으로 제공하기 어렵다고 판단했습니다. 그래서 수집, raw 보존, 정규화, 재처리, worker 제어를 별도 데이터 처리 파이프라인과 제어 구조로 확장했습니다.
 
 <figure class="report-figure">
   <img src="/assets/images/data-platform/trader-data-architecture.svg" alt="Go Controller, Kafka, Python Collector와 ETL Worker, raw storage와 PostgreSQL로 구성한 데이터 파이프라인">
@@ -103,7 +104,7 @@ Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판�
 
 핵심은 데이터를 단순 적재하는 것이 아니라, **raw부터 정규화 결과, Kafka commit, worker 상태까지 운영자가 추적하고 제어할 수 있는 구조**로 확장한 것입니다.
 
-→ [Trader Data Platform Report 보기](/reports/trader-data-platform/)
+→ [Trader 데이터 파이프라인 Report 보기](/reports/trader-data-platform/)
 
 ---
 
@@ -134,12 +135,13 @@ SELECT hypertable_name FROM timescaledb_information.hypertables;
 
 ### 단계별 개선 결과
 
-| 단계 | 조치 | P95 변화 |
+| 검증 | 조건 | P95 결과 |
 |------|------|----------|
-| Before | 인덱스 없음, 일반 테이블 | **342ms** @ 10 RPS |
-| 1단계 | `(symb, timestamp)` 복합 인덱스 적용 | **32ms** @ 10 RPS (**10배**) |
-| 2단계 | 하이퍼테이블 생성 + 청크 구조 분석 | 7,247ms @ 300 RPS (인덱스 있어도 대용량에서 한계) |
-| 3단계 | 90일 인터벌 + 공간 파티션 4 튜닝 | **235ms** @ 300 RPS, SLO 달성 |
+| 인덱스 효과 | 일반 테이블, 인덱스 없음 | **342ms** @ 10 RPS |
+| 인덱스 효과 | 일반 테이블, `(symb, timestamp)` 적용 | **32ms** @ 10 RPS (**약 10배**) |
+| 하이퍼테이블 기준선 | 동일 인덱스의 일반 테이블 | **7,247ms** @ 300 RPS |
+| 청크 비교 | 하이퍼테이블, 90일 인터벌 + 공간 파티션 8 | **332ms** @ 300 RPS |
+| 최종 설정 | 하이퍼테이블, 90일 인터벌 + 공간 파티션 4 | **235ms** @ 300 RPS, SLO 달성 |
 
 > **인덱스가 쿼리 경로를 결정하고, 하이퍼테이블이 스캔 범위를 제한한다.**
 > 두 조건이 동시에 충족되어야 대규모 시계열 조회가 성립한다.
@@ -193,12 +195,12 @@ JMC Stack Trace 분석으로 hot path를 추적.
 
 ```
 Allocation Hotspot:
-  org.springframework.security.oauth2.jwt.JwtDecoder.decode()
-  → 요청마다 JWT를 중복 검증 중
-  → SecurityContext에 이미 파싱된 값이 있는데도 재파싱
+  BaseNCodec.decode()
+  → Base64.decodeBase64()
+  → JWT.require().verify(token)
 ```
 
-**필터 순서 재조정으로 중복 검증 제거 → Old GC 총 시간 약 36% 감소.**
+`JwtFilter`와 `JwtTokenProvider`가 각각 검증하던 구조를 한 번만 검증하고 `DecodedJWT`를 인증 단계에서 재사용하도록 바꿨습니다. 인증 경로의 불필요한 DB 조회도 제거해 **90초 본부하의 Old GC 총 시간을 약 36% 줄였습니다.**
 
 쿼리 최적화만으로는 보이지 않는 병목이었다.
 런타임 프로파일러가 없었으면 발견하지 못했을 지점.
@@ -212,19 +214,19 @@ Allocation Hotspot:
 ### 상황
 
 Group Canvas의 실시간 노드 업데이트 기능.
-로컬에서는 잘 됐다. **부하를 올리자 수신 실패율이 폭증했다.**
+로컬에서는 잘 됐지만, 동시 접속 200명 부하에서 같은 세션에 여러 작업이 전송하며 쓰기 충돌과 세션 이탈이 발생했습니다.
 
-- 100명 부하 기준 ≤200ms 성공률: **0.38%**
+세션별 전송을 직렬화해 오류를 제거한 뒤에도 송신자 20명, 20Hz 조건에서 ≤200ms 수신율은 **0.38%**에 머물렀습니다.
 
 ### 원인
 
-멀티스레드 fanout 구조에서 `TEXT_PARTIAL_WRITING` 에러 발생.
-상태 누적 방식 전송이 동시 접근 시 충돌.
+멀티스레드 fanout 구조의 동시 `sendMessage()` 호출은 `TEXT_PARTIAL_WRITING`을 일으켰습니다.
+이를 직렬화한 뒤에는 변경 여부와 관계없이 반복되는 flush가 큐를 쌓아 지연을 만들었습니다.
 
 ### 해결
 
-**Dirty Flag 기반 최신값 단건 전송**으로 재설계.
-부분 상태를 누적하지 않고 변경이 감지된 시점에 항상 최신 스냅샷을 전송.
+`ConcurrentWebSocketSessionDecorator`로 세션별 쓰기를 직렬화했습니다.
+이후 **Dirty Flag 기반 최신값 단건 전송**으로 재설계해, 변경이 있을 때만 최신 스냅샷을 전송했습니다.
 
 - ≤200ms 수신율: 0.38% → **99.97%**
 
@@ -257,7 +259,7 @@ Redis는 정상 상태의 빠른 전파를 담당하고 Kafka는 Reliable 이벤
 
 ### PoC 1 — 그룹 샤딩
 
-**문제**: 단일 인스턴스에 모든 fanout 집중 → 스케일아웃이 불가능한 구조.
+**문제**: 단순 연결 분산만으로는 같은 그룹의 fanout 비용이 여러 서버에 남아, 서버별 처리 책임을 나누기 어려웠습니다.
 **해결**: groupId % shard 수 기반 라우팅으로 인스턴스별 담당 그룹 분리.
 
 | 항목 | Before (단일) | After (샤딩 2대) |
@@ -270,7 +272,7 @@ Redis는 정상 상태의 빠른 전파를 담당하고 Kafka는 Reliable 이벤
 
 ### PoC 2 — Fallback & 편집 충돌 제어
 
-**문제**: shard 장애 시 다른 인스턴스로 우회되면 편집 중이던 상태가 사라짐.
+**문제**: 우회 서버는 기존 서버의 메모리 편집 상태를 공유하지 않아 사용자 수정과 서버 변경을 비교하기 어려웠습니다.
 **해결**: Redis Draft에 편집 상태 보존 + dirtyFields 기반 충돌 감지.
 
 - 내가 편집 중인 사이 서버에서 변경된 필드를 추적
@@ -281,14 +283,14 @@ Redis는 정상 상태의 빠른 전파를 담당하고 Kafka는 Reliable 이벤
 
 ### PoC 3 — Failback & Kafka Replay
 
-**문제**: 장애 서버 복구 후 재진입 시 그동안 발생한 이벤트가 유실됨.
+**문제**: 복구 서버가 장애 구간 이벤트를 따라잡기 전에 다시 연결을 받으면 서버별 상태가 달라질 수 있었습니다.
 **해결**: Kafka Consumer Group 분리 (Broadcast / Catch-up) + offset replay.
 
 1. 목표 offset 기록 → Catch-up Consumer가 replay
 2. `catchupCompleted = true` 확인 후 Broadcast Group으로 전환
 3. 구 서버 Drain → 클라이언트 재연결 유도 → 세션 전환
 
-이벤트 유실 없이 서비스 중단 없이 복구.
+검증 시나리오에서 Kafka offset 3건을 목표 offset까지 처리한 뒤 ready 전환을 확인했고, 기존 서버는 재연결 안내 후 drain했습니다.
 
 → [PoC 3 보기](/reports/websocket-poc3-failback/)
 
@@ -316,7 +318,7 @@ Redis는 정상 상태의 빠른 전파를 담당하고 Kafka는 Reliable 이벤
 | **Load Test** | k6 constant-arrival-rate 시나리오 |
 
 ---
-## 운영환경 인프라 구축 및 성능 검증 & 다운사이징
+## AWS 배포 환경 구성과 SLO 기반 사양 검증
 
 ### 보고서 링크
 
@@ -324,8 +326,8 @@ Redis는 정상 상태의 빠른 전파를 담당하고 Kafka는 Reliable 이벤
 
 ### 상황
 
-성능 개선 이후, 실제 운영 환경에서도 안정적으로 동작하는지 검증이 필요했다.
-단순히 빠른 것이 아니라, 얼마나 버틸 수 있고, 어디까지 줄일 수 있는지를 확인하는 단계였다.
+성능 개선 이후 AWS에 App과 DB를 분리한 검증 환경을 구성해 목표 부하에서 필요한 사양을 확인했습니다.
+단순히 빠른 것이 아니라, 현재 워크로드에서 SLO를 만족하면서 자원을 어디까지 줄일 수 있는지 확인하는 단계였습니다.
 
 ### 접근방식
 
@@ -341,7 +343,7 @@ Redis는 정상 상태의 빠른 전파를 담당하고 Kafka는 Reliable 이벤
 | 2core / 4GB + 2core / 8GB | 10.54ms  | 10.85ms   |
 | 2core / 4GB + 2core / 4GB | 23.35ms  | 11.83ms   |
 
-- 저사양에서도 SLO 안정적으로 만족
+- 해당 검증 부하에서 App 2core/4GB, DB 2core/4GB 구성도 p95 300ms 목표 충족
 
 ### 핵심
 
@@ -357,10 +359,10 @@ Trader는 단순 기능 구현 이후 Redis/Kafka 장애, 운영 관측, 자동 
 |------|----------|--------|
 | Observability | TraceId/MDC/AOP 기반 구조화 로그, Loki/Grafana dashboard, error rate alert | [Observability System](/reports/observability-system/) |
 | Redis Degrade | lock/autosave/version hint DB fallback, API 5xx 없이 기능 지속 | [Realtime Degraded Mode](/reports/realtime-degrade-overview/) |
-| Kafka Degrade | Outbox 기반 durable log, 장애 기간 이벤트 손실 0건/중복 0건 | [Realtime Degraded Mode](/reports/realtime-degrade-overview/) |
+| Kafka Degrade | Outbox 기반 durable log, 5분 38초 장애 검증에서 손실 0건/중복 0건 | [Realtime Degraded Mode](/reports/realtime-degrade-overview/) |
 | Auto Recovery | Grafana Alert -> Lambda -> SSM/ASG 복구 및 scale-out | [Auto Recovery & Scale-out](/reports/auto-recovery-scaleout/) |
 | Load Validation | Terraform, k6, AWS SSM 기반 Redis 장애 주입과 baseline 비교 | [Load Test Orchestrator Validation](/reports/loadtest-orchestrator-redis-fault-validation/) |
-| Data Pipeline | raw 보존, Kafka outbox, ETL lineage, worker ASG scale-out/in | [Trader Data Platform](/reports/trader-data-platform/) |
+| Data Pipeline | raw 보존, Kafka outbox, ETL lineage, worker ASG scale-out/in | [Trader 데이터 파이프라인](/reports/trader-data-platform/) |
 
 핵심은 장애를 숨기는 것이 아니라, 장애 범위를 제한하고 복구 흐름을 검증 가능한 형태로 만드는 것입니다. 최근 확장에서는 ETL 처리 비용과 부하를 즉시 발생시키지 않고, raw와 Kafka lag를 기준으로 필요한 시점에 worker를 기동하는 control plane 구조까지 검증했습니다.
 

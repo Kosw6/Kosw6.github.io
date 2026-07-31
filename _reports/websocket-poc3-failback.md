@@ -1,5 +1,5 @@
 ---
-title: "PoC 3 — Kafka Replay 기반 Failback과 이벤트 유실 없는 서버 전환"
+title: "PoC 3 — Kafka Replay 기반 Failback과 서버 재편입 검증"
 layout: single
 permalink: /reports/websocket-poc3-failback/
 toc: true
@@ -7,8 +7,8 @@ toc_sticky: true
 classes: wide
 ---
 > 🚀 **WebSocket 분산 시스템 설계의 마지막 단계**
-> (샤딩 → 정합성 → 무중단 복구)<br>
-> 🔍 **서비스 중단 없이 WebSocket 서버를 교체하는 방법 (Kafka Replay · Drain · Failback 설계)**  <br>
+> (샤딩 → 정합성 → 복구 서버 재편입)<br>
+> 🔍 **누락 이벤트를 따라잡은 뒤 WebSocket 서버를 전환하는 방법 (Kafka Replay · Drain · Failback 설계)**  <br>
 > **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md)
 <br>
 
@@ -24,14 +24,14 @@ classes: wide
 | 단계 | 결과 |
 |------|------|
 | ws-1 장애 → ws-2 자동 인수 | **이벤트 처리 지속** ✅ |
-| ws-1 복구 → Kafka Replay | **replayCount=3, 유실 0** ✅ |
-| ws-2 Drain → 클라이언트 재연결 | **서비스 중단 없는 전환** ✅ |
+| ws-1 복구 → Kafka Replay | **replayCount=3, 목표 offset 도달** ✅ |
+| ws-2 Drain → 클라이언트 재연결 | **재연결 안내 후 서버 전환** ✅ |
 
 - **문제**: 샤딩 서버가 복구된 후 fallback 서버에서 **어떻게 원복(failback)** 할 것인가
 - **핵심 설계**: Kafka를 이벤트 로그로 활용해 장애 구간을 offset 기반으로 복구하고,<br>
-  Gateway + Drain으로 클라이언트 재연결을 유도하여 무중단 서버 전환 구현
+  Gateway + Drain으로 클라이언트 재연결을 유도하여 복구 서버 재편입 순서 검증
 
-> ⚠️ 어떻게 이벤트 유실 없이 서버를 교체했는지 (Kafka Replay + Drain 흐름)   
+> ⚠️ 복구 서버가 목표 offset을 따라잡은 뒤 어떻게 다시 연결을 받게 했는지 (Kafka Replay + Drain 흐름)
 > **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md)
 ---
 
@@ -101,7 +101,7 @@ Catch-up 종료 → ready=true → Broadcast Consumer 시작
 [CATCHUP] completed replayCount=3 targetOffsets={0=2} lastConsumedOffsets={0=2}
 ```
 
-이벤트 유실 없이 장애 구간 3건 모두 복구 확인.
+검증 시나리오에서 장애 구간의 Kafka 이벤트 3건을 소비하고 목표 offset 도달을 확인했습니다.
 
 > 🔍 Kafka offset 기반 replay 설계와 실제 복구 로그 전체 보기   
 > **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md)
@@ -178,9 +178,9 @@ ws-2: draining=true, 신규 연결 차단, 기존 클라이언트에 재연결 �
 
 | 결정 | 이유 |
 |------|------|
-| Kafka를 이벤트 로그 저장소로 사용 | 장애 구간의 이벤트를 offset 기준으로 정확히 replay 가능 |
+| Kafka를 이벤트 로그 저장소로 사용 | 검증 시나리오의 목표 offset까지 장애 구간 이벤트를 replay 가능 |
 | Gateway 중심 lifecycle orchestration | 각 서버가 독립 판단하지 않도록 → 일관성 유지 |
-| Drain → reconnect 구조 | 강제 종료 없이 클라이언트가 스스로 재연결 → 사용자 경험 유지 |
+| Drain → reconnect 구조 | 재연결 안내 후 기존 세션을 정리하고 복구 서버로 전환 |
 | Consumer Group 분리 | Catch-up과 Broadcast가 서로 간섭하지 않음 |
 
 ---

@@ -15,11 +15,12 @@ classes: wide
 
 | 항목 | Before | After |
 |------|--------|-------|
-| ≤200ms 수신 성공률 | **0.38%** | **99.97%** |
+| ≤200ms 수신 성공률 (쓰기 충돌 제거 후) | **0.38%** | **99.97%** |
 
 - **환경**: 200명 동시 접속, 송신자 20명, 20Hz → 80,000 send/s fan-out
 - **문제 1**: 동일 세션에 동시 send → TEXT_PARTIAL_WRITING → room 붕괴
-- **문제 2**: Drop 전략 없이 All-delivery → 지연 누적
+- **문제 2**: 동시 전송 오류 제거 후에도 반복 flush가 누적돼 ≤200ms 수신율 0.38%
+- **문제 3**: Drop 전략 없이 All-delivery → 지연 누적
 - **해결**: ConcurrentWebSocketSessionDecorator + 최신값 Coalescing + Dirty Flag
 
 ---
