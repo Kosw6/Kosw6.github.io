@@ -63,8 +63,8 @@ classes:
   <a class="report-card" href="/reports/jpa-tuning/">
     <span class="report-card__eyebrow">JPA</span>
     <h3>조회 방식별 처리량 비교</h3>
-    <p>네 가지 조회 방식의 요청당 데이터 크기와 객체 생성 비용을 비교해 병목이 발생하는 조건을 찾았습니다.</p>
-    <span class="report-card__result">붕괴 RPS 5배 차이</span>
+    <p>네 가지 조회 구조를 같은 부하에서 비교한 뒤, 1만 자 원문과 DB 20자 프리뷰의 p95, GC, 객체 할당량을 검증했습니다.</p>
+    <span class="report-card__result">동일 p95 구간 유지 가능 RPS 약 5배</span>
   </a>
   <a class="report-card" href="/reports/jfr-jmc-hotpath/">
     <span class="report-card__eyebrow">런타임 분석</span>

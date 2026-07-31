@@ -18,7 +18,7 @@ classes: wide
 | 항목 | Before | After |
 |------|--------|-------|
 | 지속 가능한 최대 RPS | ~26 RPS (붕괴) | **120 RPS 안정** |
-| 개선 포인트 | Lazy N+1 + 10K payload | Fetch Join + DB 레벨 20자 preview |
+| 개선 포인트 | Lazy N+1 + 1만 자 본문 조회 | Fetch Join + DB 레벨 20자 preview |
 
 - **핵심 발견**: 병목이 DB(N+1) → GC(객체 생성) → Payload(직렬화) 순으로 이동함
 - **환경**: 4C/16GB, PostgreSQL 17 + TimescaleDB, k6 120 RPS × 90s, seed=777 고정
