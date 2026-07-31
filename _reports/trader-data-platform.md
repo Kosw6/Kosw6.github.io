@@ -151,7 +151,7 @@ trader.jobs.events lag = 0
 
 DB outbox를 source of truth로 보고 해당 row를 `PENDING`으로 되돌렸습니다. Go outbox relay가 다시 발행했고 Python Worker가 소비한 뒤 BLS raw 수집과 ETL이 완료됐습니다.
 
-<details class="evidence-block">
+<details class="evidence-block" markdown="1">
   <summary>복구 결과 SQL 및 로그 요약</summary>
 
 ```text
@@ -177,7 +177,7 @@ record_lineage rows=49
 
 BLS ETL worker를 중지한 상태에서 raw job 2건을 수집했습니다. raw는 `COLLECTED`로 보존되고 `trader.raw.bls.ready` lag가 2까지 증가했습니다. worker를 다시 실행하자 commit offset이 1에서 3으로 이동하고 lag가 0이 됐습니다.
 
-<details class="evidence-block">
+<details class="evidence-block" markdown="1">
   <summary>lag 및 source_object 상태 전이</summary>
 
 ```text
