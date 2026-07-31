@@ -1,12 +1,12 @@
 ---
-title: "Trader - 주식투자 복기 플랫폼"
+title: "Trader - 주식투자 복기 서비스"
 layout: single
 classes: wide
-excerpt: "투자 복기 플랫폼, TimescaleDB p95 SLO 달성, WebSocket 99.97%, Kafka/ETL lineage, AWS worker scaling"
+excerpt: "투자 복기 서비스, TimescaleDB p95 SLO 달성, WebSocket 99.97%, Kafka/ETL lineage, AWS worker scaling"
 tags: [spring, timescaledb, redis, kafka, websocket, k6, go, python, aws, etl]
 ---
 
-Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판단과 결과를 다시 살펴볼 수 있게 만든 주식투자 복기 플랫폼입니다.
+Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판단과 결과를 다시 살펴볼 수 있게 만든 주식투자 복기 서비스입니다.
 
 투자 판단 근거는 React Flow 기반 노드와 엣지로 시각화하고, 주가와 거시경제, 재무 데이터를 함께 조회할 수 있게 했습니다. 서비스가 커지면서 발생한 조회 지연과 동시 편집 문제를 측정해 개선하고, 데이터 수집 중단 이후에도 처리 상태를 확인하고 복구할 수 있는 구조로 확장했습니다.
 

@@ -26,7 +26,7 @@ classes: wide
     <header class="home-section-heading">
       <span>프로젝트 개요</span>
       <div>
-        <h2 id="primary-project-title">Trader, 주식투자 복기 플랫폼</h2>
+        <h2 id="primary-project-title">Trader, 주식투자 복기 서비스</h2>
         <p>2025.01 - 2026.07, 개인 개발, 기여도 100%</p>
       </div>
     </header>

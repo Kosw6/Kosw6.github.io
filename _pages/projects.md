@@ -17,7 +17,7 @@ classes:
   <a class="home-menu-item" href="{{ '/projects/trader/' | relative_url }}">
     <div class="home-menu-item__title">
       <span>01</span>
-      <h2>Trader 주식투자 복기 플랫폼</h2>
+      <h2>Trader 주식투자 복기 서비스</h2>
     </div>
     <p class="home-menu-item__description">투자 판단을 다시 살펴볼 수 있도록 차트, 일지, 실시간 캔버스를 연결하고 주가, 거시경제, 재무 데이터를 수집해 제공했습니다.</p>
     <div class="home-menu-item__outcome">
