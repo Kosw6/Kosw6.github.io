@@ -2706,11 +2706,41 @@ body,
   }
 
   .home-case {
-    padding: 24px 0;
+    gap: 10px;
+    padding: 20px 0;
   }
 
   .home-case__content h3 {
-    font-size: 17px;
+    margin-bottom: 10px;
+    font-size: 16px;
+    line-height: 1.48;
+  }
+
+  .home-case__content > p {
+    gap: 2px;
+    margin-bottom: 8px !important;
+    font-size: 14px !important;
+    line-height: 1.62 !important;
+  }
+
+  .home-case .home-case__sentences > span,
+  .home-case .home-sentence-lines > span {
+    display: inline;
+  }
+
+  .home-case .home-case__sentences > span + span::before,
+  .home-case .home-sentence-lines > span + span::before {
+    content: " ";
+  }
+
+  .home-case__result {
+    margin-top: 8px !important;
+    padding: 8px 0 8px 12px;
+  }
+
+  .home-case footer {
+    margin-top: 10px;
+    padding-top: 10px;
   }
 }
 

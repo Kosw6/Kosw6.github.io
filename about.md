@@ -16,11 +16,11 @@ classes:
 
 관심 분야
 
-- Backend Performance Engineering
-- Realtime Systems
-- Data Pipeline & ETL
-- Distributed Systems & Failure Recovery
-- Control Plane & Automation
+- 백엔드 성능 분석
+- 실시간 처리
+- 데이터 파이프라인과 ETL
+- 분산 시스템과 장애 복구
+- Worker 제어와 운영 자동화
 
 ---
 

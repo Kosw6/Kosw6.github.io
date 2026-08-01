@@ -1,9 +1,9 @@
 ---
-title: "SLO 기반 운영 사양 산정 - p95 300ms 기준 인프라 결정"
+title: "SLO 기반 인프라 사양 검증 - p95 300ms 기준 설정 비교"
 layout: single
 permalink: /reports/slo-operating-capacity/
 classes: wide
-excerpt: "p95 <= 300ms 기준으로 App/DB 2vCPU/4GB, Thread 30, Hikari 8 설정을 도출하고 기본 부하와 별도 Stress 부하의 병목 신호를 구분해 해석한 운영 사양 산정"
+excerpt: "p95 <= 300ms 기준으로 App/DB 2vCPU/4GB, Thread 30, Hikari 8 설정을 비교하고 기본 부하와 별도 Stress 부하의 병목 신호를 구분해 해석한 인프라 사양 검증"
 tags: [slo, capacity-planning, k6, linux, spring, hikari]
 ---
 

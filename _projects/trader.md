@@ -48,6 +48,8 @@ Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판�
 
 ## 성과 한눈에 보기
 
+각 수치는 서로 다른 부하 및 장애 검증 시나리오에서 측정한 결과입니다.
+
 | 문제 | 개선 전 | 개선 후 | 결과 |
 |------|--------|---------|------|
 | TimescaleDB 시계열 쿼리 (p95, 300 RPS) | 7,247ms | **235ms** | **목표 300ms 충족** |
@@ -58,7 +60,7 @@ Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판�
 
 ---
 
-## Data Pipeline & Control Plane 확장 {#data-platform}
+## 데이터 파이프라인과 Worker 제어 {#data-platform}
 
 차트와 일지만으로는 투자 복기에 필요한 재무·매크로·시세 데이터를 안정적으로 제공하기 어렵다고 판단했습니다. 그래서 수집, raw 보존, 정규화, 재처리, worker 제어를 별도 데이터 처리 파이프라인과 제어 구조로 확장했습니다.
 
@@ -318,7 +320,7 @@ Redis는 정상 상태의 빠른 전파를 담당하고 Kafka는 Reliable 이벤
 | **Load Test** | k6 constant-arrival-rate 시나리오 |
 
 ---
-## AWS 배포 환경 구성과 SLO 기반 사양 검증
+## AWS 배포 환경 구성과 SLO 기반 인프라 사양 검증
 
 ### 보고서 링크
 
@@ -351,27 +353,27 @@ Redis는 정상 상태의 빠른 전파를 담당하고 Kafka는 Reliable 이벤
 성능은 단순 인프라 사양이 아니라, 구조와 자원 사용 방식에 의해 결정된다는 것을 검증하였다.<br>
 
 ---
-## Reliability & Operations {#reliability-operations}
+## 장애 대응과 운영 검증 {#reliability-operations}
 
 Trader는 단순 기능 구현 이후 Redis/Kafka 장애, 운영 관측, 자동 복구, 데이터 파이프라인 제어 흐름까지 검증했습니다.
 
-| 영역 | 검증 내용 | Report |
+| 영역 | 검증 내용 | 상세 문서 |
 |------|----------|--------|
-| Observability | TraceId/MDC/AOP 기반 구조화 로그, Loki/Grafana dashboard, error rate alert | [Observability System](/reports/observability-system/) |
-| Redis Degrade | lock/autosave/version hint DB fallback, API 5xx 없이 기능 지속 | [Realtime Degraded Mode](/reports/realtime-degrade-overview/) |
-| Kafka Degrade | Outbox 기반 durable log, 5분 38초 장애 검증에서 손실 0건/중복 0건 | [Realtime Degraded Mode](/reports/realtime-degrade-overview/) |
-| Auto Recovery | Grafana Alert -> Lambda -> SSM/ASG 복구 및 scale-out | [Auto Recovery & Scale-out](/reports/auto-recovery-scaleout/) |
-| Load Validation | Terraform, k6, AWS SSM 기반 Redis 장애 주입과 baseline 비교 | [Load Test Orchestrator Validation](/reports/loadtest-orchestrator-redis-fault-validation/) |
-| Data Pipeline | raw 보존, Kafka outbox, ETL lineage, worker ASG scale-out/in | [Trader 데이터 파이프라인](/reports/trader-data-platform/) |
+| 관측과 알람 | TraceId/MDC/AOP 기반 구조화 로그, Loki/Grafana dashboard, error rate alert | [Observability System](/reports/observability-system/) |
+| Redis 장애 | lock/autosave/version hint DB fallback, API 5xx 없이 기능 지속 | [Realtime Degraded Mode](/reports/realtime-degrade-overview/) |
+| Kafka 장애 | Outbox 기반 durable log, 5분 38초 장애 검증에서 손실 0건/중복 0건 | [Realtime Degraded Mode](/reports/realtime-degrade-overview/) |
+| 자동 복구 | Grafana Alert -> Lambda -> SSM/ASG 복구 및 scale-out | [Auto Recovery & Scale-out](/reports/auto-recovery-scaleout/) |
+| 부하 및 장애 검증 | Terraform, k6, AWS SSM 기반 Redis 장애 주입과 baseline 비교 | [Load Test Orchestrator Validation](/reports/loadtest-orchestrator-redis-fault-validation/) |
+| 데이터 파이프라인 | raw 보존, Kafka outbox, ETL lineage, worker ASG scale-out/in | [Trader 데이터 파이프라인](/reports/trader-data-platform/) |
 
-핵심은 장애를 숨기는 것이 아니라, 장애 범위를 제한하고 복구 흐름을 검증 가능한 형태로 만드는 것입니다. 최근 확장에서는 ETL 처리 비용과 부하를 즉시 발생시키지 않고, raw와 Kafka lag를 기준으로 필요한 시점에 worker를 기동하는 control plane 구조까지 검증했습니다.
+핵심은 장애를 숨기는 것이 아니라, 장애 범위를 제한하고 복구 흐름을 검증 가능한 형태로 만드는 것입니다. 최근 확장에서는 ETL 처리 비용과 부하를 즉시 발생시키지 않고, raw와 Kafka lag를 기준으로 필요한 시점에 Worker를 기동하는 제어 구조까지 검증했습니다.
 
 ---
 
-## Source Code {#source-code}
+## 소스 코드 {#source-code}
 
-| Repository | Responsibility |
+| 저장소 | 역할 |
 |---|---|
 | [trader-backend](https://github.com/Kosw6/trader-backend) | Spring Boot REST API, WebSocket, 실시간 협업 및 도메인 서비스 |
-| [trader-controller](https://github.com/Kosw6/trader-controller) | Go Control Plane, Kafka Outbox, lag 측정, Worker 및 AWS ASG 제어 |
+| [trader-controller](https://github.com/Kosw6/trader-controller) | Go 기반 Worker 제어, Kafka Outbox, lag 측정 및 AWS ASG 제어 |
 | [trader-data](https://github.com/Kosw6/trader-data) | Python 기반 KIS, BLS, SEC 수집, raw 보존, ETL 정규화 및 lineage 처리 |

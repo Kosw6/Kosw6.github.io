@@ -14,9 +14,9 @@ tags: [go, k6, terraform, redis, websocket, ssm, loadtest]
 > 원문: [loadtest-orchestrator-redis-fault-validation.md](https://github.com/Kosw6/engineering-notes/blob/main/reports/loadtest-orchestrator-redis-fault-validation.md)
 <br>
 
-> **시리즈**: Reliability & Operations
+> **시리즈**: 장애 대응과 운영 검증
 > <br>[1. Observability System](/reports/observability-system/)
-> <br>[2. SLO 기반 운영 사양 산정](/reports/slo-operating-capacity/)
+> <br>[2. SLO 기반 인프라 사양 검증](/reports/slo-operating-capacity/)
 > <br>[3. Realtime Degraded Mode](/reports/realtime-degrade-overview/)
 > <br>[4. Auto Recovery & Scale-out](/reports/auto-recovery-scaleout/)
 > <br>**5. Load Test Orchestrator**

@@ -142,7 +142,7 @@ classes: wide
             <b>결과</b>
             <span class="home-sentence-lines">
               <span>동시 접속 200명, 송신자 20명의 같은 부하에서 <strong>200ms 이내 수신 비율을 99.97%</strong>로 높였습니다.</span>
-              <span>서버 전환 후 변경 이력을 따라잡고 다시 서비스에 편입하는 흐름도 검증했습니다.</span>
+              <span>별도 장애 전환 PoC에서는 서버가 변경 이력을 따라잡은 뒤 다시 서비스에 편입되는 흐름을 검증했습니다.</span>
             </span>
           </p>
           <footer>
@@ -313,7 +313,7 @@ classes: wide
       <a href="{{ '/reports/loadtest-orchestrator-redis-fault-validation/' | relative_url }}"><strong>부하, 장애 검증 자동화</strong><span>장애 주입부터 복구 확인까지 같은 순서로 반복 실행</span></a>
       <a href="{{ '/reports/jpa-tuning/' | relative_url }}"><strong>JPA 조회 전략 비교</strong><span>N+1, Fetch Join, Projection 비교</span></a>
       <a href="{{ '/reports/jfr-jmc-hotpath/' | relative_url }}"><strong>JFR/JMC Hot Path 분석</strong><span>JWT 중복 검증과 객체 할당 병목</span></a>
-      <a href="{{ '/reports/slo-operating-capacity/' | relative_url }}"><strong>SLO 기반 운영 사양 산정</strong><span>부하와 자원 사용량의 관계 확인</span></a>
+      <a href="{{ '/reports/slo-operating-capacity/' | relative_url }}"><strong>SLO 기반 인프라 사양 검증</strong><span>부하와 자원 사용량의 관계 확인</span></a>
       <a href="{{ '/reports/' | relative_url }}"><strong>전체 Engineering Reports</strong><span>측정 조건, 비교 과정과 한계</span></a>
     </nav>
 

@@ -28,7 +28,7 @@ classes:
 | **Database** | PostgreSQL, TimescaleDB (하이퍼테이블, 청크 튜닝, CAGG), 인덱싱 전략 |
 | **Cache / MQ** | Redis (TTL 설계, JSON Serializer), Kafka (Consumer Group, offset replay) |
 | **Realtime** | WebSocket, Redis Pub/Sub, 서버 분산과 복구 설계 |
-| **Data Pipeline / Control Plane** | DB Outbox, Kafka lag, raw/ETL 분리, lineage, idempotency |
+| **데이터 파이프라인 / Worker 제어** | DB Outbox, Kafka lag, raw/ETL 분리, lineage, idempotency |
 | **Performance** | k6, JFR/JMC, Prometheus/Grafana, Grafana Alert |
 | **DevOps** | Docker, Terraform, GitHub Actions, AWS (EC2/S3/CloudFront/SSM/ASG/Lambda) |
 | **Frontend** | React, Vite, React Flow, WebGL 차트 |
@@ -51,7 +51,7 @@ classes:
 
 ### Trader (개인 프로젝트, 2025.01–현재)
 
-[Source Code와 저장소별 역할 보기](/projects/trader/#source-code)
+[소스 코드와 저장소별 역할 보기](/projects/trader/#source-code)
 
 주식투자 학습을 위한 복기 서비스입니다. 약 2,600만 행의 주가 조회 성능 개선에서 시작해 실시간 협업, 장애 복구, KIS, BLS, SEC 데이터 파이프라인과 Worker 제어까지 확장했습니다.
 

@@ -39,7 +39,7 @@ classes:
   </a>
   <a class="report-card" href="/reports/slo-operating-capacity/">
     <span class="report-card__eyebrow">운영 사양</span>
-    <h3>SLO 기반 운영 사양 산정</h3>
+    <h3>SLO 기반 인프라 사양 검증</h3>
     <p>목표 응답시간 300ms를 기준으로 애플리케이션과 DB 자원 설정을 같은 부하에서 비교했습니다.</p>
     <span class="report-card__result">2vCPU, 4GB, Thread 30, Connection 8</span>
   </a>
