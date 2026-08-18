@@ -28,7 +28,7 @@ classes: wide
 | ws-2 Drain → 클라이언트 재연결 | **재연결 안내 후 서버 전환** ✅ |
 
 - **문제**: 샤딩 서버가 복구된 후 fallback 서버에서 **어떻게 원복(failback)** 할 것인가
-- **핵심 설계**: Kafka를 이벤트 로그로 활용해 장애 구간을 offset 기반으로 복구하고,<br>
+- **핵심 설계**: Kafka를 이벤트 로그로 활용해 복구 시작 시점의 목표 offset까지 replay하고,<br>
   Gateway + Drain으로 클라이언트 재연결을 유도하여 복구 서버 재편입 순서 검증
 
 > ⚠️ 복구 서버가 목표 offset을 따라잡은 뒤 어떻게 다시 연결을 받게 했는지 (Kafka Replay + Drain 흐름)
@@ -77,6 +77,10 @@ UP이 5회 연속 확인될 때만 복구 요청을 보낸다 (일시적 재시�
 
 두 컨테이너를 분리함으로써 **replay 중에 실시간 이벤트가 오염되지 않는다**.
 
+이 PoC의 Broadcast Consumer는 ws-1과 ws-2가 동일한 `canvas-broadcast-group`에 참여해
+partition을 분담하는 구조였다. 따라서 이 단계에서 검증한 것은 장애 시 Kafka rebalance로
+ws-2가 ws-1의 partition을 인수하는 흐름이며, 모든 WS 서버가 모든 이벤트를 받는 fan-out 구조는 아니다.
+
 ---
 
 ### Catch-up (Replay) 흐름
@@ -101,7 +105,12 @@ Catch-up 종료 → ready=true → Broadcast Consumer 시작
 [CATCHUP] completed replayCount=3 targetOffsets={0=2} lastConsumedOffsets={0=2}
 ```
 
-검증 시나리오에서 장애 구간의 Kafka 이벤트 3건을 소비하고 목표 offset 도달을 확인했습니다.
+검증 시나리오에서는 신규 catch-up consumer group이 offset 0부터 목표 offset 2까지
+Kafka 이벤트 3건을 replay하고 목표 offset 도달을 확인했습니다. 즉, 로그에 나타난 3건을
+모두 장애 구간 이벤트라고 단정한 것이 아니라, 당시 보존된 범위를 처음부터 재생한 결과입니다.
+
+복구 시작 시 조회한 end offset은 **종료 목표**다. 실제 시작 위치는 catch-up consumer group의
+committed offset이 있으면 그 다음 위치이고, 없으면 `auto.offset.reset` 정책에 의해 결정된다.
 
 > 🔍 Kafka offset 기반 replay 설계와 실제 복구 로그 전체 보기   
 > **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc3-failback-kafka-replay-recovery.md)
@@ -178,7 +187,7 @@ ws-2: draining=true, 신규 연결 차단, 기존 클라이언트에 재연결 �
 
 | 결정 | 이유 |
 |------|------|
-| Kafka를 이벤트 로그 저장소로 사용 | 검증 시나리오의 목표 offset까지 장애 구간 이벤트를 replay 가능 |
+| Kafka를 이벤트 로그 저장소로 사용 | 검증 시나리오에서 목표 offset까지 보존 이벤트를 replay 가능 |
 | Gateway 중심 lifecycle orchestration | 각 서버가 독립 판단하지 않도록 → 일관성 유지 |
 | Drain → reconnect 구조 | 재연결 안내 후 기존 세션을 정리하고 복구 서버로 전환 |
 | Consumer Group 분리 | Catch-up과 Broadcast가 서로 간섭하지 않음 |
@@ -190,3 +199,34 @@ ws-2: draining=true, 신규 연결 차단, 기존 클라이언트에 재연결 �
 장애 서버의 프로세스가 다시 실행되면 곧바로 트래픽을 받을 수 있다고 생각했다. 하지만 중단 중 발생한 이벤트를 따라잡기 전에 연결을 받으면 서버마다 상태가 달라질 수 있었다.
 
 이후 복구 완료를 프로세스 실행이 아니라 Kafka offset catch-up, `ready` 전환, 기존 서버 drain의 순서로 정의했다. 서버를 다시 띄우는 것과 서비스 경로에 안전하게 편입하는 것은 별개의 단계라는 점을 failback 검증 기준으로 삼았다.
+
+---
+
+## 검증 범위와 후속 개선
+
+이 PoC는 2개의 WebSocket 인스턴스와 제한된 Kafka partition 조건에서
+공유 Broadcast Consumer Group의 rebalance, replay, drain, failback 순서를 검증했다.
+이 조건에서는 ws-1 장애 후 ws-2가 partition을 인수해 이벤트 처리를 이어가는 흐름을 확인할 수 있었다.
+
+그러나 서버 수가 늘고 같은 룸의 WebSocket 세션이 여러 서버에 분산되면,
+공유 consumer group만으로는 이벤트가 해당 룸의 세션을 가진 서버에 전달된다고 보장할 수 없다.
+Kafka의 partition 할당과 WebSocket 세션 배치는 서로 독립적이기 때문이다.
+
+예를 들어 룸 세션은 ws-1에 있지만 해당 이벤트의 partition이 ws-2에 할당되면,
+ws-2가 메시지를 소비하고 ws-1은 소비하지 못할 수 있다. Kafka consumer group은
+여러 consumer에 작업을 분배하는 구조이지 모든 서버에 같은 메시지를 전달하는 broadcast 구조가 아니다.
+
+현재 구현에서는 이 한계를 다음과 같이 보완했다.
+
+- **Redis Pub/Sub**: 모든 WebSocket 서버에 정상 실시간 이벤트 fan-out
+- **Kafka**: reliable 이벤트의 영속 로그 및 Redis Pub/Sub 누락 보정
+- **서버별 Consumer Group**: `reliable-replay-${instanceId}`로 각 서버가 reliable 이벤트를 독립 소비
+- **서버별 멱등 처리**: `processed:reliable:{instanceId}:{eventId}`가 있으면 Kafka 재전파 생략
+
+일반 Kafka 보정 consumer는 누락을 발견하면 Redis로 다시 발행하지 않고,
+해당 서버의 로컬 WebSocket 세션에만 재전파한다. 따라서 다른 서버가 Kafka 메시지를
+소비해 특정 서버의 보정 기회를 가져가는 문제를 방지한다.
+
+또한 이 PoC에서는 복구 서버로 기존 세션을 강제로 이동시키는 Drain 방식을 검증했지만,
+후속 Rendezvous Hashing 라우팅에서는 불필요한 reconnect 비용을 줄이기 위해
+기존 fallback 세션은 유지하고 **신규 연결부터** 원래 hash 대상 서버로 자연스럽게 복귀시키는 정책을 선택했다.
