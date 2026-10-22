@@ -7,6 +7,9 @@ excerpt: "Redis, Kafka, Pub/Sub 장애 상황에서 WebSocket 실시간 흐름�
 tags: [redis, kafka, websocket, degrade, fallback, spring]
 ---
 
+> **후속 설계 안내**: 이 글은 당시 장애 실험과 전파 구조의 기록입니다. 이후 RELIABLE 이벤트의 Outbox 선기록, 서버 로컬 중복 선점과 최초 선점 후 3분의 재처리 기한을 도입했습니다. 아래 ‘5분 38초 장애 후 전량 복구’는 당시 실험 결과이며 현재 정책의 최종 전달 보장을 뜻하지 않습니다. [현재 계약과 검증 범위 보기](/reports/node-contract-refactoring/).
+
+
 > **핵심 질문**: Redis 또는 Kafka가 장애 상태가 되어도 실시간 협업 흐름과 이벤트 보존을 분리해 장애 범위를 제한할 수 있는가?
 >
 > **근거 문서**

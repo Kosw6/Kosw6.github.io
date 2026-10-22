@@ -18,6 +18,7 @@ Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판�
   <a href="#data-platform">데이터 파이프라인</a>
   <a href="#timescaledb-performance">성능 개선</a>
   <a href="#websocket-realtime">실시간 처리</a>
+  <a href="#node-contract">계약 중심 설계</a>
   <a href="#reliability-operations">장애 복구와 운영</a>
 </nav>
 
@@ -236,7 +237,26 @@ Group Canvas의 실시간 노드 업데이트 기능.
 
 ---
 
+## 협업 편집의 계약 중심 리팩터링 {#node-contract}
+
+Node 수정에서 실제 저장 필드와 충돌 검사·이력의 기준이 달라질 수 있는 조건을 발견했습니다. 요청의 입력 계약, 업무 성공의 범위와 실패 후 복구 정책을 먼저 정하고 객체의 책임과 의존성을 분리했습니다.
+
+| 설계 결정 | 지킬 계약 | 객체지향 관점 |
+|---|---|---|
+| 도메인이 실제 적용 결과 반환 | 같은 필드·버전을 History와 Outbox에 사용, no-op은 부수효과 없음 | 캡슐화, SRP |
+| 업무 이벤트 기록 계약 도입 | Node·History·Outbox 원자적 커밋, 메시지 표현 변경의 영향 제한 | SRP, DIP |
+| 실시간 발행과 내구성 기록 분리 | 이벤트 종류별 성공 의미 명시, 모드별 전파 정책 교체 | ISP, OCP, DIP |
+| Relay 실패 단계와 재시도 종료 정의 | 동일 ID 재발행, claim 소유권, 최초 선점 후 3분 기한 | 실패 모델링과 복구 계약 |
+
+단위·H2/Spring 테스트에서 변경 필드, Outbox 실패 시 롤백과 커밋 후 처리 등을 검증한 기록을 남겼습니다. 실제 PostgreSQL·Redis·Kafka·다중 서버 통합 검증은 별도 범위이며, LSP의 공통 실패 계약도 추가 검토 사항으로 구분했습니다.
+
+→ [계약·책임 분리·검증 근거 보기](/reports/node-contract-refactoring/)
+
+---
+
 ## 실시간 시스템 2 — Redis Pub/Sub 누락 보정
+
+> 아래 누락 보정과 장애 PoC는 당시 구현의 기록입니다. 이후 Outbox 선기록, 로컬 중복 선점과 내용 변경의 사용자 병합 검토 정책으로 보강했습니다. [현재 설계와 검증 범위](/reports/node-contract-refactoring/)에서 차이를 설명합니다.
 
 ### 문제
 

@@ -73,7 +73,7 @@ classes: wide
       <span>문제 해결</span>
       <div>
         <h2 id="case-section-title">대표 문제 해결 사례</h2>
-        <p>같은 조건에서 대안을 비교하고 결과를 확인한 네 가지 사례입니다.</p>
+        <p>성능 측정, 기능 계약과 장애 조건을 기준으로 설계하고 검증한 다섯 가지 사례입니다.</p>
       </div>
     </header>
 
@@ -158,6 +158,32 @@ classes: wide
       <article class="home-case">
         <header class="home-case__label">
           <span>03</span>
+          <strong>도메인 설계</strong>
+        </header>
+        <div class="home-case__content">
+          <h3>협업 편집의 변경·이력·이벤트를 일치시키는 계약 중심 리팩터링</h3>
+          <p><b>문제</b><span class="home-sentence-lines">
+            <span>충돌 검사와 이력이 사용하는 변경 필드와 실제 저장하는 필드의 기준이 다를 수 있음을 발견했습니다.</span>
+            <span>업무 저장과 외부 전파의 책임도 섞여 있어 요청 성공이 보장하는 범위를 명확히 해야 했습니다.</span>
+          </span></p>
+          <p><b>판단과 선택</b><span class="home-case__sentences">
+            <span>도메인의 실제 적용 결과를 이력과 이벤트의 공통 기준으로 삼았습니다.</span>
+            <span>Node·History·Outbox의 원자적 커밋을 업무 성공으로 정의하고, 메시지 변환과 커밋 후 전파를 별도 책임으로 분리했습니다.</span>
+            <span>업무 서비스는 변경 사실을 기록하는 계약에 의존하도록 설계했습니다.</span>
+          </span></p>
+          <p class="home-case__result"><b>결과</b><span class="home-sentence-lines">
+            <span><strong>변경 필드 일치, no-op, 전체 롤백과 후처리 실패 격리</strong>를 검증하는 계약 테스트를 구성했습니다.</span>
+            <span>SOLID 적용 근거를 변경 이유와 실패 시 책임으로 설명하고, 외부 시스템 통합 검증 범위는 구분했습니다.</span>
+          </span></p>
+          <footer><span>Java, Spring, JPA, Transactional Outbox, SOLID</span>
+            <a href="{{ '/reports/node-contract-refactoring/' | relative_url }}">설계 계약과 검증 근거 보기 →</a>
+          </footer>
+        </div>
+      </article>
+
+      <article class="home-case">
+        <header class="home-case__label">
+          <span>04</span>
           <strong>조회 성능</strong>
         </header>
         <div class="home-case__content">
@@ -193,7 +219,7 @@ classes: wide
 
       <article class="home-case">
         <header class="home-case__label">
-          <span>04</span>
+          <span>05</span>
           <strong>장애 복구</strong>
         </header>
         <div class="home-case__content">

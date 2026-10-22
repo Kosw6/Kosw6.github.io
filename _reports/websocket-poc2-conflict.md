@@ -7,6 +7,9 @@ toc_sticky: true
 classes: wide
 ---
 
+> **후속 설계 안내**: 이 글의 AUTO_MERGE는 당시 PoC 정책입니다. 이후 내용 수정은 서버의 내용 변경이 있으면 비중첩 필드라도 MERGE_REVIEW_REQUIRED로 사용자 검토를 요구하도록 보강했습니다. 위치만 변경되어 내용 문맥에 영향이 없는 경우는 구분합니다. [현재 계약과 검증 범위 보기](/reports/node-contract-refactoring/).
+
+
 > 🔍 **Fallback 환경에서 편집 충돌을 어떻게 해결했는지 (Kafka · Redis · 필드 단위 충돌 감지 설계)** 
 
 > **원본 분석 노트**: [GitHub에서 보기](https://github.com/Kosw6/engineering-notes/blob/main/reports/GroupController/poc2-fallback-state-sync-conflict-resolution.md)

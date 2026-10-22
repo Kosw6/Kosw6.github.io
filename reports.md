@@ -10,6 +10,17 @@ classes:
 
 문제가 발생한 조건, 대안을 선택한 이유와 검증 결과를 정리했습니다. 각 문서에는 측정 수치와 실행 기록도 함께 남겼습니다.
 
+## 도메인 설계와 일관성
+
+<div class="report-grid">
+  <a class="report-card report-card--featured" href="/reports/node-contract-refactoring/">
+    <span class="report-card__eyebrow">객체지향 설계 · 기능 계약</span>
+    <h3>Node 변경·이력·이벤트의 계약 중심 리팩터링</h3>
+    <p>실제 변경의 불변식과 업무 성공 범위를 정의하고, 도메인 규칙·메시지 변환·실시간 전파·복구의 책임을 분리했습니다.</p>
+    <span class="report-card__result">변경 결과 단일화 · 원자적 커밋 · SOLID 적용 근거</span>
+  </a>
+</div>
+
 ## 데이터 처리와 운영
 
 <div class="report-grid">
@@ -23,7 +34,7 @@ classes:
     <span class="report-card__eyebrow">메시지 시스템 장애</span>
     <h3>Redis, Kafka 장애 대응</h3>
     <p>메시지 시스템이 중단돼도 요청과 변경 내용을 보관하고, 복구 후 다시 처리하는 흐름을 검증했습니다.</p>
-    <span class="report-card__result">Redis 검증: HTTP 5xx 0건 / Kafka 5분 38초 장애 검증: 유실, 중복 0건</span>
+    <span class="report-card__result">Redis 검증: HTTP 5xx 0건 / 당시 Kafka 5분 38초 장애 검증: 유실, 중복 0건</span>
   </a>
   <a class="report-card" href="/reports/auto-recovery-scaleout/">
     <span class="report-card__eyebrow">자동 복구</span>
@@ -93,7 +104,7 @@ classes:
     <span class="report-card__eyebrow">편집 충돌 검증</span>
     <h3>장애 중 작성한 내용의 병합 판단</h3>
     <p>사용자가 작성한 내용과 서버 변경 내용을 필드별로 비교해 자동 병합 가능 여부를 판단했습니다.</p>
-    <span class="report-card__result">안전, 자동 병합, 충돌로 구분</span>
+    <span class="report-card__result">당시 PoC: 안전, 자동 병합, 충돌로 구분</span>
   </a>
   <a class="report-card" href="/reports/websocket-poc3-failback/">
     <span class="report-card__eyebrow">서버 복귀 검증</span>
