@@ -14,10 +14,10 @@ classes:
 
 <div class="report-grid">
   <a class="report-card report-card--featured" href="/reports/node-contract-refactoring/">
-    <span class="report-card__eyebrow">객체지향 설계 · 기능 계약</span>
-    <h3>Node 변경·이력·이벤트의 계약 중심 리팩터링</h3>
-    <p>실제 변경의 불변식과 업무 성공 범위를 정의하고, 도메인 규칙·메시지 변환·실시간 전파·복구의 책임을 분리했습니다.</p>
-    <span class="report-card__result">변경 결과 단일화 · 원자적 커밋 · SOLID 적용 근거</span>
+    <span class="report-card__eyebrow">객체지향 설계 및 기능 계약</span>
+    <h3>Node 변경, 이력 및 이벤트의 계약 중심 리팩터링</h3>
+    <p>실제 변경의 불변식과 업무 성공 범위를 정의하고, 도메인 규칙, 메시지 변환, 실시간 전파 및 복구의 책임을 분리했습니다.</p>
+    <span class="report-card__result">변경 결과 단일화, 원자적 커밋 및 SOLID 적용 근거</span>
   </a>
 </div>
 

@@ -1,5 +1,5 @@
 ---
-title: "협업 편집의 변경·이력·이벤트를 일치시키는 계약 중심 리팩터링"
+title: "협업 편집의 변경, 이력 및 이벤트를 일치시키는 계약 중심 리팩터링"
 layout: single
 permalink: /reports/node-contract-refactoring/
 classes: wide
@@ -19,12 +19,12 @@ tags: [java, spring, solid, oop, transaction, outbox, refactoring]
 </nav>
 
 <div class="proof-strip">
-  <div class="proof-item"><span class="proof-item__label">변경 계약</span><strong>실제 적용 결과를 공통 기준으로</strong><span>Node · History · Outbox의 필드와 버전 일치</span></div>
+  <div class="proof-item"><span class="proof-item__label">변경 계약</span><strong>실제 적용 결과를 공통 기준으로</strong><span>Node, History 및 Outbox의 필드와 버전 일치</span></div>
   <div class="proof-item"><span class="proof-item__label">업무 성공</span><strong>세 DB 상태의 원자적 커밋</strong><span>Redis 힌트와 캐시 처리는 커밋 이후로 분리</span></div>
-  <div class="proof-item"><span class="proof-item__label">복구 계약</span><strong>실패 분류와 고정 재처리 기한</strong><span>동일 eventId 재발행 · claimToken 소유권 검사</span></div>
+  <div class="proof-item"><span class="proof-item__label">복구 계약</span><strong>실패 분류와 고정 재처리 기한</strong><span>동일 eventId 재발행 및 claimToken 소유권 검사</span></div>
 </div>
 
-Trader의 협업 캔버스에서는 사용자가 Node의 제목·본문·연결 노트를 수정하고, 다른 사용자가 그 결과를 실시간으로 확인합니다. 이 기능에는 저장된 내용뿐 아니라 충돌 판단에 쓰는 이력, 업무 버전, 변경 이벤트가 같은 사실을 표현해야 한다는 요구가 있습니다.
+Trader의 협업 캔버스에서는 사용자가 Node의 제목, 본문 및 연결 노트를 수정하고, 다른 사용자가 그 결과를 실시간으로 확인합니다. 이 기능에는 저장된 내용뿐 아니라 충돌 판단에 쓰는 이력, 업무 버전, 변경 이벤트가 같은 사실을 표현해야 한다는 요구가 있습니다.
 
 기능이 확장되면서 요청 DTO 해석, 상태 변경, 이력 기록, 메시지 변환과 외부 전파의 책임이 한 흐름에 모였습니다. 기존 코드를 분석해 실패 가능한 조건을 먼저 정리하고, 각 단계가 지켜야 할 계약을 정의한 뒤 책임을 분리했습니다. 아래 변경 전 문제는 코드에서 확인한 위험 조건이며, 모두 실제 운영 장애로 발생했다는 의미는 아닙니다.
 
@@ -50,8 +50,8 @@ Trader의 협업 캔버스에서는 사용자가 Node의 제목·본문·연결 
 | 조건 | 지켜야 할 동작 |
 |---|---|
 | 요청 필드와 전달 값이 불일치 | 계약 위반을 명시적으로 거절하고 상태를 변경하지 않음 |
-| 유효한 실제 변경 | Node 적용 결과의 필드·버전을 History와 Outbox가 동일하게 사용 |
-| 검증을 통과한 동일 값 요청 | 버전 증가·History·Outbox 생성 없이 no-op 성공 |
+| 유효한 실제 변경 | Node 적용 결과의 필드와 버전을 History와 Outbox가 동일하게 사용 |
+| 검증을 통과한 동일 값 요청 | 버전을 늘리거나 History와 Outbox를 생성하지 않고 no-op 성공 |
 | 연결 노트 변경 | 서비스가 요청자의 소유권을 확인하고, 요청자가 교체할 수 있는 연결 범위만 변경 |
 | 변경 근거인 DB History 손상 | 정상적인 빈 변경으로 바꾸지 않고 검증 실패로 처리 |
 
@@ -59,11 +59,11 @@ Redis 버전 힌트도 같은 적용 결과를 사용하지만, 저장 성공 �
 
 **책임을 배치한 방법**
 
-생성·내용 수정·위치 수정의 요청 DTO를 분리하고, `NodeChangeRequestValidator`가 요청을 변경 계획으로 해석하게 했습니다. `Node`는 검증된 `NodeContentChange`를 적용하고 `NodeChangeResult`로 실제 적용 필드와 버전을 반환합니다. 서비스는 이 결과를 History와 업무 이벤트에 전달합니다.
+생성, 내용 수정 및 위치 수정의 요청 DTO를 분리하고, `NodeChangeRequestValidator`가 요청을 변경 계획으로 해석하게 했습니다. `Node`는 검증된 `NodeContentChange`를 적용하고 `NodeChangeResult`로 실제 적용 필드와 버전을 반환합니다. 서비스는 이 결과를 History와 업무 이벤트에 전달합니다.
 
 ```text
 요청 DTO
-  → NodeChangeRequestValidator: 요청 의도·유효성·실제 차이 확인
+  → NodeChangeRequestValidator: 요청 의도, 유효성 및 실제 차이 확인
   → NodeConflictValidator: 최신 변경 문맥과 충돌 확인
   → Node.applyContentChange(): 상태 변경과 연결 규칙 적용
   → NodeChangeResult: appliedFields + newVersion
@@ -109,7 +109,7 @@ NodeService / TeamNodePositionWriter
   → NodeChangeEventStager.stage(NodeChange)
        ↑ 구현
     OutboxNodeChangeEventStager
-      → 전송 DTO·Envelope 변환
+      → 전송 DTO와 Envelope 변환
       → TransactionalReliableEventService
       → 현재 DB 트랜잭션에 Outbox 기록
 ```
@@ -122,7 +122,7 @@ Outbox 구현에는 `Propagation.MANDATORY`를 적용해 활성 트랜잭션 없
 
 **동시성 계약 보강**
 
-필드 충돌 검증 이후에도 저장 전 경쟁이 생길 수 있으므로, 업무 버전과 별도의 JPA `@Version` 필드인 `lockVersion`을 두었습니다. 저장 시 CAS가 실패하면 Node·History·Outbox를 롤백하고 새 트랜잭션에서 최대 한 번 재검증합니다.
+필드 충돌 검증 이후에도 저장 전 경쟁이 생길 수 있으므로, 업무 버전과 별도의 JPA `@Version` 필드인 `lockVersion`을 두었습니다. 저장 시 CAS가 실패하면 Node, History 및 Outbox를 롤백하고 새 트랜잭션에서 최대 한 번 재검증합니다.
 
 현재 내용 수정 정책은 서버의 내용 변경이 있으면 비중첩 필드라도 병합 결과를 검토하도록 `MERGE_REVIEW_REQUIRED`를 반환합니다. 위치만 바뀌어 내용 문맥에 영향이 없는 경우와는 구분합니다. 기술적으로 합칠 수 있는지와 사용자가 합쳐진 내용을 의도했는지를 별도 판단으로 둔 것입니다.
 
@@ -132,9 +132,9 @@ Outbox 구현에는 `Propagation.MANDATORY`를 적용해 활성 트랜잭션 없
 
 **검증 근거와 비용**
 
-`NodeServiceTransactionContractTest`는 Outbox flush 후 실패를 주입하고 별도 조회에서 Node 원복, History·Outbox 부재와 후처리 미실행을 확인합니다. 같은 스냅샷을 읽은 두 트랜잭션의 저장 경쟁 테스트도 있습니다. `NodeChangeStagingTransactionTest`는 트랜잭션 없는 호출 거절과 롤백·커밋에 따른 알림 차이를 검증합니다.
+`NodeServiceTransactionContractTest`는 Outbox flush 후 실패를 주입하고 별도 조회에서 Node 원복, History와 Outbox 부재와 후처리 미실행을 확인합니다. 같은 스냅샷을 읽은 두 트랜잭션의 저장 경쟁 테스트도 있습니다. `NodeChangeStagingTransactionTest`는 트랜잭션 없는 호출 거절과 롤백과 커밋에 따른 알림 차이를 검증합니다.
 
-커밋 후 리스너는 동기 실행이므로 응답 시간에 영향을 줄 수 있습니다. 또한 프로세스가 커밋 직후 종료되면 애플리케이션 이벤트 기반 후처리는 실행되지 않을 수 있습니다. RELIABLE 이벤트는 Outbox로 기록하고, 파생 작업에는 DB fallback·캐시 무효화 재시도·TTL 등 작업별 복구 방식을 선택했습니다.
+커밋 후 리스너는 동기 실행이므로 응답 시간에 영향을 줄 수 있습니다. 또한 프로세스가 커밋 직후 종료되면 애플리케이션 이벤트 기반 후처리는 실행되지 않을 수 있습니다. RELIABLE 이벤트는 Outbox로 기록하고, 파생 작업에는 DB fallback, 캐시 무효화 재시도 및 TTL 등 작업별 복구 방식을 선택했습니다.
 
 ## 이벤트 전달과 복구의 계약 {#delivery-contract}
 
@@ -146,10 +146,10 @@ Outbox 구현에는 `Propagation.MANDATORY`를 적용해 활성 트랜잭션 없
 
 | 경계 | 성공의 의미 | 보장하지 않는 것 |
 |---|---|---|
-| Live 발행 | TRANSIENT·VOLATILE 실시간 경로 호출 | DB 내구성, 모든 클라이언트 수신 |
+| Live 발행 | TRANSIENT 및 VOLATILE 실시간 경로 호출 | DB 내구성, 모든 클라이언트 수신 |
 | Outbox stage | 활성 트랜잭션에 전달 의무 기록 | 커밋 완료, Kafka 전달 |
-| 업무 커밋 | 업무 상태·이력·Outbox가 함께 확정 | 모든 후처리와 외부 전달 완료 |
-| Kafka ACK | 브로커 발행 확인 | 소비자 처리·WebSocket 수신 완료 |
+| 업무 커밋 | 업무 상태, 이력 및 Outbox가 함께 확정 | 모든 후처리와 외부 전달 완료 |
+| Kafka ACK | 브로커 발행 확인 | 소비자 처리와 WebSocket 수신 완료 |
 | Outbox SENT | 현재 claim 소유자가 완료 상태 기록 | exactly-once 또는 전체 화면 수렴 |
 
 **책임을 배치한 방법**
@@ -166,7 +166,7 @@ DB 트랜잭션
           └─ Outbox Relay → 선점 → Kafka ACK → SENT 기록
 ```
 
-Relay는 JSON 해석, Kafka 발행, SENT 기록과 복구 상태 기록의 실패를 구분합니다. DB 기록 실패를 Kafka 장애로 해석하지 않고, 영구적 데이터·발행 오류는 FAILED로 격리합니다. ACK 뒤 SENT 기록이 실패하면 동일한 `eventId`로 재발행할 수 있게 했습니다.
+Relay는 JSON 해석, Kafka 발행, SENT 기록과 복구 상태 기록의 실패를 구분합니다. DB 기록 실패를 Kafka 장애로 해석하지 않고, 영구적 데이터 오류와 발행 오류는 FAILED로 격리합니다. ACK 뒤 SENT 기록이 실패하면 동일한 `eventId`로 재발행할 수 있게 했습니다.
 
 Outbox 선점 시도마다 별도의 `claimToken`을 발급하고, 상태 변경은 `eventId + claimToken`이 일치할 때만 허용합니다. 이벤트의 동일성과 현재 작업자의 갱신 권한을 구분해, lease 만료 후 오래된 작업자가 새 작업자의 상태를 덮어쓰는 것을 방어합니다. 이 토큰이 Kafka 중복 발행 자체를 막는 것은 아닙니다.
 
@@ -174,11 +174,11 @@ Outbox 선점 시도마다 별도의 `claimToken`을 발급하고, 상태 변경
 
 최초 DB 선점 시각부터 3분의 고정 재처리 기한을 두고, 지수 백오프와 지터를 적용했습니다. 최초 시도 전 Kafka DOWN 대기는 기한을 시작하지 않지만, 최초 시도 후의 DOWN 시간은 기한에 포함됩니다. 기한이 지나면 새 선점을 거절하고 실패 상태로 종료하며, 기한 전 선점한 활성 작업의 늦은 ACK 기록은 허용합니다.
 
-따라서 이 구조는 중복을 허용하는 제한된 재시도 계약입니다. 모든 이벤트의 최종 전달이나 exactly-once를 보장한다고 표현하지 않습니다. 수신 측 로컬 중복 캐시도 만료·재시작 한계가 있고, DB 원본 재조회에 의한 화면 수렴은 별도 통합 검증 대상입니다.
+따라서 이 구조는 중복을 허용하는 제한된 재시도 계약입니다. 모든 이벤트의 최종 전달이나 exactly-once를 보장한다고 표현하지 않습니다. 수신 측 로컬 중복 캐시도 만료되거나 프로세스가 재시작되면 중복을 막을 수 없고, DB 원본 재조회에 의한 화면 수렴은 별도 통합 검증 대상입니다.
 
 **객체지향 관점**
 
-- SRP: 실시간 전파, 내구성 기록, Kafka 전달과 상태 기록의 변경 이유·실패 책임을 분리했습니다.
+- SRP: 실시간 전파, 내구성 기록, Kafka 전달과 상태 기록의 변경 이유와 실패 책임을 분리했습니다.
 - ISP: 실시간 발행 호출자는 내구성 기록 능력까지 의존하지 않습니다.
 - OCP: 커밋 후 상위 흐름을 유지하면서 실행 모드별 전파 정책을 구현체로 분리했습니다. 새로운 모드를 추가할 때 설정까지 무수정이라는 뜻은 아닙니다.
 - DIP: 커밋 후 리스너는 Redis 구현 대신 `CommittedEventPropagator`에 의존합니다.
@@ -192,23 +192,23 @@ Outbox 선점 시도마다 별도의 `claimToken`을 발급하고, 상태 변경
 
 ## 검증 범위와 남은 과제 {#validation}
 
-2026년 9월 설계·구현 기록에는 단위 테스트와 H2/Spring 트랜잭션 테스트의 완료 결과를 남겼습니다. 아래 테스트는 정상 반환뿐 아니라 실패 이후 DB 상태, 후처리 실행 여부와 재시도 경계를 확인합니다. 2026년 10월 22일 포트폴리오 정리 시 구현과 테스트 코드를 대조했으며, 새 테스트 실행 결과를 추가한 것은 아닙니다.
+2026년 9월 설계 및 구현 기록에는 단위 테스트와 H2/Spring 트랜잭션 테스트의 완료 결과를 남겼습니다. 아래 테스트는 정상 반환뿐 아니라 실패 이후 DB 상태, 후처리 실행 여부와 재시도 경계를 확인합니다. 2026년 10월 22일 포트폴리오 정리 시 구현과 테스트 코드를 대조했으며, 새 테스트 실행 결과를 추가한 것은 아닙니다.
 
 | 검증 대상 | 근거 테스트 | 확인하는 계약 |
 |---|---|---|
-| 변경 필드와 no-op | NodeServiceContentUpdateTest | 실제 변경·이력·이벤트의 공통 기준, 동일 값 요청의 부수효과 부재 |
+| 변경 필드와 no-op | NodeServiceContentUpdateTest | 실제 변경, 이력 및 이벤트의 공통 기준, 동일 값 요청의 부수효과 부재 |
 | 연결 불변식 | NodeContentChangeTest | 중복 연결의 멱등성, 컬렉션의 읽기 전용 노출 |
 | 업무 트랜잭션 | NodeServiceTransactionContractTest | Outbox 실패 시 전체 롤백, 커밋 후 처리, 저장 경쟁 검출 |
 | 기록 경계 | NodeChangeStagingTransactionTest | 트랜잭션 없는 호출 거절, 커밋과 롤백에 따른 알림 차이 |
 | 재처리 기한 | OutboxRetryWindowTest | 기한 보존, 경계 시각 선점 거절, 늦은 ACK와 오래된 token 처리 |
 
-실제 PostgreSQL 마이그레이션, Redis·Kafka 장애, 다중 서버 경쟁과 브라우저 수렴은 설계 문서에 별도 통합 검증 과제로 남아 있습니다. 과거 장애 PoC에서 관찰한 ‘중복 0건’을 현재 구조의 exactly-once 보장으로 해석하지 않습니다.
+실제 PostgreSQL 마이그레이션, Redis와 Kafka 장애, 다중 서버 경쟁과 브라우저 수렴은 설계 문서에 별도 통합 검증 과제로 남아 있습니다. 과거 장애 PoC에서 관찰한 ‘중복 0건’을 현재 구조의 exactly-once 보장으로 해석하지 않습니다.
 
 ## 설계에서 얻은 기준
 
 요청이 무엇을 바꿀 수 있는지, 정상 반환이 무엇을 뜻하는지, 실패 후 어떤 상태를 허용하는지를 먼저 정했습니다. 이 계약을 기준으로 요청 검증, 도메인 변경, 전달 의무 기록과 외부 전파의 책임을 나누었습니다.
 
-모든 클래스에 인터페이스를 추가하지는 않았습니다. 업무 변경과 전송 표현처럼 변경 이유가 다르거나, single/multi처럼 실제 정책 교체가 필요한 경계에 추상화를 두었습니다. SRP·DIP·ISP·OCP의 적용 근거와 LSP에서 남아 있는 실패 계약 검토 사항을 구분한 이유입니다.
+모든 클래스에 인터페이스를 추가하지는 않았습니다. 업무 변경과 전송 표현처럼 변경 이유가 다르거나, single/multi처럼 실제 정책 교체가 필요한 경계에 추상화를 두었습니다. SRP, DIP, ISP 및 OCP의 적용 근거와 LSP에서 남아 있는 실패 계약 검토 사항을 구분한 이유입니다.
 
 ## 계약을 표현한 코드 {#sources}
 
@@ -252,6 +252,6 @@ public record NodeChangeResult(
 }
 ```
 
-분석에는 `node_refactor_design.md`, `reliable_event_delivery_before.md`, `reliable_event_delivery_solid_mapping.md`의 설계 결정과 후속 변경 기록을 사용했습니다. 해당 원문과 코드의 공개 URL은 확인되지 않아, 이 글에 핵심 계약·코드 발췌·테스트 범위와 남은 과제를 함께 정리했습니다.
+분석에는 `node_refactor_design.md`, `reliable_event_delivery_before.md`, `reliable_event_delivery_solid_mapping.md`의 설계 결정과 후속 변경 기록을 사용했습니다. 해당 원문과 코드의 공개 URL은 확인되지 않아, 이 글에 핵심 계약, 코드 발췌, 테스트 범위와 남은 과제를 함께 정리했습니다.
 
-→ [Trader 프로젝트 전체 보기](/projects/trader/) · [전체 문제 해결 기록](/reports/)
+→ [Trader 프로젝트 전체 보기](/projects/trader/) / [전체 문제 해결 기록](/reports/)

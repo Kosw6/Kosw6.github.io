@@ -161,14 +161,14 @@ classes: wide
           <strong>도메인 설계</strong>
         </header>
         <div class="home-case__content">
-          <h3>협업 편집의 변경·이력·이벤트를 일치시키는 계약 중심 리팩터링</h3>
+          <h3>협업 편집의 변경, 이력 및 이벤트를 일치시키는 계약 중심 리팩터링</h3>
           <p><b>문제</b><span class="home-sentence-lines">
             <span>충돌 검사와 이력이 사용하는 변경 필드와 실제 저장하는 필드의 기준이 다를 수 있음을 발견했습니다.</span>
             <span>업무 저장과 외부 전파의 책임도 섞여 있어 요청 성공이 보장하는 범위를 명확히 해야 했습니다.</span>
           </span></p>
           <p><b>판단과 선택</b><span class="home-case__sentences">
             <span>도메인의 실제 적용 결과를 이력과 이벤트의 공통 기준으로 삼았습니다.</span>
-            <span>Node·History·Outbox의 원자적 커밋을 업무 성공으로 정의하고, 메시지 변환과 커밋 후 전파를 별도 책임으로 분리했습니다.</span>
+            <span>Node, History 및 Outbox의 원자적 커밋을 업무 성공으로 정의하고, 메시지 변환과 커밋 후 전파를 별도 책임으로 분리했습니다.</span>
             <span>업무 서비스는 변경 사실을 기록하는 계약에 의존하도록 설계했습니다.</span>
           </span></p>
           <p class="home-case__result"><b>결과</b><span class="home-sentence-lines">

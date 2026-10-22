@@ -63,7 +63,7 @@ Trader는 차트, 투자 일지와 실시간 캔버스를 연결해 투자 판�
 
 ## 데이터 파이프라인과 Worker 제어 {#data-platform}
 
-차트와 일지만으로는 투자 복기에 필요한 재무·매크로·시세 데이터를 안정적으로 제공하기 어렵다고 판단했습니다. 그래서 수집, raw 보존, 정규화, 재처리, worker 제어를 별도 데이터 처리 파이프라인과 제어 구조로 확장했습니다.
+차트와 일지만으로는 투자 복기에 필요한 재무, 매크로 및 시세 데이터를 안정적으로 제공하기 어렵다고 판단했습니다. 그래서 수집, raw 보존, 정규화, 재처리, worker 제어를 별도 데이터 처리 파이프라인과 제어 구조로 확장했습니다.
 
 <figure class="report-figure">
   <img src="/assets/images/data-platform/trader-data-architecture.svg" alt="Go Controller, Kafka, Python Collector와 ETL Worker, raw storage와 PostgreSQL로 구성한 데이터 파이프라인">
@@ -158,7 +158,7 @@ SELECT hypertable_name FROM timescaledb_information.hypertables;
 
 → [상세 Report 보기](/reports/timescaledb-27x/)
 
-현재 사용자 화면에는 1D 조회를 연결했으며, 1W/1M/1Y는 CAGG의 성능과 정합성 특성을 확인한 설계·검증 범위입니다.
+현재 사용자 화면에는 1D 조회를 연결했으며, 1W/1M/1Y는 CAGG의 성능과 정합성 특성을 확인한 설계 및 검증 범위입니다.
 
 ---
 
@@ -239,18 +239,18 @@ Group Canvas의 실시간 노드 업데이트 기능.
 
 ## 협업 편집의 계약 중심 리팩터링 {#node-contract}
 
-Node 수정에서 실제 저장 필드와 충돌 검사·이력의 기준이 달라질 수 있는 조건을 발견했습니다. 요청의 입력 계약, 업무 성공의 범위와 실패 후 복구 정책을 먼저 정하고 객체의 책임과 의존성을 분리했습니다.
+Node 수정에서 실제로 저장되는 필드가 충돌 검사와 이력에 쓰이는 필드와 달라질 수 있음을 발견했습니다. 요청의 입력 계약, 업무 성공의 범위와 실패 후 복구 정책을 먼저 정하고 객체의 책임과 의존성을 분리했습니다.
 
 | 설계 결정 | 지킬 계약 | 객체지향 관점 |
 |---|---|---|
-| 도메인이 실제 적용 결과 반환 | 같은 필드·버전을 History와 Outbox에 사용, no-op은 부수효과 없음 | 캡슐화, SRP |
-| 업무 이벤트 기록 계약 도입 | Node·History·Outbox 원자적 커밋, 메시지 표현 변경의 영향 제한 | SRP, DIP |
+| 도메인이 실제 적용 결과 반환 | 같은 필드와 버전을 History와 Outbox에 사용, no-op은 부수효과 없음 | 캡슐화, SRP |
+| 업무 이벤트 기록 계약 도입 | Node, History 및 Outbox 원자적 커밋, 메시지 표현 변경의 영향 제한 | SRP, DIP |
 | 실시간 발행과 내구성 기록 분리 | 이벤트 종류별 성공 의미 명시, 모드별 전파 정책 교체 | ISP, OCP, DIP |
 | Relay 실패 단계와 재시도 종료 정의 | 동일 ID 재발행, claim 소유권, 최초 선점 후 3분 기한 | 실패 모델링과 복구 계약 |
 
-단위·H2/Spring 테스트에서 변경 필드, Outbox 실패 시 롤백과 커밋 후 처리 등을 검증한 기록을 남겼습니다. 실제 PostgreSQL·Redis·Kafka·다중 서버 통합 검증은 별도 범위이며, LSP의 공통 실패 계약도 추가 검토 사항으로 구분했습니다.
+단위 테스트와 H2/Spring 테스트에서 변경 필드, Outbox 실패 시 롤백과 커밋 후 처리 등을 검증한 기록을 남겼습니다. 실제 PostgreSQL, Redis, Kafka를 연동한 다중 서버 통합 검증은 별도 범위이며, LSP의 공통 실패 계약도 추가 검토 사항으로 구분했습니다.
 
-→ [계약·책임 분리·검증 근거 보기](/reports/node-contract-refactoring/)
+→ [계약, 책임 분리 및 검증 근거 보기](/reports/node-contract-refactoring/)
 
 ---
 
