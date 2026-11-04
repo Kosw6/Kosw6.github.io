@@ -1,0 +1,13 @@
+{%- assign korean_url = page.url -%}
+{%- assign english_url = '/en/' -%}
+{%- if page.lang == 'en' -%}
+  {%- assign korean_url = page.translation_url -%}
+  {%- assign english_url = page.url -%}
+{%- else -%}
+  {%- for translation in site.pages -%}
+    {%- if translation.lang == 'en' and translation.translation_url == page.url -%}
+      {%- assign english_url = translation.url -%}
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}

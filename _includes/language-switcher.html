@@ -1,0 +1,7 @@
+{% include language-paths.html %}
+<div class="language-switcher" role="group" aria-label="Language">
+  <span class="language-switcher__label" aria-hidden="true">Language</span>
+  <a href="{{ korean_url | relative_url }}" lang="ko" hreflang="ko"{% unless page.lang == 'en' %} aria-current="page"{% endunless %}>한국어</a>
+  <span aria-hidden="true">/</span>
+  <a href="{{ english_url | relative_url }}" lang="en" hreflang="en"{% if page.lang == 'en' %} aria-current="page"{% endif %}>English</a>
+</div>
